@@ -6282,6 +6282,1679 @@ general: {
 
 });
 
+/* ---- 50-chimie-gaz.js ---- */
+/* Chimie — Les gaz */
+DATA.feuilles['chimie'] = DATA.feuilles['chimie'] || {};
+Object.assign(DATA.feuilles['chimie'], {
+
+/* ============ 1. Rappels ============ */
+rappels: {
+  bulle: 'rappels de chimie',
+  sous: 'Rappels : mole, masse molaire, concentration et stœchiométrie',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'la mole', items: [
+          ['1 mol', '= 6,02 × 10<sup>23</sup> particules (nombre d\'Avogadro)'],
+          ['masse molaire M', 'masse de 1 mol (g/mol), tableau périodique'],
+          ['nombre de moles', 'n = {{m|M}}'],
+        ], note: 'ex. M(H<sub>2</sub>O) = 2(1,01) + 16,00 = 18,02 g/mol' } ],
+      [ { t: 'form', h: 'la concentration', items: [
+          ['molaire', 'C = {{n|V}}  (mol/L, V en litres)'],
+          ['massique', 'C = {{m|V}}  (g/L)'],
+          ['en %', '% m/V = g de soluté par 100 mL'],
+          ['en ppm', '1 ppm = 1 mg/L (solution aqueuse)'],
+          ['dilution', 'C<sub>1</sub>V<sub>1</sub> = C<sub>2</sub>V<sub>2</sub>'],
+        ] } ],
+    ] },
+    { t: 'list', h: 'la stœchiométrie', items: [
+      'Une équation chimique **balancée** respecte la conservation de la matière (même nombre d\'atomes de chaque côté).',
+      'Les **coefficients** donnent les rapports en **moles** (pas en grammes !).',
+      'Démarche : masse → **moles** (÷ M) → rapport des coefficients → moles cherchées → masse (× M).',
+      '**Réactif limitant** : celui qui s\'épuise en premier ; il détermine la quantité de produit. L\'autre est en **excès**.',
+    ] },
+    { t: 'box', h: 'le « pont des moles »', f: 'grammes ⇄ moles ⇄ moles de l\'autre substance ⇄ grammes (ou litres de gaz)' },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'types de réactions', items: [
+          'Synthèse : A + B → AB · Décomposition : AB → A + B.',
+          'Combustion : avec O<sub>2</sub>, produit CO<sub>2</sub> et H<sub>2</sub>O (pour un composé organique).',
+          'Neutralisation : acide + base → sel + eau.',
+        ] } ],
+      [ { t: 'list', h: 'chiffres significatifs', items: [
+          'Multiplication, division : autant de chiffres significatifs que la donnée qui en a le moins.',
+          'Garder les calculs intermédiaires sans arrondir.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'Nombre de moles dans 36,0 g d\'eau.', s: [ 'n = {{36,0 g|18,02 g/mol}} = 2,00 mol' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'On dissout 5,85 g de NaCl dans 250 mL d\'eau. C ?',
+          s: [ 'n = {{5,85|58,44}} = 0,100 mol', 'C = {{0,100 mol|0,250 L}} = 0,400 mol/L' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: '2 H<sub>2</sub> + O<sub>2</sub> → 2 H<sub>2</sub>O. Quelle masse d\'eau forment 4,04 g de H<sub>2</sub> ?',
+      s: [ 'n(H<sub>2</sub>) = {{4,04|2,02}} = 2,00 mol', 'n(H<sub>2</sub>O) = 2,00 mol × {{2|2}} = 2,00 mol // rapport 2 : 2', 'm = 2,00 × 18,02 = 36,0 g' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'On mélange 3,0 mol de H<sub>2</sub> et 2,0 mol de O<sub>2</sub>. Réactif limitant ?',
+      s: [ '3,0 mol H<sub>2</sub> demandent 3,0 × {{1|2}} = 1,5 mol O<sub>2</sub>', 'on a 2,0 mol O<sub>2</sub> > 1,5 → O<sub>2</sub> en excès (0,5 mol de trop)' ],
+      r: 'H<sub>2</sub> est limitant ; il se forme 3,0 mol d\'eau' },
+    { t: 'ex', h: 'Exemple 5 —', q: 'Diluer 50 mL d\'une solution à 2,0 mol/L jusqu\'à 250 mL.',
+      s: [ 'C<sub>2</sub> = {{C<sub>1</sub>V<sub>1</sub>|V<sub>2</sub>}} = {{2,0 × 50|250}} = 0,40 mol/L' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser les coefficients avec des grammes.',
+          'Oublier de convertir les mL en L pour C = n/V.',
+          'Équation non balancée → tous les calculs sont faux.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'n = m / M ; C = n / V.',
+          'Toujours passer par les moles.',
+          'Le réactif limitant décide de la quantité de produit.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 2. Théorie cinétique ============ */
+'theorie-cinetique': {
+  bulle: 'théorie cinétique des gaz',
+  sous: 'Propriétés des gaz et théorie cinétique',
+  recto: [
+    { t: 'list', h: 'la théorie cinétique des gaz (modèle du gaz parfait)', items: [
+      'Un gaz est formé de particules **très petites** et **très éloignées** : leur volume propre est négligeable.',
+      'Les particules sont en **mouvement constant**, **rapide**, **aléatoire** et en ligne droite.',
+      'Elles entrent en **collision** entre elles et avec les parois : ces collisions sont **élastiques** (pas de perte d\'énergie).',
+      'Il n\'y a **pas de forces d\'attraction** entre les particules.',
+      'L\'**énergie cinétique moyenne** des particules est proportionnelle à la **température absolue** (en kelvins).',
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'propriétés des gaz', items: [
+          '**Compressibilité** : on peut réduire leur volume (beaucoup d\'espace vide).',
+          '**Expansion** : ils occupent tout le volume disponible.',
+          '**Diffusion** : ils se mélangent spontanément à d\'autres gaz.',
+          '**Effusion** : ils s\'échappent par de petites ouvertures.',
+          '**Pression** : causée par les collisions des particules sur les parois.',
+        ] } ],
+      [ { t: 'form', h: 'les 4 variables d\'un gaz', items: [
+          ['pression', 'P (kPa)'],
+          ['volume', 'V (L)'],
+          ['température', 'T (K) = T (°C) + 273'],
+          ['quantité', 'n (mol)'],
+        ], note: 'Zéro absolu : 0 K = −273 °C. Les particules y auraient une énergie cinétique minimale.' } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'box', h: 'vitesse de diffusion (loi de Graham)', f: '{{v<sub>1</sub>|v<sub>2</sub>}} = √({{M<sub>2</sub>|M<sub>1</sub>}})', note: 'Plus un gaz est léger, plus il diffuse vite.' } ],
+      [ { t: 'list', h: 'gaz parfait et gaz réel', items: [
+          'Un gaz **réel** s\'éloigne du modèle à **haute pression** et à **basse température** (les particules se rapprochent et s\'attirent).',
+          'Dans les conditions ordinaires, le modèle du gaz parfait fonctionne bien.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'Convertir.', s: [ '25 °C = 25 + 273 = 298 K', '−40 °C = −40 + 273 = 233 K', '373 K = 373 − 273 = 100 °C' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Combien de fois H<sub>2</sub> diffuse-t-il plus vite que O<sub>2</sub> ?',
+          s: [ '{{v(H<sub>2</sub>)|v(O<sub>2</sub>)}} = √({{32,00|2,02}}) ≈ 4' ], r: 'environ 4 fois plus vite' } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Expliquer avec la théorie cinétique : un ballon gonflé à l\'intérieur rapetisse quand on le sort en hiver.',
+      p: [ 'Au froid, l\'énergie cinétique des particules diminue : elles bougent moins vite et frappent la paroi moins souvent et moins fort. La pression intérieure baisse, donc le ballon se contracte jusqu\'à ce que les pressions intérieure et extérieure s\'équilibrent.' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Pourquoi sent-on le parfum d\'une personne à l\'autre bout de la classe ?',
+      p: [ 'Par **diffusion** : les particules de parfum, en mouvement aléatoire constant, se dispersent parmi les particules de l\'air.' ] },
+    { t: 'ex', h: 'Exemple 5 —', q: 'Pourquoi une seringue bouchée remplie d\'air se comprime-t-elle, mais pas une seringue remplie d\'eau ?',
+      p: [ 'Dans un gaz, les particules sont très éloignées : il y a beaucoup d\'espace vide à réduire. Dans un liquide, elles se touchent presque.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser des °C dans une loi des gaz : toujours des **kelvins**.',
+          'Dire que les particules « grossissent » quand on chauffe : c\'est leur vitesse qui augmente.',
+          'Inverser la loi de Graham : le gaz léger est le plus rapide.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Gaz = particules petites, éloignées, rapides, sans attraction.',
+          'T (K) = T (°C) + 273.',
+          'Pression = collisions sur les parois.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 3. Pression ============ */
+pression: {
+  bulle: 'la pression',
+  sous: 'La pression : unités et mesure',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'box', h: 'définition', f: 'P = {{F|A}}', note: 'F en newtons (N), A en m², P en pascals (Pa). 1 kPa = 1000 Pa.' },
+        { t: 'txt', p: [ 'Pour un gaz, la pression vient des **collisions** des particules sur les parois du contenant. Plus il y a de collisions (et plus elles sont fortes), plus la pression est grande.' ] } ],
+      [ { t: 'form', h: 'équivalences', items: [
+          ['', '1 atm = 101,3 kPa = 760 mm Hg'],
+          ['', '1 mm Hg ≈ 0,133 kPa'],
+          ['pression normale', '101,3 kPa (au niveau de la mer)'],
+        ] },
+        { t: 'list', h: 'conditions de référence', items: [
+          '**TPN** : 0 °C (273 K) et 101,3 kPa.',
+          '**TAPN** : 25 °C (298 K) et 101,3 kPa.',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'mesurer une pression', full: true, lcol: true,
+      head: ['Instrument', 'Principe', 'Calcul'],
+      rows: [
+        ['**Baromètre** à mercure', 'mesure la pression atmosphérique par la hauteur d\'une colonne de mercure', 'P<sub>atm</sub> = h (mm Hg)'],
+        ['**Manomètre à bout fermé**', 'le gaz pousse le mercure vers un bout fermé (vide)', 'P<sub>gaz</sub> = h'],
+        ['**Manomètre à bout ouvert**', 'on compare le gaz à la pression atmosphérique', 'mercure plus haut du côté **ouvert** : P<sub>gaz</sub> = P<sub>atm</sub> + h<br>mercure plus haut du côté **gaz** : P<sub>gaz</sub> = P<sub>atm</sub> − h'],
+      ],
+      note: 'h = différence de hauteur entre les deux colonnes de mercure. Le côté où le mercure est plus bas est celui qui pousse le plus fort.' },
+    { t: 'list', h: 'pression et altitude', items: [
+      'Plus on monte, plus la couche d\'air au-dessus est mince : la pression atmosphérique **diminue**.',
+      'L\'eau bout donc à moins de 100 °C en montagne.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Une force de 500 N s\'exerce sur 0,25 m². Pression ?',
+      s: [ 'P = {{500 N|0,25 m²}} = 2000 Pa = 2,0 kPa' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Convertir 95,0 kPa en atm et en mm Hg.',
+      s: [ '95,0 × {{1 atm|101,3 kPa}} ≈ 0,938 atm', '95,0 × {{760 mm Hg|101,3 kPa}} ≈ 713 mm Hg' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Manomètre à bout ouvert : P<sub>atm</sub> = 760 mm Hg. Le mercure est 150 mm plus haut du côté ouvert. P<sub>gaz</sub> en kPa ?',
+      s: [ 'côté ouvert plus haut → le gaz pousse plus fort', 'P<sub>gaz</sub> = 760 + 150 = 910 mm Hg', '910 × {{101,3|760}} ≈ 121 kPa' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Même manomètre, mais le mercure est 60 mm plus haut du côté du gaz.',
+      s: [ 'P<sub>gaz</sub> = 760 − 60 = 700 mm Hg ≈ 93,3 kPa' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Additionner h quand il faut soustraire (regarde de quel côté le mercure est plus bas).',
+          'Mélanger kPa et mm Hg dans le même calcul.',
+          'Oublier que 1 kPa = 1000 Pa.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'P = F / A.',
+          '101,3 kPa = 1 atm = 760 mm Hg.',
+          'TPN : 0 °C ; TAPN : 25 °C.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 4. Boyle-Mariotte ============ */
+boyle: {
+  bulle: 'loi de boyle-mariotte',
+  sous: 'La loi de Boyle-Mariotte (pression et volume)',
+  recto: [
+    { t: 'cols', w: '1.1fr 1fr', c: [
+      [ { t: 'txt', p: [
+          'À **température** et **quantité de gaz constantes**, la pression d\'un gaz est **inversement proportionnelle** à son volume : si le volume diminue de moitié, la pression double.',
+        ] },
+        { t: 'box', f: 'P<sub>1</sub>V<sub>1</sub> = P<sub>2</sub>V<sub>2</sub>', note: 'ou PV = constante' },
+        { t: 'list', h: 'explication (théorie cinétique)', items: [
+          'Moins de volume → les particules ont moins d\'espace → elles frappent les parois **plus souvent** → la pression augmente.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 230, h: 190, xmin: 0, xmax: 5, ymin: 0, ymax: 500, tick: 1, ticky: 100, grille: 1,
+            nx: 'V (L)', ny: 'P (kPa)',
+            courbes: [ { fn: x => 200 / x, x0: 0.35 } ],
+            pts: [ { x: 1, y: 200, lbl: '(1 ; 200)', dx: 5, dy: -4 }, { x: 2, y: 100, lbl: '(2 ; 100)', dx: 5, dy: -4 } ],
+            alt: 'hyperbole pression en fonction du volume', cap: 'P en fonction de V : courbe inverse (PV = 200)' },
+        ] } ],
+    ] },
+    { t: 'list', h: 'démarche pour toutes les lois des gaz', items: [
+      '1. Faire la **liste des données** avec leurs unités (P<sub>1</sub>, V<sub>1</sub>, P<sub>2</sub>, V<sub>2</sub>…).',
+      '2. Repérer ce qui est **constant** → choisir la bonne loi.',
+      '3. Utiliser les **mêmes unités** pour les deux états (kPa et kPa ; L et L). T toujours en **K**.',
+      '4. Isoler l\'inconnue, calculer, vérifier que la réponse a du sens (P ↑ → V ↓).',
+    ] },
+    { t: 'list', h: 'applications', items: [
+      'Seringue, pompe à vélo, respiration (le diaphragme augmente le volume des poumons → la pression baisse → l\'air entre).',
+      'Plongée : en remontant, la pression diminue et l\'air des poumons prend de l\'expansion.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un gaz occupe 2,0 L à 100 kPa. On le comprime à 0,50 L (T constante). Nouvelle pression ?',
+      s: [ 'P<sub>2</sub> = {{P<sub>1</sub>V<sub>1</sub>|V<sub>2</sub>}}', 'P<sub>2</sub> = {{100 kPa × 2,0 L|0,50 L}} = 400 kPa' ],
+      p: [ 'Vérif. : volume ÷ 4 → pression × 4 ✓' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Un plongeur expire une bulle de 1,5 L à une profondeur où la pression est de 303,9 kPa. Volume de la bulle en surface (101,3 kPa) ?',
+      s: [ 'V<sub>2</sub> = {{P<sub>1</sub>V<sub>1</sub>|P<sub>2</sub>}} = {{303,9 × 1,5|101,3}} = 4,5 L' ],
+      r: 'la bulle triple de volume en remontant' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Une seringue contient 60 mL d\'air à 101,3 kPa. On bouche l\'embout et on pousse jusqu\'à 20 mL. Pression ?',
+      s: [ 'P<sub>2</sub> = {{101,3 × 60|20}} ≈ 304 kPa' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser Boyle quand la température change.',
+          'Croire que P et V sont directement proportionnels.',
+          'Mélanger mL et L entre l\'état 1 et l\'état 2 (ici, ça fonctionne tant que c\'est la même unité des deux côtés).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'T et n constantes : P<sub>1</sub>V<sub>1</sub> = P<sub>2</sub>V<sub>2</sub>.',
+          'Relation inverse : V ÷ 2 → P × 2.',
+          'Graphique P-V : courbe (hyperbole).',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 5. Charles ============ */
+charles: {
+  bulle: 'loi de charles',
+  sous: 'La loi de Charles (volume et température)',
+  recto: [
+    { t: 'cols', w: '1.1fr 1fr', c: [
+      [ { t: 'txt', p: [
+          'À **pression** et **quantité de gaz constantes**, le volume d\'un gaz est **directement proportionnel** à sa **température absolue** (en kelvins).',
+        ] },
+        { t: 'box', f: '{{V<sub>1</sub>|T<sub>1</sub>}} = {{V<sub>2</sub>|T<sub>2</sub>}}', note: 'T en kelvins obligatoirement !' },
+        { t: 'list', h: 'explication', items: [
+          'On chauffe → les particules vont plus vite et frappent plus fort → pour garder la même pression, le gaz **prend de l\'expansion**.',
+          'Si on prolonge la droite V-T, elle coupe l\'axe à **−273 °C** : le **zéro absolu** (0 K).',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 235, h: 190, xmin: -300, xmax: 150, ymin: 0, ymax: 6, tick: 100, ticky: 1, grille: 50,
+            nx: 'T (°C)', ny: 'V (L)',
+            courbes: [ { fn: x => (x + 273) / 75, x0: -50 }, { fn: x => (x + 273) / 75, x0: -273, x1: -50, dash: true, cls: 'ln2' } ],
+            pts: [ { x: -273, y: 0, lbl: '−273 °C', dx: -8, dy: -8, pk: true } ],
+            alt: 'volume en fonction de la température : droite qui coupe l’axe à moins 273 degrés', cap: 'prolongée, la droite atteint V = 0 à −273 °C' },
+        ] } ],
+    ] },
+    { t: 'list', h: 'applications', items: [
+      'Montgolfière : l\'air chauffé prend de l\'expansion ; il devient moins dense et monte.',
+      'Ballon placé au congélateur : il rapetisse.',
+      'Pneus de vélo gonflés au soleil qui semblent plus durs.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un gaz occupe 3,0 L à 27 °C. On le chauffe à 127 °C (P constante). Nouveau volume ?',
+      s: [ 'T<sub>1</sub> = 27 + 273 = 300 K · T<sub>2</sub> = 127 + 273 = 400 K', 'V<sub>2</sub> = {{V<sub>1</sub>T<sub>2</sub>|T<sub>1</sub>}} = {{3,0 × 400|300}} = 4,0 L' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Un ballon de 2,50 L à 22 °C est sorti dehors à −18 °C. Volume ?',
+      s: [ 'T<sub>1</sub> = 295 K · T<sub>2</sub> = 255 K', 'V<sub>2</sub> = {{2,50 × 255|295}} ≈ 2,16 L' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'À quelle température (°C) un gaz de 500 mL à 20 °C occupera-t-il 600 mL ?',
+      s: [ 'T<sub>2</sub> = {{T<sub>1</sub>V<sub>2</sub>|V<sub>1</sub>}} = {{293 × 600|500}} ≈ 352 K', '352 − 273 = 79 °C' ] },
+    { t: 'ex', h: 'Piège classique :', q: 'Si on double la température de 20 °C à 40 °C, le volume double-t-il ?',
+      p: [ '**Non !** En kelvins : 293 K → 313 K, soit seulement 1,07 fois plus. Le volume augmente d\'environ 7 %.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Calculer avec des °C (on obtient des réponses absurdes).',
+          'Oublier de reconvertir la réponse en °C quand on le demande.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'P et n constantes : V / T constant.',
+          'T en kelvins.',
+          'Zéro absolu : −273 °C.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 6. Gay-Lussac ============ */
+'gay-lussac': {
+  bulle: 'loi de gay-lussac',
+  sous: 'La loi de Gay-Lussac (pression et température)',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'À **volume** et **quantité de gaz constants**, la pression d\'un gaz est **directement proportionnelle** à sa température absolue.',
+        ] },
+        { t: 'box', f: '{{P<sub>1</sub>|T<sub>1</sub>}} = {{P<sub>2</sub>|T<sub>2</sub>}}', note: 'T en kelvins' } ],
+      [ { t: 'list', h: 'explication', items: [
+          'Le contenant est **rigide** : le volume ne peut pas changer.',
+          'On chauffe → les particules vont plus vite → collisions plus fréquentes et plus fortes → la **pression augmente**.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'applications et sécurité', items: [
+      'Ne jamais chauffer ni jeter au feu une **bonbonne d\'aérosol** : la pression peut la faire exploser.',
+      'La pression des pneus augmente après un long trajet (les pneus chauffent) : on la mesure à froid.',
+      'Autocuiseur : pression plus élevée → l\'eau bout à plus de 100 °C → cuisson plus rapide.',
+    ] },
+    { t: 'tab', h: 'résumé des lois simples', full: true, lcol: true,
+      head: ['Loi', 'Constantes', 'Relation', 'Formule'],
+      rows: [
+        ['Boyle-Mariotte', 'T, n', 'P et V inverses', 'P<sub>1</sub>V<sub>1</sub> = P<sub>2</sub>V<sub>2</sub>'],
+        ['Charles', 'P, n', 'V et T directes', '{{V<sub>1</sub>|T<sub>1</sub>}} = {{V<sub>2</sub>|T<sub>2</sub>}}'],
+        ['Gay-Lussac', 'V, n', 'P et T directes', '{{P<sub>1</sub>|T<sub>1</sub>}} = {{P<sub>2</sub>|T<sub>2</sub>}}'],
+        ['Avogadro', 'P, T', 'V et n directes', '{{V<sub>1</sub>|n<sub>1</sub>}} = {{V<sub>2</sub>|n<sub>2</sub>}}'],
+      ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un pneu est gonflé à 220 kPa à 20 °C. Après un trajet, il est à 45 °C (volume constant). Pression ?',
+      s: [ 'T<sub>1</sub> = 293 K · T<sub>2</sub> = 318 K', 'P<sub>2</sub> = {{P<sub>1</sub>T<sub>2</sub>|T<sub>1</sub>}} = {{220 × 318|293}} ≈ 239 kPa' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une bonbonne d\'aérosol à 300 kPa et 25 °C est jetée dans un feu à 400 °C. Pression ?',
+      s: [ 'T<sub>1</sub> = 298 K · T<sub>2</sub> = 673 K', 'P<sub>2</sub> = {{300 × 673|298}} ≈ 678 kPa' ],
+      r: 'plus du double : risque d\'explosion' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un contenant rigide passe de 150 kPa à 100 kPa quand on le refroidit. Il était à 27 °C. Nouvelle température ?',
+      s: [ 'T<sub>2</sub> = {{T<sub>1</sub>P<sub>2</sub>|P<sub>1</sub>}} = {{300 × 100|150}} = 200 K', '200 − 273 = −73 °C' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre Gay-Lussac (V constant) et Charles (P constante).',
+          'Température en °C.',
+          'Oublier que dans un contenant souple (ballon), c\'est plutôt le volume qui change.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'V et n constants : P / T constant.',
+          'Contenant rigide → Gay-Lussac.',
+          'Chaleur + contenant fermé = danger.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 7. Avogadro ============ */
+avogadro: {
+  bulle: 'loi d\'avogadro',
+  sous: 'La loi d\'Avogadro et le volume molaire',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'À **température** et **pression constantes**, le volume d\'un gaz est **directement proportionnel** à son nombre de moles.',
+          'Conséquence (hypothèse d\'Avogadro) : des volumes **égaux** de gaz différents, aux mêmes T et P, contiennent le **même nombre de particules**.',
+        ] },
+        { t: 'box', f: '{{V<sub>1</sub>|n<sub>1</sub>}} = {{V<sub>2</sub>|n<sub>2</sub>}}' } ],
+      [ { t: 'tab', h: 'le volume molaire (1 mol de n\'importe quel gaz)', full: true, lcol: true,
+          head: ['Conditions', 'T', 'P', 'V<sub>m</sub>'],
+          rows: [
+            ['**TPN**', '0 °C', '101,3 kPa', '**22,4 L/mol**'],
+            ['**TAPN**', '25 °C', '101,3 kPa', '**24,5 L/mol**'],
+          ] },
+        { t: 'box', f: 'V = n × V<sub>m</sub>    ·    n = {{V|V<sub>m</sub>}}' } ],
+    ] },
+    { t: 'list', h: 'à savoir', items: [
+      'Le volume molaire est le **même pour tous les gaz** (parfaits), peu importe leur masse molaire.',
+      'Mais la **masse** de 22,4 L change d\'un gaz à l\'autre : 22,4 L de H<sub>2</sub> pèsent 2,02 g, 22,4 L de CO<sub>2</sub> pèsent 44,01 g.',
+      'Le volume molaire sert de pont entre les **litres de gaz** et les **moles** en stœchiométrie.',
+      'Masse volumique d\'un gaz : ρ = {{M|V<sub>m</sub>}} (g/L).',
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'Volume de 0,50 mol d\'O<sub>2</sub> à TPN.', s: [ 'V = 0,50 × 22,4 = 11,2 L' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Nombre de moles dans 49 L de gaz à TAPN.', s: [ 'n = {{49|24,5}} = 2,0 mol' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Masse de 5,6 L de CO<sub>2</sub> à TPN.',
+      s: [ 'n = {{5,6|22,4}} = 0,25 mol', 'm = 0,25 × 44,01 ≈ 11 g' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Un ballon contient 0,040 mol de gaz et occupe 1,0 L. On ajoute 0,020 mol (T et P constantes). Volume ?',
+      s: [ 'V<sub>2</sub> = {{V<sub>1</sub>n<sub>2</sub>|n<sub>1</sub>}} = {{1,0 × 0,060|0,040}} = 1,5 L' ] },
+    { t: 'ex', h: 'Exemple 5 —', q: 'Masse volumique de l\'hélium à TAPN.',
+      s: [ 'ρ = {{4,00 g/mol|24,5 L/mol}} ≈ 0,163 g/L // bien plus léger que l\'air (≈ 1,2 g/L)' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser 22,4 L/mol quand les conditions ne sont pas TPN.',
+          'Croire que 1 mol d\'un gaz lourd occupe plus de volume.',
+          'Oublier d\'additionner l\'ancienne et la nouvelle quantité (n<sub>2</sub> = total).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'TPN : 22,4 L/mol ; TAPN : 24,5 L/mol.',
+          'Même volume = même nombre de particules.',
+          'V et n proportionnels.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 8. Loi générale ============ */
+'loi-generale': {
+  bulle: 'loi générale des gaz',
+  sous: 'La loi générale des gaz',
+  recto: [
+    { t: 'txt', p: [ 'La **loi générale des gaz** réunit les lois de Boyle-Mariotte, de Charles, de Gay-Lussac et d\'Avogadro. On l\'utilise quand **plusieurs variables changent en même temps**.' ] },
+    { t: 'cols', c: [
+      [ { t: 'box', h: 'forme complète', f: '{{P<sub>1</sub>V<sub>1</sub>|n<sub>1</sub>T<sub>1</sub>}} = {{P<sub>2</sub>V<sub>2</sub>|n<sub>2</sub>T<sub>2</sub>}}' } ],
+      [ { t: 'box', h: 'quantité constante (le plus fréquent)', f: '{{P<sub>1</sub>V<sub>1</sub>|T<sub>1</sub>}} = {{P<sub>2</sub>V<sub>2</sub>|T<sub>2</sub>}}' } ],
+    ] },
+    { t: 'list', h: 'l\'astuce', items: [
+      'On **raye** de la formule ce qui reste **constant** : on retrouve automatiquement la loi simple.',
+      'ex. T constante et n constante → P<sub>1</sub>V<sub>1</sub> = P<sub>2</sub>V<sub>2</sub> (Boyle).',
+      'Il suffit donc de retenir UNE formule.',
+    ] },
+    { t: 'list', h: 'démarche', items: [
+      '1. Tableau : état 1 (P<sub>1</sub>, V<sub>1</sub>, T<sub>1</sub>, n<sub>1</sub>) et état 2.',
+      '2. Convertir : T en K ; mêmes unités de P et de V pour les deux états.',
+      '3. Isoler l\'inconnue : par ex. V<sub>2</sub> = {{P<sub>1</sub>V<sub>1</sub>T<sub>2</sub>|T<sub>1</sub>P<sub>2</sub>}}.',
+      '4. Vérifier le bon sens : chaque variable pousse-t-elle la réponse dans le bon sens ?',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un gaz occupe 500 mL à 25 °C et 100 kPa. Volume à TPN ?',
+      s: [ 'T<sub>1</sub> = 298 K, P<sub>1</sub> = 100 kPa · T<sub>2</sub> = 273 K, P<sub>2</sub> = 101,3 kPa', 'V<sub>2</sub> = {{P<sub>1</sub>V<sub>1</sub>T<sub>2</sub>|T<sub>1</sub>P<sub>2</sub>}} = {{100 × 500 × 273|298 × 101,3}}', 'V<sub>2</sub> ≈ 452 mL' ],
+      p: [ 'Bon sens : on refroidit (V ↓) et on augmente un peu P (V ↓) → le volume diminue ✓' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Un ballon-sonde de 10 L est lâché au sol (100 kPa, 20 °C). En altitude : 30 kPa et −40 °C. Volume ?',
+      s: [ 'T<sub>1</sub> = 293 K · T<sub>2</sub> = 233 K', 'V<sub>2</sub> = {{100 × 10 × 233|293 × 30}} ≈ 26,5 L' ],
+      r: 'le ballon grossit : la baisse de pression l\'emporte sur le froid' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'On double la quantité de gaz et on double la température absolue dans un contenant rigide. Que devient P ?',
+      s: [ '{{P<sub>1</sub>|n<sub>1</sub>T<sub>1</sub>}} = {{P<sub>2</sub>|2n<sub>1</sub> × 2T<sub>1</sub>}} // V constant, rayé', 'P<sub>2</sub> = 4P<sub>1</sub>' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier une variable qui change (souvent T).',
+          'Isoler mal : faire un produit croisé écrit au long aide.',
+          'Laisser T en °C.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Une seule formule : P V / (n T) constant.',
+          'Rayer ce qui ne change pas.',
+          'Vérifier le sens de la réponse.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 9. Gaz parfaits ============ */
+'gaz-parfaits': {
+  bulle: 'loi des gaz parfaits',
+  sous: 'La loi des gaz parfaits',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'La **loi des gaz parfaits** relie les 4 variables d\'un gaz **dans un seul état** (pas de « avant / après »).',
+        ] },
+        { t: 'box', f: 'PV = nRT', note: 'R = 8,314 kPa·L/(mol·K)' } ],
+      [ { t: 'form', h: 'unités obligatoires avec ce R', items: [
+          ['P', 'kPa'],
+          ['V', 'L'],
+          ['n', 'mol'],
+          ['T', 'K'],
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'formes utiles', items: [
+          ['nombre de moles', 'n = {{PV|RT}}'],
+          ['avec la masse', 'PV = {{m|M}}RT'],
+          ['masse molaire', 'M = {{mRT|PV}}'],
+          ['masse volumique', 'ρ = {{m|V}} = {{PM|RT}}'],
+        ] } ],
+      [ { t: 'list', h: 'quand l\'utiliser ?', items: [
+          'On connaît 3 des 4 variables et on cherche la 4<sup>e</sup>.',
+          'Il n\'y a **qu\'un seul état** du gaz.',
+          'Trouver la **masse molaire** d\'un gaz inconnu → l\'identifier.',
+          'Si on a deux états → loi générale.',
+        ] } ],
+    ] },
+    { t: 'box', h: 'vérification', f: 'à TPN : V = {{1 × 8,314 × 273|101,3}} ≈ 22,4 L pour 1 mol ✓' },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Nombre de moles dans une bonbonne de 10,0 L à 25 °C et 150 kPa.',
+      s: [ 'n = {{PV|RT}} = {{150 × 10,0|8,314 × 298}}', 'n ≈ 0,605 mol' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: '1,00 g d\'un gaz inconnu occupe 0,785 L à 100 kPa et 300 K. Quel gaz ?',
+      s: [ 'M = {{mRT|PV}} = {{1,00 × 8,314 × 300|100 × 0,785}}', 'M ≈ 31,8 g/mol' ],
+      r: 'probablement O<sub>2</sub> (32,00 g/mol)' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Pression de 0,500 mol de N<sub>2</sub> dans 2,00 L à 20 °C.',
+      s: [ 'P = {{nRT|V}} = {{0,500 × 8,314 × 293|2,00}} ≈ 609 kPa' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Volume de 8,80 g de CO<sub>2</sub> à 30 °C et 95,0 kPa.',
+      s: [ 'n = {{8,80|44,01}} ≈ 0,200 mol', 'V = {{nRT|P}} = {{0,200 × 8,314 × 303|95,0}} ≈ 5,30 L' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser des mL, des °C ou des atm avec R = 8,314.',
+          'Utiliser PV = nRT quand le problème a deux états.',
+          'Oublier de convertir la masse en moles.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'PV = nRT, R = 8,314.',
+          'kPa, L, mol, K.',
+          'M = mRT / PV pour identifier un gaz.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 10. Dalton ============ */
+dalton: {
+  bulle: 'loi de dalton',
+  sous: 'La loi de Dalton (pressions partielles)',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'Dans un **mélange de gaz** qui ne réagissent pas entre eux, chaque gaz exerce sa propre pression, comme s\'il était seul : c\'est sa **pression partielle**.',
+        ] },
+        { t: 'box', f: 'P<sub>totale</sub> = P<sub>1</sub> + P<sub>2</sub> + P<sub>3</sub> + …' } ],
+      [ { t: 'form', h: 'avec la fraction molaire', items: [
+          ['fraction molaire', 'x<sub>A</sub> = {{n<sub>A</sub>|n<sub>totale</sub>}}'],
+          ['pression partielle', 'P<sub>A</sub> = x<sub>A</sub> × P<sub>totale</sub>'],
+        ], note: 'La pression partielle est proportionnelle au nombre de moles du gaz.' } ],
+    ] },
+    { t: 'list', h: 'gaz recueilli sur l\'eau', items: [
+      'Quand on recueille un gaz par déplacement d\'eau, il est mélangé à de la **vapeur d\'eau**.',
+      'P<sub>gaz sec</sub> = P<sub>totale</sub> − P<sub>vapeur d\'eau</sub> (valeur dans une table ; elle dépend de la température, ≈ 3,17 kPa à 25 °C).',
+    ] },
+    { t: 'list', h: 'exemples de la vie courante', items: [
+      'L\'air : environ 78 % de N<sub>2</sub> et 21 % de O<sub>2</sub> → à 101,3 kPa, P(O<sub>2</sub>) ≈ 21 kPa.',
+      'En altitude, la pression partielle d\'O<sub>2</sub> baisse : on respire plus difficilement.',
+      'Les plongeurs utilisent des mélanges gazeux adaptés à la profondeur.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un mélange contient 2,0 mol de N<sub>2</sub> et 0,50 mol de O<sub>2</sub>. P<sub>totale</sub> = 150 kPa. Pressions partielles ?',
+      s: [ 'n<sub>totale</sub> = 2,5 mol', 'x(N<sub>2</sub>) = {{2,0|2,5}} = 0,80 → P = 0,80 × 150 = 120 kPa', 'x(O<sub>2</sub>) = {{0,50|2,5}} = 0,20 → P = 0,20 × 150 = 30 kPa', 'vérif. : 120 + 30 = 150 ✓' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'On recueille du H<sub>2</sub> sur l\'eau à 25 °C. P<sub>totale</sub> = 101,3 kPa ; P<sub>vapeur</sub> = 3,17 kPa. P(H<sub>2</sub>) ?',
+      s: [ 'P(H<sub>2</sub>) = 101,3 − 3,17 ≈ 98,1 kPa' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Pressions partielles : He 40 kPa, Ne 25 kPa, Ar 35 kPa. P<sub>totale</sub> et fraction molaire de He ?',
+      s: [ 'P<sub>totale</sub> = 40 + 25 + 35 = 100 kPa', 'x(He) = {{40|100}} = 0,40' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier de soustraire la vapeur d\'eau pour un gaz recueilli sur l\'eau.',
+          'Calculer la fraction molaire avec des grammes au lieu des moles.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'P<sub>totale</sub> = somme des pressions partielles.',
+          'P<sub>A</sub> = x<sub>A</sub> P<sub>totale</sub>.',
+          'Gaz sur l\'eau : − P<sub>vapeur</sub>.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 11. Stœchiométrie des gaz ============ */
+'stoechio-gaz': {
+  bulle: 'stœchiométrie des gaz',
+  sous: 'La stœchiométrie des gaz',
+  recto: [
+    { t: 'txt', p: [ 'On combine l\'équation balancée (rapports en moles) avec les lois des gaz pour passer des **litres de gaz** aux **moles**, et inversement.' ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'les 3 ponts vers les moles', items: [
+          'Masse → n = {{m|M}}.',
+          'Gaz à TPN ou TAPN → n = {{V|V<sub>m</sub>}} (22,4 ou 24,5 L/mol).',
+          'Gaz à d\'autres conditions → n = {{PV|RT}}.',
+          'Solution → n = C × V.',
+        ] } ],
+      [ { t: 'box', h: 'loi des volumes combinés', f: 'Aux mêmes T et P, les <b>volumes</b> de gaz sont dans le même rapport que les <b>coefficients</b>.', note: 'On peut alors travailler directement en litres, sans passer par les moles.' } ],
+    ] },
+    { t: 'list', h: 'démarche', items: [
+      '1. Écrire et **balancer** l\'équation.',
+      '2. Convertir la donnée en **moles**.',
+      '3. Utiliser le **rapport des coefficients**.',
+      '4. Convertir les moles trouvées dans l\'unité demandée (g, L, mol/L).',
+      '5. Vérifier le réactif limitant s\'il y a deux réactifs.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Zn + 2 HCl → ZnCl<sub>2</sub> + H<sub>2</sub>. Volume de H<sub>2</sub> à TAPN produit par 6,54 g de Zn (HCl en excès) ?',
+      s: [ 'n(Zn) = {{6,54|65,38}} ≈ 0,100 mol', 'n(H<sub>2</sub>) = 0,100 mol // rapport 1 : 1', 'V = 0,100 × 24,5 = 2,45 L' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'N<sub>2</sub> + 3 H<sub>2</sub> → 2 NH<sub>3</sub>. Volume de NH<sub>3</sub> produit par 6,0 L de H<sub>2</sub> (mêmes T et P) ?',
+      s: [ 'V(NH<sub>3</sub>) = 6,0 L × {{2|3}} = 4,0 L // volumes combinés' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'C<sub>3</sub>H<sub>8</sub> + 5 O<sub>2</sub> → 3 CO<sub>2</sub> + 4 H<sub>2</sub>O. Pour brûler 10 L de propane (mêmes T et P) ?',
+      s: [ 'O<sub>2</sub> nécessaire = 10 × 5 = 50 L', 'CO<sub>2</sub> produit = 10 × 3 = 30 L' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Même réaction qu\'en 1 : quelle masse de Zn faut-il pour produire 1,50 L de H<sub>2</sub> à 20 °C et 98,0 kPa ?',
+      s: [ 'n(H<sub>2</sub>) = {{98,0 × 1,50|8,314 × 293}} ≈ 0,0603 mol', 'n(Zn) = 0,0603 mol', 'm = 0,0603 × 65,38 ≈ 3,95 g' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser le rapport des coefficients avec des grammes.',
+          'Appliquer les volumes combinés à un liquide ou un solide.',
+          'Utiliser 22,4 L/mol hors des conditions TPN.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Tout passe par les moles.',
+          'Gaz aux mêmes T, P : volumes ∝ coefficients.',
+          'PV = nRT hors TPN/TAPN.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+
+/* ---- 51-chimie-energie-vitesse.js ---- */
+/* Chimie — Aspect énergétique des transformations et vitesse de réaction */
+(function () {
+  // Courbe de diagramme énergétique : plateau des réactifs (Hr), bosse du complexe activé (Hc), plateau des produits (Hp)
+  const diag = (Hr, Hc, Hp) => x => {
+    if (x <= 2) return Hr;
+    if (x <= 5) return Hr + (Hc - Hr) * (1 - Math.cos(Math.PI * (x - 2) / 3)) / 2;
+    if (x <= 8) return Hp + (Hc - Hp) * (1 + Math.cos(Math.PI * (x - 5) / 3)) / 2;
+    return Hp;
+  };
+  // Distribution des énergies cinétiques (forme de Maxwell-Boltzmann simplifiée)
+  const mb = T => E => 60 * (E / (T * T)) * Math.exp(-E / T);
+
+Object.assign(DATA.feuilles['chimie'], {
+
+/* ============ 12. Endo et exo ============ */
+'endo-exo': {
+  bulle: 'endothermique ou exothermique',
+  sous: 'Réactions endothermiques et exothermiques, diagramme énergétique',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'Toute transformation s\'accompagne d\'un échange d\'énergie entre le **système** (les substances qui réagissent) et le **milieu** (tout le reste).',
+          'L\'**enthalpie** H est l\'énergie contenue dans une substance. On mesure la **variation d\'enthalpie** :',
+        ] },
+        { t: 'box', f: 'ΔH = H<sub>produits</sub> − H<sub>réactifs</sub>' } ],
+      [ { t: 'tab', full: true, lcol: true,
+          head: ['', '**Exothermique**', '**Endothermique**'],
+          rows: [
+            ['énergie', 'dégagée dans le milieu', 'absorbée du milieu'],
+            ['ΔH', '**négatif** (ΔH < 0)', '**positif** (ΔH > 0)'],
+            ['milieu', 'se réchauffe', 'se refroidit'],
+            ['H produits', 'plus bas que les réactifs', 'plus haut que les réactifs'],
+            ['dans l\'équation', 'énergie du côté des **produits**', 'énergie du côté des **réactifs**'],
+          ] } ],
+    ] },
+    { t: 'fig', h: 'diagrammes énergétiques', figs: [
+      { kind: 'plan', w: 270, h: 185, xmin: 0, xmax: 10, ymin: 0, ymax: 10, xlabels: [], ylabels: [], nx: 'progression', ny: 'H',
+        courbes: [ { fn: diag(6, 8.5, 2) } ],
+        segs: [ { a: [9, 6], b: [9, 2], cls: 'ln2' } ],
+        pts: [ { x: 1, y: 6, lbl: 'réactifs', dx: -4, dy: -6 }, { x: 8.6, y: 2, lbl: 'produits', dx: -40, dy: 13 } ],
+        droites: [ { a: [0, 6], b: [1, 6], cls: 'ln3', dash: true, lbl: 'ΔH < 0', at: [9.2, 4.2], pk: true } ],
+        alt: 'diagramme d’une réaction exothermique', cap: '<b>exothermique</b> : les produits sont plus bas' },
+      { kind: 'plan', w: 270, h: 185, xmin: 0, xmax: 10, ymin: 0, ymax: 10, xlabels: [], ylabels: [], nx: 'progression', ny: 'H',
+        courbes: [ { fn: diag(2, 8.5, 6) } ],
+        segs: [ { a: [9, 2], b: [9, 6], cls: 'ln2' } ],
+        pts: [ { x: 1, y: 2, lbl: 'réactifs', dx: -4, dy: 13 }, { x: 8.6, y: 6, lbl: 'produits', dx: -40, dy: -6 } ],
+        droites: [ { a: [0, 2], b: [1, 2], cls: 'ln3', dash: true, lbl: 'ΔH > 0', at: [9.2, 4.2], pk: true } ],
+        alt: 'diagramme d’une réaction endothermique', cap: '<b>endothermique</b> : les produits sont plus haut' },
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'exemples exothermiques', items: [
+          'combustions, respiration cellulaire, neutralisation',
+          'dissolution de NaOH dans l\'eau',
+          'condensation, solidification',
+        ] } ],
+      [ { t: 'list', h: 'exemples endothermiques', items: [
+          'photosynthèse, électrolyse de l\'eau',
+          'dissolution de NH<sub>4</sub>NO<sub>3</sub> (sac réfrigérant instantané)',
+          'fusion, vaporisation, sublimation',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'CH<sub>4</sub> + 2 O<sub>2</sub> → CO<sub>2</sub> + 2 H<sub>2</sub>O   ΔH = −890 kJ',
+      s: [ 'ΔH < 0 → exothermique', 'autre écriture : CH<sub>4</sub> + 2 O<sub>2</sub> → CO<sub>2</sub> + 2 H<sub>2</sub>O + 890 kJ // énergie avec les produits' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: '6 CO<sub>2</sub> + 6 H<sub>2</sub>O + 2803 kJ → C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6 O<sub>2</sub>',
+      s: [ 'énergie du côté des réactifs → endothermique', 'ΔH = +2803 kJ' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'On dissout un sel dans l\'eau et le bécher devient froid. La dissolution est-elle endo ou exo ?',
+      p: [ 'Le **milieu** (eau, bécher, main) se refroidit : il a **donné** de l\'énergie au système. La dissolution est **endothermique** (ΔH > 0).' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Sur un diagramme, H<sub>réactifs</sub> = 120 kJ et H<sub>produits</sub> = 45 kJ. ΔH ?',
+      s: [ 'ΔH = 45 − 120 = −75 kJ → exothermique' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre système et milieu : si le bécher devient **chaud**, la réaction est **exo**.',
+          'Écrire ΔH = H<sub>réactifs</sub> − H<sub>produits</sub> (c\'est l\'inverse).',
+          'Oublier le signe de ΔH.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Exo : ΔH < 0, dégage de la chaleur.',
+          'Endo : ΔH > 0, absorbe de la chaleur.',
+          'ΔH = H<sub>P</sub> − H<sub>R</sub>.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 13. Énergie d'activation ============ */
+'energie-activation': {
+  bulle: 'énergie d\'activation',
+  sous: 'Énergie d\'activation et complexe activé',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'Pour réagir, les réactifs doivent d\'abord **briser des liaisons** : il faut leur fournir une énergie minimale, l\'**énergie d\'activation** (E<sub>a</sub>).',
+          'Au sommet de la « bosse », les particules forment le **complexe activé** : un état instable, de très courte durée, où des liaisons se brisent pendant que d\'autres se forment.',
+        ] },
+        { t: 'form', h: 'lectures du diagramme', items: [
+          ['E<sub>a</sub> directe', 'H<sub>complexe</sub> − H<sub>réactifs</sub>'],
+          ['E<sub>a</sub> inverse', 'H<sub>complexe</sub> − H<sub>produits</sub>'],
+          ['ΔH', 'H<sub>produits</sub> − H<sub>réactifs</sub> = E<sub>a</sub> directe − E<sub>a</sub> inverse'],
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 250, h: 220, xmin: 0, xmax: 10, ymin: 0, ymax: 200, xlabels: [], ticky: 50, grille: 1, nx: 'progression', ny: 'H (kJ)',
+            courbes: [ { fn: diag(50, 180, 20) } ],
+            segs: [ { a: [3.2, 50], b: [3.2, 180], cls: 'ln3', dash: true }, { a: [6.8, 20], b: [6.8, 180], cls: 'ln3', dash: true }, { a: [9.2, 50], b: [9.2, 20], cls: 'ln2' } ],
+            droites: [ { a: [0, 50], b: [1, 50], cls: 'ln3', dash: true } ],
+            pts: [ { x: 5, y: 180, lbl: 'complexe activé', dx: -40, dy: -7 } ],
+            alt: 'diagramme avec énergie d’activation', cap: 'H<sub>R</sub> = 50, complexe = 180, H<sub>P</sub> = 20 (kJ)' },
+        ] } ],
+    ] },
+    { t: 'list', h: 'à comprendre', items: [
+      'Même une réaction **exothermique** a besoin d\'une énergie d\'activation (ex. une allumette pour allumer du bois).',
+      'Plus E<sub>a</sub> est **petite**, plus la réaction est **rapide** (plus de collisions ont assez d\'énergie).',
+      'Un **catalyseur** abaisse E<sub>a</sub> (nouveau chemin) sans changer ΔH.',
+      'Réaction inverse : E<sub>a</sub> inverse = E<sub>a</sub> directe − ΔH.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Avec le diagramme du recto (H<sub>R</sub> = 50 kJ, complexe à 180 kJ, H<sub>P</sub> = 20 kJ).',
+      s: [ 'E<sub>a</sub> directe = 180 − 50 = 130 kJ', 'E<sub>a</sub> inverse = 180 − 20 = 160 kJ', 'ΔH = 20 − 50 = −30 kJ // exothermique', 'vérif. : 130 − 160 = −30 ✓' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une réaction a E<sub>a</sub> = 75 kJ et ΔH = +40 kJ. E<sub>a</sub> de la réaction inverse ?',
+      s: [ 'E<sub>a</sub> inverse = E<sub>a</sub> directe − ΔH = 75 − 40 = 35 kJ' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un catalyseur fait passer E<sub>a</sub> de 130 kJ à 70 kJ pour la même réaction. Que devient ΔH ?',
+      p: [ 'ΔH **ne change pas** (−30 kJ) : le catalyseur abaisse seulement la bosse. E<sub>a</sub> inverse passe aussi de 160 à 100 kJ.' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Pourquoi une feuille de papier ne brûle-t-elle pas seule à la température de la pièce, même si la combustion est exothermique ?',
+      p: [ 'Parce que l\'énergie d\'activation n\'est pas atteinte : il faut d\'abord une flamme (ou une étincelle) pour fournir E<sub>a</sub>. Ensuite, l\'énergie dégagée par la combustion entretient la réaction.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Mesurer E<sub>a</sub> à partir de 0 au lieu de partir du niveau des réactifs.',
+          'Croire qu\'un catalyseur change ΔH.',
+          'Confondre E<sub>a</sub> directe et inverse.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'E<sub>a</sub> = sommet − réactifs.',
+          'Complexe activé = sommet, instable.',
+          'Catalyseur : E<sub>a</sub> ↓, ΔH inchangé.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 14. Enthalpie, chaleur molaire ============ */
+enthalpie: {
+  bulle: 'chaleur molaire de réaction',
+  sous: 'Variation d\'enthalpie et chaleur molaire de réaction',
+  recto: [
+    { t: 'txt', p: [
+      'La **chaleur molaire de réaction** est l\'énergie absorbée ou dégagée par **1 mole** d\'une substance lors d\'une transformation. Elle s\'exprime en **kJ/mol** et porte le signe de ΔH.',
+    ] },
+    { t: 'box', f: 'Q = n × ΔH<sub>molaire</sub>', note: 'Q : énergie totale échangée (kJ) · n : nombre de moles de la substance de référence' },
+    { t: 'tab', h: 'les types', full: true, lcol: true,
+      head: ['Chaleur molaire de…', 'Transformation', 'Exemple (valeur approximative)'],
+      rows: [
+        ['**combustion**', '1 mol d\'une substance brûle dans O<sub>2</sub>', 'CH<sub>4</sub> : −890 kJ/mol'],
+        ['**formation**', '1 mol d\'un composé formée à partir de ses éléments', 'H<sub>2</sub>O(l) : −285,8 kJ/mol'],
+        ['**dissolution**', '1 mol de soluté se dissout', 'NaOH : −44,5 kJ/mol · NH<sub>4</sub>NO<sub>3</sub> : +25,7 kJ/mol'],
+        ['**neutralisation**', '1 mol d\'eau formée par un acide et une base', 'environ −57 kJ/mol'],
+        ['**fusion**, **vaporisation**', 'changement d\'état de 1 mol', 'glace : +6,01 kJ/mol · eau : +40,7 kJ/mol'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'règles', items: [
+          'Les coefficients de l\'équation sont des **moles** : ΔH correspond aux quantités écrites.',
+          'Si on **double** l\'équation, on **double** ΔH.',
+          'Si on **inverse** l\'équation, on **change le signe** de ΔH.',
+          'L\'état (s, l, g) compte : ΔH change selon que l\'eau est liquide ou gazeuse.',
+        ] } ],
+      [ { t: 'list', h: 'changements d\'état', items: [
+          'Endothermiques : fusion, vaporisation, sublimation.',
+          'Exothermiques : solidification, condensation, déposition.',
+          'La température reste constante pendant un changement d\'état.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Énergie dégagée par la combustion de 32,1 g de CH<sub>4</sub> (ΔH = −890 kJ/mol).',
+      s: [ 'n = {{32,1|16,05}} = 2,00 mol', 'Q = 2,00 × (−890) = −1780 kJ' ],
+      r: '1780 kJ dégagés' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Énergie dégagée quand on forme 9,01 g d\'eau liquide (ΔH<sub>f</sub> = −285,8 kJ/mol).',
+      s: [ 'n = {{9,01|18,02}} = 0,500 mol', 'Q = 0,500 × (−285,8) ≈ −143 kJ' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Énergie pour faire fondre 36,0 g de glace (ΔH<sub>fus</sub> = +6,01 kJ/mol).',
+      s: [ 'n = {{36,0|18,02}} ≈ 2,00 mol', 'Q = 2,00 × 6,01 ≈ 12,0 kJ absorbés' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: '2 H<sub>2</sub> + O<sub>2</sub> → 2 H<sub>2</sub>O(l)  ΔH = −571,6 kJ. ΔH pour 2 H<sub>2</sub>O(l) → 2 H<sub>2</sub> + O<sub>2</sub> ? Et par mole d\'eau formée ?',
+      s: [ 'inverse → ΔH = +571,6 kJ', 'par mole d\'eau : {{−571,6|2}} = −285,8 kJ/mol' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier de convertir la masse en moles.',
+          'Garder le même signe en inversant l\'équation.',
+          'Confondre la chaleur par mole et la chaleur pour l\'équation complète.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Q = n × ΔH.',
+          '× 2 l\'équation → × 2 ΔH ; inverser → − ΔH.',
+          'Combustion, formation, dissolution, neutralisation.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 15. Énergie de liaison ============ */
+'energie-liaison': {
+  bulle: 'énergie de liaison',
+  sous: 'Énergie de liaison et calcul de ΔH',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'L\'**énergie de liaison** est l\'énergie nécessaire pour **briser** 1 mol d\'une liaison entre deux atomes (à l\'état gazeux).',
+          '**Briser** une liaison **absorbe** de l\'énergie (+). **Former** une liaison **dégage** la même énergie (−).',
+        ] },
+        { t: 'box', f: 'ΔH = Σ E(liaisons brisées) − Σ E(liaisons formées)', note: 'réactifs : liaisons brisées · produits : liaisons formées' } ],
+      [ { t: 'tab', h: 'énergies moyennes (kJ/mol)', full: true,
+          head: ['Liaison', 'E', 'Liaison', 'E'],
+          rows: [
+            ['H–H', '436', 'O–H', '463'],
+            ['Cl–Cl', '242', 'C–H', '413'],
+            ['H–Cl', '431', 'C=O', '799'],
+            ['O=O', '498', 'C–C', '348'],
+            ['N≡N', '945', 'N–H', '391'],
+          ],
+          note: 'Les valeurs varient légèrement selon les tables : utilise celles de ton cahier.' } ],
+    ] },
+    { t: 'list', h: 'démarche', items: [
+      '1. Dessiner la **structure** (formule développée) de chaque molécule pour voir toutes les liaisons.',
+      '2. Compter les liaisons brisées (réactifs) en tenant compte des **coefficients**.',
+      '3. Compter les liaisons formées (produits).',
+      '4. ΔH = brisées − formées. Si les liaisons formées sont plus fortes → ΔH < 0 (exothermique).',
+    ] },
+    { t: 'list', h: 'à comprendre', items: [
+      'Une réaction est **exothermique** quand l\'énergie dégagée en formant les nouvelles liaisons dépasse l\'énergie absorbée pour briser les anciennes.',
+      'Liaison double ou triple : plus forte qu\'une liaison simple entre les mêmes atomes.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'H<sub>2</sub> + Cl<sub>2</sub> → 2 HCl',
+      s: [ 'brisées : 1 H–H + 1 Cl–Cl = 436 + 242 = 678 kJ', 'formées : 2 H–Cl = 2 × 431 = 862 kJ', 'ΔH = 678 − 862 = −184 kJ // exothermique' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: '2 H<sub>2</sub> + O<sub>2</sub> → 2 H<sub>2</sub>O(g)',
+      s: [ 'brisées : 2 H–H + 1 O=O = 2(436) + 498 = 1370 kJ', 'formées : 4 O–H (2 par molécule × 2) = 4 × 463 = 1852 kJ', 'ΔH = 1370 − 1852 = −482 kJ' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'CH<sub>4</sub> + 2 O<sub>2</sub> → CO<sub>2</sub> + 2 H<sub>2</sub>O(g)',
+      s: [ 'brisées : 4 C–H + 2 O=O = 4(413) + 2(498) = 2648 kJ', 'formées : 2 C=O + 4 O–H = 2(799) + 4(463) = 3450 kJ', 'ΔH = 2648 − 3450 = −802 kJ' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Faire formées − brisées (signe inversé).',
+          'Oublier de multiplier par les coefficients.',
+          'Oublier qu\'une molécule d\'eau contient **deux** liaisons O–H.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Briser : +E ; former : −E.',
+          'ΔH = brisées − formées.',
+          'Toujours dessiner les molécules.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 16. Calorimétrie ============ */
+calorimetrie: {
+  bulle: 'calorimétrie',
+  sous: 'La calorimétrie',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'La **calorimétrie** mesure l\'énergie échangée lors d\'une transformation grâce à la variation de température d\'une masse d\'eau, dans un **calorimètre** (contenant isolé).',
+        ] },
+        { t: 'box', f: 'Q = mcΔT', note: 'Q en J · m en g · c en J/(g·°C) · ΔT = T<sub>finale</sub> − T<sub>initiale</sub>' },
+        { t: 'form', items: [
+          ['capacité thermique massique de l\'eau', 'c = 4,19 J/(g·°C)'],
+          ['1 mL d\'eau (ou de solution diluée)', '≈ 1 g'],
+        ] } ],
+      [ { t: 'list', h: 'le principe', items: [
+          'Énergie **dégagée** par la réaction = énergie **absorbée** par l\'eau (et inversement).',
+          'Q<sub>réaction</sub> = −Q<sub>eau</sub>',
+          'L\'eau se **réchauffe** → réaction **exothermique** → ΔH < 0.',
+          'L\'eau se **refroidit** → réaction **endothermique** → ΔH > 0.',
+        ] },
+        { t: 'box', h: 'chaleur molaire', f: 'ΔH = {{−Q<sub>eau</sub>|n}}', note: 'n : moles de la substance de référence ; convertir J → kJ' } ],
+    ] },
+    { t: 'list', h: 'sources d\'erreur', items: [
+      'Pertes de chaleur vers l\'air ou le contenant (calorimètre mal isolé).',
+      'Lecture imprécise du thermomètre ; réaction incomplète.',
+      'On néglige souvent la chaleur absorbée par le calorimètre lui-même.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Énergie pour chauffer 250 g d\'eau de 20 °C à 80 °C.',
+      s: [ 'Q = 250 × 4,19 × (80 − 20)', 'Q = 62 850 J ≈ 62,9 kJ' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'On dissout 2,00 g de NaOH dans 100 g d\'eau. T passe de 20,0 °C à 25,3 °C. Chaleur molaire de dissolution ?',
+      s: [ 'Q<sub>eau</sub> = 100 × 4,19 × 5,3 = 2221 J = 2,221 kJ', 'n(NaOH) = {{2,00|40,00}} = 0,0500 mol', 'ΔH = {{−2,221 kJ|0,0500 mol}} ≈ −44,4 kJ/mol // exothermique : l\'eau s\'est réchauffée' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'On mélange 50 mL de HCl 1,0 mol/L et 50 mL de NaOH 1,0 mol/L. ΔT = +6,7 °C. Chaleur molaire de neutralisation ?',
+      s: [ 'm ≈ 100 g · Q<sub>eau</sub> = 100 × 4,19 × 6,7 ≈ 2807 J', 'n(H<sub>2</sub>O) = 1,0 × 0,050 = 0,050 mol', 'ΔH = {{−2,807|0,050}} ≈ −56 kJ/mol' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Quelle masse d\'eau peut-on chauffer de 25 °C avec 10,0 kJ ?',
+      s: [ 'm = {{Q|cΔT}} = {{10 000|4,19 × 25}} ≈ 95,5 g' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier le signe : ΔH de la réaction est l\'**opposé** de Q de l\'eau.',
+          'Laisser Q en J et ΔH en kJ/mol sans convertir.',
+          'Utiliser la masse du soluté au lieu de la masse d\'eau dans mcΔT.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Q = mcΔT, c(eau) = 4,19.',
+          'Q<sub>réaction</sub> = −Q<sub>eau</sub>.',
+          'ΔH = −Q / n.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 17. Loi de Hess ============ */
+hess: {
+  bulle: 'loi de hess',
+  sous: 'La loi de Hess',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'La variation d\'enthalpie d\'une réaction **ne dépend pas du chemin** suivi : si on peut obtenir une réaction en additionnant plusieurs étapes, son ΔH est la **somme** des ΔH des étapes.',
+        ] },
+        { t: 'box', f: 'ΔH<sub>totale</sub> = ΔH<sub>1</sub> + ΔH<sub>2</sub> + ΔH<sub>3</sub> + …' } ],
+      [ { t: 'list', h: 'les 3 règles de manipulation', items: [
+          '**Inverser** une équation → **changer le signe** de ΔH.',
+          '**Multiplier** une équation par un nombre → **multiplier** ΔH par ce nombre.',
+          '**Additionner** les équations → **additionner** les ΔH ; les substances présentes des deux côtés s\'annulent.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'démarche', items: [
+      '1. Écrire l\'équation **cible** (celle dont on cherche ΔH).',
+      '2. Pour chaque substance de la cible, trouver l\'équation donnée où elle apparaît **une seule fois**.',
+      '3. **Inverser** l\'équation si la substance est du mauvais côté ; **multiplier** pour avoir le bon coefficient.',
+      '4. Additionner ; vérifier qu\'on retrouve exactement la cible (les intermédiaires s\'annulent).',
+      '5. Additionner les ΔH modifiés.',
+    ] },
+    { t: 'txt', h: 'à quoi ça sert ?', p: [ 'À trouver le ΔH de réactions difficiles ou impossibles à mesurer directement (ex. formation du monoxyde de carbone, qui se transforme en CO<sub>2</sub> pendant la mesure).' ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Trouver ΔH de C + ½ O<sub>2</sub> → CO, avec :',
+      s: [ '(1) C + O<sub>2</sub> → CO<sub>2</sub>  ΔH<sub>1</sub> = −393,5 kJ', '(2) CO + ½ O<sub>2</sub> → CO<sub>2</sub>  ΔH<sub>2</sub> = −283,0 kJ', 'CO doit être un produit → on inverse (2) :', 'CO<sub>2</sub> → CO + ½ O<sub>2</sub>  ΔH = +283,0 kJ', '(1) + (2 inversée) : C + ½ O<sub>2</sub> → CO // CO<sub>2</sub> et ½ O<sub>2</sub> s\'annulent', 'ΔH = −393,5 + 283,0 = −110,5 kJ' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Trouver ΔH de S + <sup>3</sup>/<sub>2</sub> O<sub>2</sub> → SO<sub>3</sub>, avec :',
+      s: [ '(1) S + O<sub>2</sub> → SO<sub>2</sub>  ΔH<sub>1</sub> = −296,8 kJ', '(2) 2 SO<sub>2</sub> + O<sub>2</sub> → 2 SO<sub>3</sub>  ΔH<sub>2</sub> = −197,8 kJ', 'on veut 1 SO<sub>3</sub> → (2) × ½ : SO<sub>2</sub> + ½ O<sub>2</sub> → SO<sub>3</sub>  ΔH = −98,9 kJ', '(1) + (2 × ½) : S + <sup>3</sup>/<sub>2</sub> O<sub>2</sub> → SO<sub>3</sub>', 'ΔH = −296,8 + (−98,9) = −395,7 kJ' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Inverser l\'équation sans changer le signe de ΔH.',
+          'Multiplier l\'équation mais pas ΔH (ou l\'inverse).',
+          'Ne pas vérifier que la somme donne exactement la cible.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'ΔH ne dépend pas du chemin.',
+          'Inverser → signe ; multiplier → × ΔH.',
+          'Les intermédiaires doivent s\'annuler.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 18. Vitesse de réaction ============ */
+vitesse: {
+  bulle: 'vitesse de réaction',
+  sous: 'La vitesse de réaction : définition et mesure',
+  recto: [
+    { t: 'cols', w: '1.1fr 1fr', c: [
+      [ { t: 'txt', p: [
+          'La **vitesse de réaction** est la variation de la quantité d\'un réactif ou d\'un produit **par unité de temps**.',
+        ] },
+        { t: 'box', f: 'v = {{Δ quantité|Δt}}', note: 'unités : mol/(L·s), g/s, mL/s, mol/min…' },
+        { t: 'list', items: [
+          'Les **réactifs** diminuent ; les **produits** augmentent. La vitesse est toujours donnée **positive**.',
+          'La vitesse **diminue** au cours de la réaction (moins de réactifs, donc moins de collisions).',
+          '**Vitesse moyenne** : entre deux instants (pente d\'une sécante). **Vitesse instantanée** : à un instant précis (pente de la tangente).',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 235, h: 190, xmin: 0, xmax: 60, ymin: 0, ymax: 60, tick: 10, ticky: 10, grille: 5, nx: 't (s)', ny: 'V (mL)',
+            courbes: [ { fn: t => 55 * (1 - Math.exp(-t / 15)) } ],
+            segs: [ { a: [0, 0], b: [20, 55 * (1 - Math.exp(-20 / 15))], cls: 'ln2', dash: true } ],
+            alt: 'volume de gaz produit en fonction du temps', cap: 'volume de O<sub>2</sub> produit : la pente (vitesse) diminue' },
+        ] } ],
+    ] },
+    { t: 'box', h: 'vitesse et coefficients', f: 'pour aA + bB → cC + dD :  v = {{1|a}}{{Δ[A]|Δt}} (en valeur absolue) = {{1|c}}{{Δ[C]|Δt}}', note: 'Une substance qui a un coefficient 2 varie 2 fois plus vite qu\'une substance de coefficient 1.' },
+    { t: 'tab', h: 'comment la mesurer', full: true, lcol: true,
+      head: ['On mesure…', 'Quand ?'],
+      rows: [
+        ['le **volume** de gaz produit', 'un gaz se dégage (seringue, cylindre renversé dans l\'eau)'],
+        ['la **masse** perdue', 'un gaz s\'échappe du contenant (balance)'],
+        ['la **pression**', 'gaz en contenant fermé'],
+        ['la **couleur** (intensité)', 'un réactif ou un produit est coloré'],
+        ['le **pH** ou la **conductibilité**', 'des ions apparaissent ou disparaissent'],
+        ['le **temps** d\'apparition d\'un précipité', 'un solide se forme'],
+      ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'La décomposition de H<sub>2</sub>O<sub>2</sub> produit 30 mL d\'O<sub>2</sub> en 20 s. Vitesse moyenne ?',
+      s: [ 'v = {{30 mL|20 s}} = 1,5 mL/s' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Dans 2 A → B, [A] passe de 0,80 à 0,50 mol/L en 60 s.',
+      s: [ 'v(A) = {{0,80 − 0,50|60}} = 0,0050 mol/(L·s)', 'v(B) = {{1|2}} × 0,0050 = 0,0025 mol/(L·s) // coefficient 2 : 1' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un comprimé effervescent perd 0,44 g de CO<sub>2</sub> en 2,0 min. Vitesse en mol/min ?',
+      s: [ 'n = {{0,44|44,01}} ≈ 0,010 mol', 'v = {{0,010|2,0}} = 0,0050 mol/min' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Sur le graphique du recto, la vitesse est-elle plus grande à 10 s ou à 40 s ?',
+      p: [ 'À **10 s** : la courbe est plus inclinée (pente plus forte). À 40 s, les réactifs sont presque épuisés et la courbe s\'aplatit.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Donner une vitesse négative pour un réactif : on prend la valeur absolue.',
+          'Oublier de diviser par le coefficient pour comparer les vitesses.',
+          'Mélanger secondes et minutes.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'v = Δ quantité / Δt.',
+          'La vitesse diminue avec le temps.',
+          'Pente de la courbe = vitesse.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 19. Théorie des collisions ============ */
+collisions: {
+  bulle: 'théorie des collisions',
+  sous: 'La théorie des collisions',
+  recto: [
+    { t: 'txt', p: [ 'Pour qu\'une réaction se produise, les particules de réactifs doivent **entrer en collision**. Mais toutes les collisions ne donnent pas une réaction : seules les **collisions efficaces** comptent.' ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'une collision est efficace si…', items: [
+          '1. les particules ont assez d\'**énergie** : au moins l\'**énergie d\'activation** E<sub>a</sub> ;',
+          '2. elles ont la bonne **orientation** : les bons atomes se rencontrent.',
+        ] },
+        { t: 'box', f: 'vitesse de réaction ∝ nombre de collisions efficaces par seconde' },
+        { t: 'list', h: 'pour accélérer une réaction, il faut…', items: [
+          'augmenter le **nombre de collisions** (concentration, surface de contact, pression) ;',
+          'augmenter la **proportion de collisions assez énergiques** (température) ;',
+          'ou **abaisser** E<sub>a</sub> (catalyseur).',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 250, h: 200, xmin: 0, xmax: 10, ymin: 0, ymax: 25, xlabels: [], ylabels: [], nx: 'énergie', ny: 'nb de particules',
+            courbes: [ { fn: mb(1.2), lbl: 'T₁ (froid)', at: [1.4, 19.5] }, { fn: mb(2), cls: 'ln2', lbl: 'T₂ (chaud)', at: [3.3, 12], pk: true } ],
+            droites: [ { a: [6, 0], b: [6, 1], cls: 'ln3', dash: true, lbl: 'Eₐ', at: [6.2, 22] } ],
+            alt: 'distribution des énergies à deux températures', cap: 'à T₂, beaucoup plus de particules dépassent Eₐ' },
+        ] } ],
+    ] },
+    { t: 'list', h: 'lire la courbe de distribution', items: [
+      'Elle montre combien de particules ont chaque énergie cinétique.',
+      'Les particules à **droite de E<sub>a</sub>** peuvent réagir.',
+      'Quand T augmente, la courbe s\'aplatit et se déplace vers la droite : la surface à droite de E<sub>a</sub> **augmente beaucoup**.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Expliquer pourquoi un aliment se conserve plus longtemps au réfrigérateur.',
+      p: [ 'Au froid, les particules ont moins d\'énergie cinétique : **moins de collisions** et surtout une **plus petite proportion** de collisions atteignent E<sub>a</sub>. Les réactions de décomposition (et la croissance des bactéries) ralentissent.' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Deux molécules se heurtent avec une énergie supérieure à E<sub>a</sub>, mais rien ne se passe. Pourquoi ?',
+      p: [ 'Leur **orientation** n\'était pas favorable : les atomes qui doivent se lier ne se sont pas rencontrés. La collision n\'était pas efficace.' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Pourquoi une réaction avec E<sub>a</sub> = 20 kJ est-elle généralement plus rapide qu\'une réaction avec E<sub>a</sub> = 150 kJ ?',
+      p: [ 'Avec une E<sub>a</sub> plus petite, une **plus grande proportion** des collisions a assez d\'énergie pour être efficace.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Croire que chaque collision produit une réaction.',
+          'Dire que la chaleur augmente seulement le nombre de collisions : elle augmente surtout leur **énergie**.',
+          'Oublier le critère d\'orientation.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Collision efficace = énergie ≥ E<sub>a</sub> + bonne orientation.',
+          'Plus de collisions efficaces = réaction plus rapide.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 20. Facteurs ============ */
+facteurs: {
+  bulle: 'facteurs de vitesse',
+  sous: 'Les facteurs qui influencent la vitesse de réaction',
+  recto: [
+    { t: 'tab', full: true, lcol: true,
+      head: ['Facteur', 'Effet', 'Explication (théorie des collisions)'],
+      rows: [
+        ['**Nature des réactifs**', 'réactions entre ions en solution : très rapides ; beaucoup de liaisons à briser : lentes', 'E<sub>a</sub> différente selon les liaisons à briser'],
+        ['**Concentration**', '↑ concentration → ↑ vitesse', 'plus de particules par volume → plus de collisions'],
+        ['**Surface de contact**', 'solide en poudre → plus rapide qu\'en bloc', 'plus de particules exposées → plus de collisions'],
+        ['**Température**', '↑ T → ↑ vitesse (souvent environ × 2 pour +10 °C)', 'plus de collisions ET surtout plus de collisions ≥ E<sub>a</sub>'],
+        ['**Catalyseur**', 'accélère sans être consommé', 'offre un chemin avec une E<sub>a</sub> plus basse'],
+        ['**Pression** (gaz)', '↑ P → ↑ vitesse', 'gaz comprimé = concentration plus grande'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'le catalyseur', items: [
+          'Il n\'est **pas consommé** : on le retrouve intact à la fin.',
+          'Il ne change **pas** ΔH ni la quantité de produits obtenue.',
+          'Il accélère la réaction **directe et inverse** autant.',
+          'Exemples : **enzymes** (catalyseurs biologiques), convertisseur catalytique des voitures.',
+          'Un **inhibiteur** fait l\'inverse : il ralentit une réaction (agents de conservation).',
+        ] } ],
+      [ { t: 'list', h: 'nature des réactifs : ordre typique', items: [
+          'ions en solution (très rapide)',
+          'molécules simples',
+          'molécules complexes, solides (lent)',
+          'ex. le fer rouille lentement, le sodium réagit violemment avec l\'eau.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Pourquoi coupe-t-on le bois d\'allumage en petits morceaux ?',
+      p: [ 'Pour augmenter la **surface de contact** avec l\'oxygène de l\'air : plus de particules peuvent entrer en collision, la combustion démarre plus vite.' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Un comprimé effervescent entier dans l\'eau froide, puis broyé dans l\'eau chaude. Lequel réagit le plus vite et pourquoi ?',
+      p: [ 'Le comprimé **broyé dans l\'eau chaude** : deux facteurs s\'additionnent, une plus grande **surface de contact** et une **température** plus élevée.' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'On double la concentration d\'acide qui réagit avec du magnésium. Que se passe-t-il ?',
+      p: [ 'Plus de particules d\'acide par litre → plus de collisions avec le magnésium → le gaz se dégage **plus vite**. La quantité totale de gaz dépend toutefois du réactif limitant.' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'L\'enzyme catalase décompose H<sub>2</sub>O<sub>2</sub> très rapidement. Est-elle consommée ?',
+      p: [ 'Non : c\'est un **catalyseur**. Elle abaisse E<sub>a</sub> et se retrouve intacte à la fin.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Dire qu\'un catalyseur donne plus de produit : il donne le même produit, plus vite.',
+          'Confondre vitesse et quantité finale de produit.',
+          'Donner un facteur sans l\'expliquer avec les collisions.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '5 facteurs : nature, concentration, surface, température, catalyseur.',
+          'Toujours expliquer avec les collisions.',
+          'Catalyseur : E<sub>a</sub> ↓, non consommé.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 21. Loi des vitesses ============ */
+'loi-vitesses': {
+  bulle: 'loi des vitesses',
+  sous: 'La loi des vitesses de réaction',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'La **loi des vitesses** exprime la vitesse d\'une réaction en fonction des **concentrations** des réactifs.',
+          'Pour aA + bB → produits :',
+        ] },
+        { t: 'box', f: 'v = k [A]<sup>m</sup> [B]<sup>n</sup>' } ],
+      [ { t: 'list', h: 'les termes', items: [
+          '**k** : constante de vitesse ; elle dépend de la réaction et de la **température** (pas des concentrations).',
+          '**m**, **n** : **ordres** de réaction par rapport à A et B, trouvés **expérimentalement**.',
+          'Pour une réaction **élémentaire** (en une seule étape), m et n sont égaux aux coefficients a et b.',
+          'Les solides et liquides purs n\'apparaissent pas dans la loi.',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'trouver l\'ordre avec des expériences', full: true, lcol: true,
+      head: ['Quand [A] est multipliée par 2…', 'Ordre m'],
+      rows: [
+        ['la vitesse ne change pas', '0'],
+        ['la vitesse est multipliée par 2', '1'],
+        ['la vitesse est multipliée par 4', '2'],
+        ['la vitesse est multipliée par 8', '3'],
+      ],
+      note: 'On compare deux expériences où **une seule** concentration change.' },
+    { t: 'list', h: 'démarche', items: [
+      '1. Choisir deux expériences où seule [A] change → trouver m.',
+      '2. Choisir deux expériences où seule [B] change → trouver n.',
+      '3. Remplacer les valeurs d\'une expérience dans v = k[A]<sup>m</sup>[B]<sup>n</sup> pour calculer **k** (avec ses unités).',
+      '4. Utiliser la loi pour prédire la vitesse à d\'autres concentrations.',
+    ] },
+  ],
+  verso: [
+    { t: 'tab', h: 'Exemple — réaction A + 2 B → C', full: true,
+      head: ['Expérience', '[A] (mol/L)', '[B] (mol/L)', 'v (mol/(L·s))'],
+      rows: [ ['1', '0,10', '0,10', '2,0 × 10<sup>−3</sup>'], ['2', '0,20', '0,10', '4,0 × 10<sup>−3</sup>'], ['3', '0,10', '0,20', '8,0 × 10<sup>−3</sup>'] ] },
+    { t: 'ex', h: 'Solution :', q: '',
+      s: [ 'exp. 1 → 2 : [A] × 2, v × 2 → m = 1', 'exp. 1 → 3 : [B] × 2, v × 4 → n = 2', 'loi : v = k[A][B]<sup>2</sup>', 'k = {{2,0 × 10<sup>−3</sup>|(0,10)(0,10)<sup>2</sup>}} = 2,0 L<sup>2</sup>/(mol<sup>2</sup>·s)' ] },
+    { t: 'ex', h: 'Prédiction :', q: 'Vitesse si [A] = 0,30 mol/L et [B] = 0,30 mol/L ?',
+      s: [ 'v = 2,0 × 0,30 × (0,30)<sup>2</sup> = 0,054 mol/(L·s)' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Réaction élémentaire 2 NO + O<sub>2</sub> → 2 NO<sub>2</sub>. Loi des vitesses ? Effet de tripler [NO] ?',
+      s: [ 'v = k[NO]<sup>2</sup>[O<sub>2</sub>]', '[NO] × 3 → v × 3<sup>2</sup> = 9' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Prendre les coefficients comme ordres pour une réaction qui n\'est pas élémentaire.',
+          'Comparer deux expériences où les deux concentrations changent.',
+          'Oublier les unités de k.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'v = k[A]<sup>m</sup>[B]<sup>n</sup>.',
+          '× 2 → × 2<sup>ordre</sup>.',
+          'k dépend seulement de la température.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+})();
+
+/* ---- 52-chimie-equilibre.js ---- */
+/* Chimie — Équilibre chimique et feuille Général */
+(function () {
+  const e = Math.exp;
+  // Perturbation de N2 + 3 H2 ⇌ 2 NH3 : ajout de H2 à t = 5
+  const apres = (t, avant, fin) => (t < 5 ? avant : fin + (avant - fin) * e(-(t - 5) / 1.5));
+  const H2 = t => (t < 5 ? 0.6 : 0.85 + 0.15 * e(-(t - 5) / 1.5));
+  const N2 = t => apres(t, 0.4, 0.35);
+  const NH3 = t => apres(t, 0.3, 0.4);
+
+Object.assign(DATA.feuilles['chimie'], {
+
+/* ============ 22. Équilibre ============ */
+equilibre: {
+  bulle: 'équilibre chimique',
+  sous: 'L\'équilibre chimique : conditions et caractéristiques',
+  recto: [
+    { t: 'txt', p: [ 'Une réaction **réversible** peut se faire dans les deux sens : A + B ⇌ C + D. À l\'**équilibre**, la réaction directe et la réaction inverse continuent de se produire, **à la même vitesse**.' ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'conditions pour atteindre l\'équilibre', items: [
+          'Une réaction **réversible**.',
+          'Un système **fermé** (rien n\'entre ni ne sort).',
+          'Des conditions **constantes** (température, pression).',
+        ] },
+        { t: 'list', h: 'caractéristiques', items: [
+          'v<sub>directe</sub> = v<sub>inverse</sub>.',
+          'Les concentrations sont **constantes**, mais **pas forcément égales**.',
+          'Équilibre **dynamique** : au niveau microscopique, les réactions continuent.',
+          'Les propriétés observables (couleur, pression) ne changent plus.',
+          'On peut l\'atteindre à partir des réactifs **ou** des produits.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 240, h: 150, xmin: 0, xmax: 12, ymin: 0, ymax: 1.1, xlabels: [], ylabels: [], nx: 't', ny: '[ ]',
+            courbes: [ { fn: t => 0.4 + 0.6 * e(-t / 2.5), lbl: 'réactifs', at: [0.5, 0.95] }, { fn: t => 0.6 * (1 - e(-t / 2.5)), cls: 'ln2', lbl: 'produits', at: [0.6, 0.12], pk: true } ],
+            droites: [ { a: [7, 0], b: [7, 1], cls: 'ln3', dash: true, lbl: 'équilibre', at: [7.3, 1.02] } ],
+            alt: 'concentrations qui deviennent constantes', cap: 'concentrations constantes, mais différentes' },
+          { kind: 'plan', w: 240, h: 150, xmin: 0, xmax: 12, ymin: 0, ymax: 1.1, xlabels: [], ylabels: [], nx: 't', ny: 'v',
+            courbes: [ { fn: t => 0.35 + 0.65 * e(-t / 2.5), lbl: 'v directe', at: [0.5, 0.95] }, { fn: t => 0.35 * (1 - e(-t / 2.5)), cls: 'ln2', lbl: 'v inverse', at: [0.6, 0.12], pk: true } ],
+            alt: 'vitesses directe et inverse qui deviennent égales', cap: 'les deux vitesses deviennent égales' },
+        ] } ],
+    ] },
+    { t: 'tab', h: 'types d\'équilibres', full: true, lcol: true,
+      head: ['Type', 'Exemple'],
+      rows: [
+        ['**de phase**', 'H<sub>2</sub>O(l) ⇌ H<sub>2</sub>O(g) dans une bouteille fermée'],
+        ['**de solubilité**', 'NaCl(s) ⇌ Na<sup>+</sup>(aq) + Cl<sup>−</sup>(aq) dans une solution saturée'],
+        ['**chimique**', 'N<sub>2</sub>(g) + 3 H<sub>2</sub>(g) ⇌ 2 NH<sub>3</sub>(g)'],
+      ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Dans une bouteille d\'eau fermée, le niveau d\'eau ne baisse plus. L\'évaporation s\'est-elle arrêtée ?',
+      p: [ 'Non. L\'eau continue de s\'évaporer, mais la vapeur se condense **à la même vitesse** : c\'est un équilibre **dynamique** de phase.' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Un élève affirme : « À l\'équilibre, il y a autant de réactifs que de produits. » Vrai ou faux ?',
+      p: [ '**Faux.** Ce sont les **vitesses** qui sont égales. Les concentrations sont constantes, mais elles peuvent être très différentes (voir le graphique du recto).' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Une boisson gazeuse ouverte perd son gaz. Pourquoi n\'est-ce pas un équilibre ?',
+      p: [ 'Le système est **ouvert** : le CO<sub>2</sub> s\'échappe et ne peut pas revenir. La réaction inverse ne peut pas se produire.' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Comment savoir qu\'un système est à l\'équilibre dans une expérience ?',
+      p: [ 'Ses propriétés observables (couleur, pression, masse de solide, pH) ne changent plus, à température constante.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Croire que la réaction s\'arrête à l\'équilibre.',
+          'Confondre « concentrations égales » et « concentrations constantes ».',
+          'Oublier que le système doit être fermé.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Équilibre : v directe = v inverse.',
+          'Concentrations constantes.',
+          'Système fermé, réaction réversible.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 23. Le Chatelier ============ */
+'le-chatelier': {
+  bulle: 'principe de le chatelier',
+  sous: 'Le principe de Le Chatelier',
+  recto: [
+    { t: 'box', f: 'Si on modifie un système à l\'équilibre, il réagit de façon à <b>s\'opposer</b> (en partie) à cette modification, jusqu\'à un nouvel équilibre.' },
+    { t: 'tab', h: 'les modifications et leurs effets', full: true, lcol: true,
+      head: ['Modification', 'Le système…', 'Déplacement'],
+      rows: [
+        ['**ajout** d\'un réactif', 'consomme ce qu\'on ajoute', 'vers les **produits** (→)'],
+        ['**retrait** d\'un produit', 'en refabrique', 'vers les **produits** (→)'],
+        ['**ajout** d\'un produit', 'le consomme', 'vers les **réactifs** (←)'],
+        ['**hausse de T**', 'absorbe la chaleur ajoutée', 'dans le sens **endothermique**'],
+        ['**baisse de T**', 'dégage de la chaleur', 'dans le sens **exothermique**'],
+        ['**hausse de P** (baisse de V), gaz', 'réduit le nombre de particules', 'vers le côté qui a **le moins de moles de gaz**'],
+        ['**baisse de P** (hausse de V), gaz', 'augmente le nombre de particules', 'vers le côté qui a **le plus de moles de gaz**'],
+        ['**catalyseur**', 'atteint l\'équilibre plus vite', '**aucun** déplacement'],
+      ],
+      note: 'Si les deux côtés ont le même nombre de moles de gaz, la pression n\'a pas d\'effet. Seul un changement de température modifie la valeur de K.' },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'astuce pour la température', items: [
+          'Écrire la chaleur dans l\'équation comme un réactif ou un produit.',
+          'ex. N<sub>2</sub> + 3 H<sub>2</sub> ⇌ 2 NH<sub>3</sub> + 92 kJ',
+          'Chauffer = ajouter de la chaleur → déplacement vers la gauche.',
+        ] } ],
+      [ { t: 'list', h: 'ce qui ne change rien', items: [
+          'Ajouter un **solide** ou un **liquide pur** (leur concentration ne varie pas).',
+          'Ajouter un gaz inerte à volume constant.',
+          'Ajouter un catalyseur.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'txt', h: 'Réaction étudiée : N<sub>2</sub>(g) + 3 H<sub>2</sub>(g) ⇌ 2 NH<sub>3</sub>(g)   ΔH = −92 kJ', p: [ 'Réactifs : 1 + 3 = 4 mol de gaz · Produits : 2 mol de gaz · La réaction directe est exothermique.' ] },
+    { t: 'tab', full: true, lcol: true,
+      head: ['On…', 'Déplacement', 'Pourquoi', '[NH<sub>3</sub>]'],
+      rows: [
+        ['ajoute du N<sub>2</sub>', '→', 'consommer le N<sub>2</sub> ajouté', '↑'],
+        ['retire du NH<sub>3</sub>', '→', 'remplacer le NH<sub>3</sub> retiré', 'remonte en partie (reste plus bas qu\'avant)'],
+        ['chauffe', '←', 'sens endothermique', '↓'],
+        ['refroidit', '→', 'sens exothermique', '↑'],
+        ['augmente la pression', '→', '4 mol de gaz → 2 mol', '↑'],
+        ['ajoute un catalyseur', 'aucun', 'accélère les deux sens', '='],
+      ] },
+    { t: 'ex', h: 'Exemple 2 —', q: '2 NO<sub>2</sub>(g) (brun) ⇌ N<sub>2</sub>O<sub>4</sub>(g) (incolore)  ΔH = −57 kJ. On plonge le tube dans l\'eau glacée.',
+      p: [ 'Refroidir → déplacement dans le sens exothermique (→) : plus de N<sub>2</sub>O<sub>4</sub>, la couleur brune **pâlit**.' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'CoCl<sub>4</sub><sup>2−</sup> (bleu) + 6 H<sub>2</sub>O ⇌ Co(H<sub>2</sub>O)<sub>6</sub><sup>2+</sup> (rose) + 4 Cl<sup>−</sup>. On ajoute du NaCl.',
+      p: [ 'Ajout de Cl<sup>−</sup> (un produit) → déplacement vers la gauche (←) : la solution devient plus **bleue**.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Croire que le système annule complètement la modification (il la compense en partie).',
+          'Compter les moles de solides ou de liquides pour l\'effet de pression.',
+          'Dire qu\'un catalyseur déplace l\'équilibre.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Le système s\'oppose au changement.',
+          'Chaleur ↑ → sens endothermique.',
+          'Pression ↑ → côté avec moins de moles de gaz.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 24. Kc ============ */
+kc: {
+  bulle: 'constante d\'équilibre',
+  sous: 'La constante d\'équilibre K<sub>c</sub>',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [ 'Pour la réaction à l\'équilibre aA + bB ⇌ cC + dD :' ] },
+        { t: 'box', f: 'K<sub>c</sub> = {{[C]<sup>c</sup> [D]<sup>d</sup>|[A]<sup>a</sup> [B]<sup>b</sup>}}', note: 'concentrations à l\'équilibre, en mol/L' },
+        { t: 'list', items: [
+          'Produits en **haut**, réactifs en **bas**, chacun à la puissance de son **coefficient**.',
+          'On **n\'inclut pas** les solides (s) ni les liquides purs (l), comme H<sub>2</sub>O(l).',
+          'K<sub>c</sub> n\'a généralement pas d\'unité en secondaire 5.',
+        ] } ],
+      [ { t: 'tab', h: 'interpréter K<sub>c</sub>', full: true, lcol: true,
+          head: ['Valeur', 'À l\'équilibre…'],
+          rows: [
+            ['K<sub>c</sub> > 1 (très grand)', 'les **produits** sont favorisés (réaction presque complète)'],
+            ['K<sub>c</sub> ≈ 1', 'réactifs et produits en quantités comparables'],
+            ['K<sub>c</sub> < 1 (très petit)', 'les **réactifs** sont favorisés (peu de réaction)'],
+          ] },
+        { t: 'list', h: 'à savoir', items: [
+          'K<sub>c</sub> ne dépend que de la **température**.',
+          'Inverser l\'équation → K<sub>inverse</sub> = {{1|K<sub>c</sub>}}.',
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'le quotient réactionnel Q', items: [
+          'Même formule que K<sub>c</sub>, mais avec les concentrations **à un moment quelconque**.',
+          'Q < K<sub>c</sub> → la réaction avance vers les **produits** (→).',
+          'Q = K<sub>c</sub> → le système est à l\'équilibre.',
+          'Q > K<sub>c</sub> → la réaction recule vers les **réactifs** (←).',
+        ] } ],
+      [ { t: 'list', h: 'le tableau IVE (initial, variation, équilibre)', items: [
+          'Ligne **I** : concentrations initiales.',
+          'Ligne **V** : variations, dans le rapport des **coefficients** (− pour les réactifs, + pour les produits).',
+          'Ligne **É** : I + V. On remplace ensuite dans K<sub>c</sub>.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'H<sub>2</sub>(g) + I<sub>2</sub>(g) ⇌ 2 HI(g). À l\'équilibre : [H<sub>2</sub>] = [I<sub>2</sub>] = 0,10 mol/L et [HI] = 0,70 mol/L.',
+      s: [ 'K<sub>c</sub> = {{[HI]<sup>2</sup>|[H<sub>2</sub>][I<sub>2</sub>]}} = {{(0,70)<sup>2</sup>|(0,10)(0,10)}} = {{0,49|0,010}} = 49', 'K<sub>c</sub> > 1 → produits favorisés' ] },
+    { t: 'tab', h: 'Exemple 2 — N<sub>2</sub>O<sub>4</sub>(g) ⇌ 2 NO<sub>2</sub>(g) : 1,00 mol de N<sub>2</sub>O<sub>4</sub> dans 1,00 L ; à l\'équilibre, [NO<sub>2</sub>] = 0,20 mol/L', full: true, lcol: true,
+      head: ['', '[N<sub>2</sub>O<sub>4</sub>]', '[NO<sub>2</sub>]'],
+      rows: [ ['I', '1,00', '0'], ['V', '−0,10', '+0,20'], ['É', '0,90', '0,20'] ],
+      note: 'Pour 2 NO<sub>2</sub> formés, 1 N<sub>2</sub>O<sub>4</sub> est consommé : −0,20 ÷ 2 = −0,10.' },
+    { t: 'ex', h: '', q: '', s: [ 'K<sub>c</sub> = {{(0,20)<sup>2</sup>|0,90}} ≈ 0,044 // réactifs favorisés' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Pour H<sub>2</sub> + I<sub>2</sub> ⇌ 2 HI (K<sub>c</sub> = 49), on a [HI] = 0,50, [H<sub>2</sub>] = [I<sub>2</sub>] = 0,20 mol/L. Dans quel sens va la réaction ?',
+      s: [ 'Q = {{(0,50)<sup>2</sup>|(0,20)(0,20)}} = 6,25', 'Q < K<sub>c</sub> → vers les produits (→)' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Écrire K<sub>c</sub> de CaCO<sub>3</sub>(s) ⇌ CaO(s) + CO<sub>2</sub>(g).',
+      s: [ 'K<sub>c</sub> = [CO<sub>2</sub>] // solides exclus' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier les exposants (coefficients).',
+          'Mettre les réactifs en haut.',
+          'Inclure un solide ou H<sub>2</sub>O(l).',
+          'Utiliser des moles au lieu de mol/L (diviser par le volume !).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'K<sub>c</sub> = produits / réactifs, avec exposants.',
+          'K > 1 : produits favorisés.',
+          'Q < K → ; Q > K ←.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 25. Keau, pH ============ */
+'keau-ph': {
+  bulle: 'pH et pOH',
+  sous: 'Constante d\'ionisation de l\'eau, pH et pOH',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [ 'L\'eau s\'ionise très légèrement : H<sub>2</sub>O(l) ⇌ H<sup>+</sup>(aq) + OH<sup>−</sup>(aq)', '(on écrit aussi H<sub>3</sub>O<sup>+</sup> pour H<sup>+</sup>)' ] },
+        { t: 'box', h: 'à 25 °C', f: 'K<sub>eau</sub> = [H<sup>+</sup>][OH<sup>−</sup>] = 1,0 × 10<sup>−14</sup>' },
+        { t: 'form', h: 'formules', items: [
+          ['pH', '= −log [H<sup>+</sup>]'],
+          ['pOH', '= −log [OH<sup>−</sup>]'],
+          ['somme', 'pH + pOH = 14'],
+          ['retour', '[H<sup>+</sup>] = 10<sup>−pH</sup> · [OH<sup>−</sup>] = 10<sup>−pOH</sup>'],
+        ] } ],
+      [ { t: 'tab', h: 'l\'échelle', full: true, lcol: true,
+          head: ['Solution', '[H<sup>+</sup>] (mol/L)', 'pH'],
+          rows: [
+            ['**acide**', '> 1,0 × 10<sup>−7</sup>', '< 7'],
+            ['**neutre**', '= 1,0 × 10<sup>−7</sup>', '= 7'],
+            ['**basique**', '< 1,0 × 10<sup>−7</sup>', '> 7'],
+          ] },
+        { t: 'list', items: [
+          'Une variation de **1 unité de pH** = [H<sup>+</sup>] multipliée ou divisée par **10**.',
+          'Acide **fort** (HCl, HNO<sub>3</sub>) : ionisé à 100 % → [H<sup>+</sup>] = C<sub>acide</sub>.',
+          'Base **forte** (NaOH, KOH) : [OH<sup>−</sup>] = C<sub>base</sub>.',
+          'Exemples de pH : suc gastrique ≈ 2, jus de citron ≈ 2,5, eau pure 7, eau de Javel ≈ 12.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'chiffres significatifs du pH', items: [
+      'Le nombre de **décimales** du pH = le nombre de chiffres significatifs de [H<sup>+</sup>] : [H<sup>+</sup>] = 3,2 × 10<sup>−4</sup> (2 ch. sig.) → pH = 3,49 (2 décimales).',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: '[H<sup>+</sup>] = 3,2 × 10<sup>−4</sup> mol/L. pH, pOH, [OH<sup>−</sup>] ?',
+      s: [ 'pH = −log(3,2 × 10<sup>−4</sup>) ≈ 3,49 // acide', 'pOH = 14 − 3,49 = 10,51', '[OH<sup>−</sup>] = {{1,0 × 10<sup>−14</sup>|3,2 × 10<sup>−4</sup>}} ≈ 3,1 × 10<sup>−11</sup> mol/L' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'pH d\'une solution de NaOH à 0,020 mol/L.',
+      s: [ 'base forte → [OH<sup>−</sup>] = 0,020 mol/L', 'pOH = −log(0,020) ≈ 1,70', 'pH = 14 − 1,70 = 12,30' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Une solution a un pH de 9,5. [H<sup>+</sup>] et [OH<sup>−</sup>] ?',
+      s: [ '[H<sup>+</sup>] = 10<sup>−9,5</sup> ≈ 3,2 × 10<sup>−10</sup> mol/L', 'pOH = 4,5 → [OH<sup>−</sup>] = 10<sup>−4,5</sup> ≈ 3,2 × 10<sup>−5</sup> mol/L' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Combien de fois une solution de pH 3 est-elle plus acide qu\'une solution de pH 6 ?',
+      s: [ '10<sup>6 − 3</sup> = 10<sup>3</sup> = 1000' ], r: '1000 fois plus de H<sup>+</sup>' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier le signe moins : pH = **−**log[H<sup>+</sup>].',
+          'Croire que pH 4 est « deux fois » plus acide que pH 8 : c\'est 10<sup>4</sup> fois.',
+          'Calculer le pH directement avec [OH<sup>−</sup>] (on trouve le pOH).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '[H<sup>+</sup>][OH<sup>−</sup>] = 10<sup>−14</sup>.',
+          'pH + pOH = 14.',
+          '1 unité de pH = facteur 10.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 26. Ka et Kb ============ */
+'ka-kb': {
+  bulle: 'ka et kb',
+  sous: 'Constantes d\'acidité (K<sub>a</sub>) et de basicité (K<sub>b</sub>)',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'acide faible', p: [ 'Un acide **faible** ne s\'ionise que partiellement : HA ⇌ H<sup>+</sup> + A<sup>−</sup>' ] },
+        { t: 'box', f: 'K<sub>a</sub> = {{[H<sup>+</sup>][A<sup>−</sup>]|[HA]}}' },
+        { t: 'list', items: [
+          'Plus K<sub>a</sub> est **grand**, plus l\'acide est **fort** (il s\'ionise davantage).',
+          'ex. acide acétique (vinaigre) : K<sub>a</sub> = 1,8 × 10<sup>−5</sup>.',
+        ] } ],
+      [ { t: 'txt', h: 'base faible', p: [ 'B + H<sub>2</sub>O ⇌ BH<sup>+</sup> + OH<sup>−</sup>' ] },
+        { t: 'box', f: 'K<sub>b</sub> = {{[BH<sup>+</sup>][OH<sup>−</sup>]|[B]}}' },
+        { t: 'list', items: [
+          'Plus K<sub>b</sub> est grand, plus la base est forte.',
+          'ex. ammoniac NH<sub>3</sub> : K<sub>b</sub> = 1,8 × 10<sup>−5</sup>.',
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'méthode (acide faible de concentration C)', items: [
+          'Tableau IVE : [H<sup>+</sup>] = [A<sup>−</sup>] = x ; [HA] = C − x.',
+          'K<sub>a</sub> = {{x<sup>2</sup>|C − x}}.',
+          '**Approximation** : si l\'acide est très faible, C − x ≈ C, donc x = √(K<sub>a</sub> × C).',
+          'Vérifier : x doit être moins de 5 % de C.',
+        ] } ],
+      [ { t: 'list', h: 'à connaître', items: [
+          '**Pourcentage d\'ionisation** = {{x|C}} × 100 %.',
+          'Paire acide-base conjuguée : K<sub>a</sub> × K<sub>b</sub> = K<sub>eau</sub> = 1,0 × 10<sup>−14</sup>.',
+          'Acide fort (HCl) : K<sub>a</sub> très grand, ionisation complète : pas besoin de K<sub>a</sub>.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'pH d\'une solution d\'acide acétique à 0,10 mol/L (K<sub>a</sub> = 1,8 × 10<sup>−5</sup>).',
+      s: [ '{{x<sup>2</sup>|0,10}} ≈ 1,8 × 10<sup>−5</sup> // approximation C − x ≈ C', 'x = √(1,8 × 10<sup>−6</sup>) ≈ 1,34 × 10<sup>−3</sup> mol/L = [H<sup>+</sup>]', 'pH = −log(1,34 × 10<sup>−3</sup>) ≈ 2,87', '% d\'ionisation = {{1,34 × 10<sup>−3</sup>|0,10}} × 100 ≈ 1,3 % // < 5 % ✓' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Un acide HA à 0,050 mol/L a un pH de 3,00. K<sub>a</sub> ?',
+      s: [ '[H<sup>+</sup>] = [A<sup>−</sup>] = 10<sup>−3,00</sup> = 1,0 × 10<sup>−3</sup> mol/L', '[HA] = 0,050 − 0,001 = 0,049 mol/L', 'K<sub>a</sub> = {{(1,0 × 10<sup>−3</sup>)<sup>2</sup>|0,049}} ≈ 2,0 × 10<sup>−5</sup>' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'pH d\'une solution de NH<sub>3</sub> à 0,20 mol/L (K<sub>b</sub> = 1,8 × 10<sup>−5</sup>).',
+      s: [ '[OH<sup>−</sup>] = √(1,8 × 10<sup>−5</sup> × 0,20) ≈ 1,9 × 10<sup>−3</sup> mol/L', 'pOH ≈ 2,72 → pH ≈ 11,28' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Traiter un acide faible comme un acide fort ([H<sup>+</sup>] ≠ C).',
+          'Oublier que K<sub>b</sub> donne [OH<sup>−</sup>], donc le pOH d\'abord.',
+          'Garder l\'approximation quand x dépasse 5 % de C.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'K<sub>a</sub> = [H<sup>+</sup>][A<sup>−</sup>] / [HA].',
+          'x ≈ √(K × C).',
+          'K<sub>a</sub> grand = acide plus fort.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 27. Kps ============ */
+kps: {
+  bulle: 'produit de solubilité',
+  sous: 'La constante du produit de solubilité (K<sub>ps</sub>)',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'Un sel **peu soluble** forme, dans une solution **saturée**, un équilibre entre le solide et ses ions :',
+          'AgCl(s) ⇌ Ag<sup>+</sup>(aq) + Cl<sup>−</sup>(aq)',
+        ] },
+        { t: 'box', f: 'K<sub>ps</sub> = [Ag<sup>+</sup>][Cl<sup>−</sup>]', note: 'le solide n\'apparaît pas dans l\'expression' },
+        { t: 'list', items: [
+          'Plus K<sub>ps</sub> est **petit**, moins le sel est soluble (à formule semblable).',
+          'K<sub>ps</sub> dépend de la température.',
+        ] } ],
+      [ { t: 'tab', h: 'solubilité molaire s (mol/L)', full: true, lcol: true,
+          head: ['Type de sel', 'Ions', 'K<sub>ps</sub>'],
+          rows: [
+            ['AB (AgCl)', 's et s', 's<sup>2</sup>'],
+            ['AB<sub>2</sub> (PbI<sub>2</sub>)', 's et 2s', 's × (2s)<sup>2</sup> = 4s<sup>3</sup>'],
+            ['A<sub>2</sub>B (Ag<sub>2</sub>CrO<sub>4</sub>)', '2s et s', '(2s)<sup>2</sup> × s = 4s<sup>3</sup>'],
+          ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'va-t-il y avoir un précipité ?', items: [
+          'Calculer **Q** avec les concentrations des ions après le mélange.',
+          'Q < K<sub>ps</sub> : pas de précipité (solution non saturée).',
+          'Q = K<sub>ps</sub> : solution saturée.',
+          'Q > K<sub>ps</sub> : un **précipité** se forme.',
+        ] } ],
+      [ { t: 'list', h: 'effet d\'ion commun', items: [
+          'Ajouter un ion déjà présent (ex. du NaCl dans une solution de AgCl) **diminue** la solubilité du sel : l\'équilibre se déplace vers le solide (Le Chatelier).',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Solubilité de AgCl (K<sub>ps</sub> = 1,8 × 10<sup>−10</sup>) en mol/L et en g/L.',
+      s: [ 's<sup>2</sup> = 1,8 × 10<sup>−10</sup>', 's = √(1,8 × 10<sup>−10</sup>) ≈ 1,3 × 10<sup>−5</sup> mol/L', 'en g/L : 1,34 × 10<sup>−5</sup> × 143,32 ≈ 1,9 × 10<sup>−3</sup> g/L' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Solubilité de PbI<sub>2</sub> (K<sub>ps</sub> = 9,8 × 10<sup>−9</sup>).',
+      s: [ 'PbI<sub>2</sub>(s) ⇌ Pb<sup>2+</sup> + 2 I<sup>−</sup>', 'K<sub>ps</sub> = s(2s)<sup>2</sup> = 4s<sup>3</sup>', 's = ∛({{9,8 × 10<sup>−9</sup>|4}}) ≈ 1,3 × 10<sup>−3</sup> mol/L' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'On obtient [Ag<sup>+</sup>] = 1,0 × 10<sup>−4</sup> et [Cl<sup>−</sup>] = 1,0 × 10<sup>−4</sup> mol/L après un mélange. Précipité ?',
+      s: [ 'Q = (1,0 × 10<sup>−4</sup>)(1,0 × 10<sup>−4</sup>) = 1,0 × 10<sup>−8</sup>', 'Q > K<sub>ps</sub> (1,8 × 10<sup>−10</sup>)' ], r: 'oui, AgCl précipite' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier le coefficient 2 dans (2s)<sup>2</sup>.',
+          'Inclure le solide dans K<sub>ps</sub>.',
+          'Oublier de tenir compte de la dilution quand on mélange deux solutions.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'K<sub>ps</sub> = produit des ions, avec exposants.',
+          'AB : s = √K<sub>ps</sub> ; AB<sub>2</sub> : s = ∛(K<sub>ps</sub>/4).',
+          'Q > K<sub>ps</sub> → précipité.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 28. Graphiques d'équilibre ============ */
+'graphiques-equilibre': {
+  bulle: 'graphiques d\'équilibre',
+  sous: 'Interpréter les graphiques d\'équilibre',
+  recto: [
+    { t: 'txt', p: [ 'Les graphiques « concentration en fonction du temps » montrent comment un système atteint l\'équilibre, puis comment il réagit à une perturbation (principe de Le Chatelier).' ] },
+    { t: 'tab', h: 'lire une perturbation', full: true, lcol: true,
+      head: ['Ce qu\'on voit', 'Ce qui s\'est passé'],
+      rows: [
+        ['un **saut brusque** d\'une seule courbe vers le haut', 'on a **ajouté** cette substance'],
+        ['un **saut brusque** d\'une seule courbe vers le bas', 'on a **retiré** cette substance'],
+        ['**toutes** les courbes de gaz sautent en même temps', 'changement de **volume** (pression)'],
+        ['changements **progressifs**, sans saut', 'changement de **température**'],
+        ['équilibre atteint **plus vite**, mêmes concentrations finales', 'ajout d\'un **catalyseur**'],
+      ] },
+    { t: 'list', h: 'après la perturbation', items: [
+      'Les concentrations changent **dans le rapport des coefficients** : pour N<sub>2</sub> + 3 H<sub>2</sub> ⇌ 2 NH<sub>3</sub>, si [N<sub>2</sub>] baisse de 0,05, [H<sub>2</sub>] baisse de 0,15 et [NH<sub>3</sub>] monte de 0,10.',
+      'Les courbes redeviennent **horizontales** : nouvel équilibre.',
+      'Le système ne revient pas complètement à l\'état d\'avant : il **compense en partie**.',
+    ] },
+    { t: 'fig', figs: [
+      { kind: 'plan', w: 560, h: 190, xmin: 0, xmax: 14, ymin: 0, ymax: 1.1, tick: 1, ticky: 0.2, grille: 1, nx: 't (min)', ny: '[ ] (mol/L)',
+        courbes: [ { fn: H2, n: 800, lbl: 'H₂', at: [1, 0.66] }, { fn: N2, cls: 'ln3', lbl: 'N₂', at: [1, 0.45] }, { fn: NH3, cls: 'ln2', lbl: 'NH₃', at: [1, 0.22], pk: true } ],
+        droites: [ { a: [5, 0], b: [5, 1], cls: 'ln2', dash: true, lbl: 'perturbation', at: [5.2, 1.05], pk: true } ],
+        alt: 'concentrations de H2, N2 et NH3 avec un ajout de H2 à 5 minutes', cap: 'N₂ + 3 H₂ ⇌ 2 NH₃ : que s\'est-il passé à t = 5 min ? (voir le verso)' },
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Interpréter le graphique du recto.',
+      s: [ 'avant 5 min → équilibre // courbes horizontales', 'à 5 min, [H<sub>2</sub>] saute de 0,60 à 1,00 → ajout de H<sub>2</sub>', 'ensuite [H<sub>2</sub>] et [N<sub>2</sub>] baissent, [NH<sub>3</sub>] monte → déplacement vers les produits (→)', 'variations : N<sub>2</sub> −0,05 ; H<sub>2</sub> −0,15 ; NH<sub>3</sub> +0,10 → rapport 1 : 3 : 2 ✓', 'nouvel équilibre : [H<sub>2</sub>] = 0,85 // plus élevé qu\'avant : compensation partielle' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Toutes les concentrations baissent d\'un coup. Ensuite, [N<sub>2</sub>] et [H<sub>2</sub>] montent un peu et [NH<sub>3</sub>] baisse. Que s\'est-il passé ?',
+      s: [ 'saut de toutes les courbes vers le bas → le volume a augmenté (pression ↓)', 'le système se déplace vers le côté qui a le plus de moles de gaz → réactifs (4 mol contre 2)', '[N<sub>2</sub>] et [H<sub>2</sub>] ↑, [NH<sub>3</sub>] ↓ → cohérent avec Le Chatelier ✓' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Sans aucun saut, [NH<sub>3</sub>] diminue progressivement et [N<sub>2</sub>], [H<sub>2</sub>] augmentent. Cause probable ?',
+      p: [ 'Un changement de **température** (pas de saut). Le déplacement se fait vers les réactifs, dans le sens **endothermique** : on a **chauffé**.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre un saut (ajout ou retrait) et une variation progressive (température).',
+          'Oublier de vérifier le rapport des coefficients.',
+          'Croire que la substance ajoutée revient à sa valeur de départ.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Saut d\'une courbe = ajout ou retrait.',
+          'Pas de saut = température.',
+          'Variations dans le rapport des coefficients.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ GÉNÉRAL ============ */
+general: {
+  bulle: 'chimie : tout en 1',
+  sous: 'Résumé de l\'année — Chimie, secondaire 5',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'les gaz', items: [
+          ['moles', 'n = m / M · C = n / V'],
+          ['température', 'T (K) = T (°C) + 273'],
+          ['pression', '101,3 kPa = 1 atm = 760 mm Hg'],
+          ['Boyle', 'P<sub>1</sub>V<sub>1</sub> = P<sub>2</sub>V<sub>2</sub> (T, n const.)'],
+          ['Charles', 'V / T constant (P, n const.)'],
+          ['Gay-Lussac', 'P / T constant (V, n const.)'],
+          ['Avogadro', 'V / n constant ; TPN 22,4 · TAPN 24,5 L/mol'],
+          ['générale', '{{P<sub>1</sub>V<sub>1</sub>|n<sub>1</sub>T<sub>1</sub>}} = {{P<sub>2</sub>V<sub>2</sub>|n<sub>2</sub>T<sub>2</sub>}}'],
+          ['gaz parfaits', 'PV = nRT ; R = 8,314 kPa·L/(mol·K)'],
+          ['Dalton', 'P<sub>tot</sub> = ΣP<sub>i</sub> ; P<sub>A</sub> = x<sub>A</sub>P<sub>tot</sub>'],
+        ] } ],
+      [ { t: 'form', h: 'énergie', items: [
+          ['enthalpie', 'ΔH = H<sub>P</sub> − H<sub>R</sub> ; exo < 0, endo > 0'],
+          ['activation', 'E<sub>a</sub> = H<sub>complexe</sub> − H<sub>R</sub>'],
+          ['chaleur molaire', 'Q = n × ΔH'],
+          ['liaisons', 'ΔH = Σ brisées − Σ formées'],
+          ['calorimétrie', 'Q = mcΔT ; c(eau) = 4,19 J/(g·°C)'],
+          ['', 'ΔH = −Q<sub>eau</sub> / n'],
+          ['Hess', 'inverser → −ΔH ; × k → k·ΔH ; additionner'],
+        ] },
+        { t: 'form', h: 'vitesse', items: [
+          ['vitesse', 'v = Δ quantité / Δt'],
+          ['loi', 'v = k[A]<sup>m</sup>[B]<sup>n</sup>'],
+          ['facteurs', 'nature, concentration, surface, T, catalyseur'],
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'équilibre', items: [
+          ['K<sub>c</sub>', '{{[produits]<sup>coef</sup>|[réactifs]<sup>coef</sup>}} (sans solides ni liquides)'],
+          ['Q vs K', 'Q < K → ; Q > K ←'],
+          ['Le Chatelier', 'le système s\'oppose au changement'],
+        ] } ],
+      [ { t: 'form', h: 'acides et bases', items: [
+          ['K<sub>eau</sub>', '[H<sup>+</sup>][OH<sup>−</sup>] = 1,0 × 10<sup>−14</sup>'],
+          ['pH', '−log[H<sup>+</sup>] ; pH + pOH = 14'],
+          ['acide faible', '[H<sup>+</sup>] ≈ √(K<sub>a</sub> × C)'],
+          ['K<sub>ps</sub>', 'AB : s<sup>2</sup> ; AB<sub>2</sub> : 4s<sup>3</sup>'],
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Gaz —', q: 'pneu 220 kPa, 20 °C → 45 °C', s: [ 'P<sub>2</sub> = 220 × 318 / 293 ≈ 239 kPa' ] },
+        { t: 'ex', h: 'PV = nRT —', q: '10,0 L, 25 °C, 150 kPa', s: [ 'n ≈ 0,605 mol' ] },
+        { t: 'ex', h: 'Calorimétrie —', q: '2,00 g NaOH, 100 g d\'eau, ΔT = 5,3 °C', s: [ 'ΔH ≈ −44,4 kJ/mol' ] },
+        { t: 'ex', h: 'Hess —', q: 'C → CO à partir de C → CO<sub>2</sub> et CO → CO<sub>2</sub>', s: [ 'ΔH = −393,5 + 283,0 = −110,5 kJ' ] } ],
+      [ { t: 'ex', h: 'Loi des vitesses —', q: '[A] × 2 → v × 2 ; [B] × 2 → v × 4', s: [ 'v = k[A][B]<sup>2</sup>' ] },
+        { t: 'ex', h: 'K<sub>c</sub> —', q: '[HI] = 0,70 ; [H<sub>2</sub>] = [I<sub>2</sub>] = 0,10', s: [ 'K<sub>c</sub> = 0,49 / 0,010 = 49' ] },
+        { t: 'ex', h: 'pH —', q: 'NaOH 0,020 mol/L', s: [ 'pOH = 1,70 → pH = 12,30' ] },
+        { t: 'ex', h: 'Le Chatelier —', q: 'N<sub>2</sub> + 3 H<sub>2</sub> ⇌ 2 NH<sub>3</sub> + chaleur ; on chauffe', s: [ 'déplacement ← ; [NH<sub>3</sub>] ↓' ] } ],
+    ] },
+    { t: 'pieges', items: [
+      'Températures en °C dans les lois des gaz : toujours en **kelvins**.',
+      'Utiliser 22,4 L/mol hors TPN ; mélanger kPa, atm et mm Hg.',
+      'Signe de ΔH : inversé en calorimétrie (−Q<sub>eau</sub>) et quand on inverse une équation.',
+      'Liaisons : brisées − formées (et non l\'inverse).',
+      'Croire qu\'un catalyseur change ΔH ou déplace l\'équilibre.',
+      'K<sub>c</sub> : oublier les exposants ou inclure les solides.',
+      'pH : oublier le « − » de −log.',
+    ] },
+    { t: 'retenir', items: [
+      'Tout calcul stœchiométrique passe par les **moles**.',
+      'Théorie cinétique et théorie des collisions expliquent presque tout : vitesse des particules, énergie, orientation.',
+      'Le Chatelier : le système compense en partie ce qu\'on lui impose.',
+    ] },
+  ],
+},
+
+});
+})();
+
 </script>
 <script>
 /* =========================================================

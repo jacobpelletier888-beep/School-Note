@@ -35,7 +35,7 @@ Réglages : format Lettre, marges « Aucune », « Graphiques d'arrière-plan »
 - [x] Mathématique SN (Général + 25 concepts, dont plusieurs partagés avec TS et CST)
 - [x] Français (Général + 27 concepts)
 - [ ] Anglais (plus tard)
-- [ ] Chimie
+- [x] Chimie (Général + 28 concepts)
 - [ ] Physique
 - [ ] Monde contemporain
 - [ ] Éducation financière
