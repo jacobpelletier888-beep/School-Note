@@ -7955,6 +7955,1900 @@ general: {
 });
 })();
 
+/* ---- 60-physique-cinematique.js ---- */
+/* Physique — Outils et cinématique */
+DATA.feuilles['physique'] = DATA.feuilles['physique'] || {};
+(function () {
+  const g = 9.8;
+  // graphique v-t de l'exemple : accélère 0 → 8 m/s (0-4 s), constant (4-10 s), freine (10-12 s)
+  const vt = t => (t <= 4 ? 2 * t : t <= 10 ? 8 : Math.max(0, 8 - 4 * (t - 10)));
+
+Object.assign(DATA.feuilles['physique'], {
+
+/* ============ 1. Mesure et incertitude ============ */
+mesure: {
+  bulle: 'mesure et incertitude',
+  sous: 'Mesure, incertitude et chiffres significatifs',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'incertitude', items: [
+          'Toute mesure a une **incertitude** : on l\'écrit **valeur ± incertitude absolue**.',
+          'Instrument **gradué** : ± la moitié de la plus petite graduation (règle en mm : ± 0,5 mm).',
+          'Instrument **numérique** : ± 1 sur le dernier chiffre affiché.',
+          '**Incertitude relative** = {{incertitude absolue|valeur}} × 100 %.',
+        ] },
+        { t: 'tab', h: 'propager l\'incertitude', full: true, lcol: true,
+          head: ['Opération', 'On additionne les…'],
+          rows: [
+            ['addition, soustraction', 'incertitudes **absolues**'],
+            ['multiplication, division', 'incertitudes **relatives**'],
+          ] } ],
+      [ { t: 'list', h: 'chiffres significatifs', items: [
+          'Tous les chiffres non nuls sont significatifs : 245 → 3.',
+          'Les zéros **entre** des chiffres comptent : 1005 → 4.',
+          'Les zéros **au début** ne comptent pas : 0,0032 → 2.',
+          'Les zéros **à la fin après la virgule** comptent : 2,50 → 3.',
+          '× et ÷ : la réponse a autant de chiffres significatifs que la donnée qui en a **le moins**.',
+          '+ et − : autant de **décimales** que la donnée qui en a le moins.',
+        ] },
+        { t: 'list', h: 'notation scientifique', items: [
+          'a × 10<sup>n</sup> avec 1 ≤ a < 10 : 0,000 45 = 4,5 × 10<sup>−4</sup>.',
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'précision et exactitude', items: [
+          '**Exactitude** : la mesure est proche de la **vraie valeur**.',
+          '**Précision** : les mesures répétées sont proches **les unes des autres**.',
+          'On peut être précis sans être exact (instrument mal calibré).',
+        ] } ],
+      [ { t: 'form', h: 'conversions utiles', items: [
+          ['km/h → m/s', '÷ 3,6'],
+          ['m/s → km/h', '× 3,6'],
+          ['1 h', '= 3600 s'],
+          ['1 cm', '= 0,01 m · 1 g = 0,001 kg'],
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un rectangle mesure (12,3 ± 0,1) cm sur (4,5 ± 0,1) cm. Aire avec son incertitude ?',
+      s: [ 'A = 12,3 × 4,5 = 55,35 cm²', 'relatives : {{0,1|12,3}} + {{0,1|4,5}} ≈ 0,81 % + 2,22 % = 3,03 %', 'absolue : 55,35 × 0,0303 ≈ 1,7 cm²' ],
+      r: 'A = (55 ± 2) cm²' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Périmètre du même rectangle.',
+      s: [ 'P = 2(12,3 + 4,5) = 33,6 cm', 'incertitude : 2(0,1 + 0,1) = 0,4 cm // on additionne les absolues' ], r: 'P = (33,6 ± 0,4) cm' },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'Chiffres significatifs.',
+          s: [ '0,004 20 → 3', '3,0 × 2,456 = 7,4 // 2 ch. sig.', '12,1 + 0,35 = 12,5 // 1 décimale' ] } ],
+      [ { t: 'ex', h: 'Exemple 4 —', q: 'Convertir 90 km/h en m/s.', s: [ '90 ÷ 3,6 = 25 m/s' ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Donner une réponse avec 8 décimales de calculatrice.',
+          'Additionner des incertitudes relatives pour une somme.',
+          'Mélanger km/h et m/s dans une même équation.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '+ et − : incertitudes absolues ; × et ÷ : relatives.',
+          'km/h ÷ 3,6 = m/s.',
+          'Précis ≠ exact.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 2. Vecteurs ============ */
+vecteurs: {
+  bulle: 'vecteurs en physique',
+  sous: 'Grandeurs vectorielles : addition et décomposition',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'tab', full: true, lcol: true,
+          head: ['Grandeur **scalaire**', 'Grandeur **vectorielle**'],
+          rows: [
+            ['seulement une valeur (et une unité)', 'une grandeur + une **orientation**'],
+            ['masse, temps, distance, énergie, température', 'déplacement, vitesse, accélération, force'],
+          ] },
+        { t: 'form', h: 'décomposer un vecteur (angle θ avec l\'axe des x)', items: [
+          ['composante x', 'A<sub>x</sub> = A cos θ'],
+          ['composante y', 'A<sub>y</sub> = A sin θ'],
+        ] },
+        { t: 'form', h: 'recomposer', items: [
+          ['grandeur', 'A = √(A<sub>x</sub><sup>2</sup> + A<sub>y</sub><sup>2</sup>)'],
+          ['orientation', 'θ = tan<sup>−1</sup>({{A<sub>y</sub>|A<sub>x</sub>}}) (+ vérifier le quadrant)'],
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 230, h: 200, xmin: -10, xmax: 100, ymin: -10, ymax: 80, tick: 20, ticky: 20, grille: 10, nx: 'x (N)', ny: 'y',
+            fleches: [ { a: [0, 0], b: [86.6, 50], pk: true, lbl: 'F = 100 N', at: [30, 40] }, { a: [0, 0], b: [86.6, 0], lbl: 'Fx', at: [40, -8] }, { a: [86.6, 0], b: [86.6, 50], vert: true, lbl: 'Fy', at: [89, 22] } ],
+            alt: 'décomposition d’une force en composantes', cap: '100 N à 30° : F<sub>x</sub> = 86,6 N ; F<sub>y</sub> = 50 N' },
+        ] } ],
+    ] },
+    { t: 'list', h: 'additionner des vecteurs (résultante)', items: [
+      '**Méthode graphique** : placer les vecteurs bout à bout ; la résultante va du début du premier à la fin du dernier.',
+      '**Méthode des composantes** : décomposer chaque vecteur, additionner tous les x, puis tous les y, puis recomposer.',
+      'Vecteurs perpendiculaires : **Pythagore** directement.',
+      'Vecteurs de même direction : on additionne (même sens) ou on soustrait (sens contraires).',
+    ] },
+    { t: 'list', h: 'noter l\'orientation', items: [
+      'Angle à partir de l\'axe des x positifs (sens antihoraire), ou points cardinaux : « 30° au nord de l\'est ».',
+      'Choisir un **sens positif** (vers la droite, vers le haut) et s\'y tenir.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Deux forces : 30 N vers l\'est et 40 N vers le nord. Résultante ?',
+      s: [ 'R = √(30<sup>2</sup> + 40<sup>2</sup>) = 50 N', 'θ = tan<sup>−1</sup>({{40|30}}) ≈ 53,1° au nord de l\'est' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Décomposer une force de 100 N à 30°.',
+      s: [ 'F<sub>x</sub> = 100 cos 30° ≈ 86,6 N', 'F<sub>y</sub> = 100 sin 30° = 50 N' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un avion vole à 200 km/h vers le nord ; le vent souffle à 50 km/h vers l\'est. Vitesse par rapport au sol ?',
+      s: [ 'v = √(200<sup>2</sup> + 50<sup>2</sup>) ≈ 206 km/h', 'θ = tan<sup>−1</sup>({{50|200}}) ≈ 14° à l\'est du nord' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Forces de 12 N vers la droite et de 20 N vers la gauche.',
+      s: [ 'R = 12 − 20 = −8 N → 8 N vers la gauche' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Additionner les grandeurs de vecteurs non parallèles (30 + 40 ≠ 50… sauf ici par Pythagore !).',
+          'Inverser cos et sin selon l\'angle choisi.',
+          'Calculatrice en radians.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Décomposer : A cos θ, A sin θ.',
+          'Additionner les composantes.',
+          'Recomposer : Pythagore + tan<sup>−1</sup>.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 3. Position, distance, déplacement ============ */
+position: {
+  bulle: 'position et déplacement',
+  sous: 'Référentiel, position, distance et déplacement',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'le référentiel', items: [
+          'Un **référentiel** est le point de vue (l\'objet de référence) à partir duquel on décrit un mouvement.',
+          'Le mouvement est **relatif** : un passager assis dans un autobus est immobile par rapport à l\'autobus, mais en mouvement par rapport à la route.',
+          'On choisit une **origine** (x = 0) et un **sens positif**.',
+        ] } ],
+      [ { t: 'tab', full: true, lcol: true,
+          head: ['Grandeur', 'Définition', 'Type'],
+          rows: [
+            ['**position** x', 'endroit par rapport à l\'origine', 'vectorielle'],
+            ['**distance** d', 'longueur totale du trajet parcouru', 'scalaire (toujours ≥ 0)'],
+            ['**déplacement** Δx', 'changement de position : x<sub>f</sub> − x<sub>i</sub>', 'vectorielle (peut être négatif)'],
+          ] } ],
+    ] },
+    { t: 'box', f: 'Δx = x<sub>f</sub> − x<sub>i</sub>', note: 'Le déplacement ne dépend que du point de départ et du point d\'arrivée, pas du chemin.' },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'à retenir', items: [
+          'Distance ≥ grandeur du déplacement.',
+          'Aller-retour : déplacement **nul**, mais distance non nulle.',
+          'Le signe du déplacement indique le **sens** (+ ou − selon l\'axe choisi).',
+        ] } ],
+      [ { t: 'list', h: 'unités', items: [
+          'SI : mètre (m).',
+          'Écrire toujours l\'orientation d\'un déplacement : « 3 m vers l\'est » ou « −3 m ».',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Une coureuse part de x = 2 m, va jusqu\'à x = 10 m, puis revient à x = 6 m.',
+      s: [ 'distance = (10 − 2) + (10 − 6) = 8 + 4 = 12 m', 'déplacement = 6 − 2 = +4 m // dans le sens positif' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Un élève fait le tour d\'une piste de 400 m et revient à son point de départ.',
+      s: [ 'distance = 400 m', 'déplacement = 0 m' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Une voiture roule 3 km vers le nord, puis 4 km vers l\'est.',
+      s: [ 'distance = 3 + 4 = 7 km', 'déplacement = √(3<sup>2</sup> + 4<sup>2</sup>) = 5 km', 'orientation : tan<sup>−1</sup>({{4|3}}) ≈ 53° à l\'est du nord' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Dans un train qui roule à 80 km/h, une personne marche vers l\'avant à 5 km/h. Sa vitesse par rapport au sol ?',
+      s: [ '80 + 5 = 85 km/h // référentiel : le sol' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre distance et déplacement.',
+          'Oublier le signe (sens) du déplacement.',
+          'Oublier de préciser le référentiel.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Δx = x<sub>f</sub> − x<sub>i</sub>.',
+          'Distance = scalaire ; déplacement = vecteur.',
+          'Le mouvement dépend du référentiel.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 4. Vitesse ============ */
+vitesse: {
+  bulle: 'vitesse',
+  sous: 'Vitesse moyenne, vitesse scalaire et vitesse instantanée',
+  recto: [
+    { t: 'tab', full: true, lcol: true,
+      head: ['Grandeur', 'Formule', 'Type'],
+      rows: [
+        ['**vitesse moyenne**', 'v<sub>moy</sub> = {{Δx|Δt}} (déplacement ÷ temps)', 'vectorielle'],
+        ['**vitesse scalaire moyenne**', 'v = {{d|Δt}} (distance ÷ temps)', 'scalaire'],
+        ['**vitesse instantanée**', 'vitesse à un instant précis (compteur de vitesse) ; pente de la tangente sur un graphique x-t', 'vectorielle'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'formules dérivées', items: [
+          ['déplacement', 'Δx = v × Δt'],
+          ['temps', 'Δt = {{Δx|v}}'],
+        ] },
+        { t: 'form', h: 'unités', items: [
+          ['SI', 'm/s'],
+          ['conversion', 'km/h ÷ 3,6 = m/s'],
+        ] } ],
+      [ { t: 'list', h: 'à comprendre', items: [
+          'La vitesse moyenne ne dit rien des variations pendant le trajet.',
+          'Sur un aller-retour, la vitesse moyenne est **nulle**, mais pas la vitesse scalaire moyenne.',
+          'Vitesse moyenne de plusieurs étapes : **déplacement total ÷ temps total** (on ne fait pas la moyenne des vitesses !).',
+        ] } ],
+    ] },
+    { t: 'txt', h: 'sur un graphique position-temps', p: [ 'La **pente** d\'une droite x-t donne la vitesse. Pour une courbe, la pente de la **sécante** donne la vitesse moyenne et la pente de la **tangente** donne la vitesse instantanée.' ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un cycliste roule 3 km vers l\'est, puis 1 km vers l\'ouest, en 0,5 h au total.',
+      s: [ 'vitesse scalaire moyenne = {{4 km|0,5 h}} = 8 km/h', 'déplacement = 3 − 1 = 2 km vers l\'est', 'vitesse moyenne = {{2 km|0,5 h}} = 4 km/h vers l\'est' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une auto parcourt 60 km à 60 km/h, puis 60 km à 120 km/h. Vitesse scalaire moyenne ?',
+      s: [ 't<sub>1</sub> = 1 h · t<sub>2</sub> = 0,5 h', 'v = {{120 km|1,5 h}} = 80 km/h // et non 90 km/h !' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Combien de temps pour parcourir 450 m à 18 km/h ?',
+      s: [ '18 km/h = 5 m/s', 'Δt = {{450|5}} = 90 s' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Faire la moyenne des vitesses de deux étapes de durées différentes.',
+          'Mélanger km et m, h et s.',
+          'Confondre vitesse moyenne (déplacement) et vitesse scalaire (distance).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'v<sub>moy</sub> = Δx / Δt.',
+          'Total ÷ total.',
+          'Pente d\'un graphique x-t = vitesse.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 5. MRU ============ */
+mru: {
+  bulle: 'mru',
+  sous: 'Le mouvement rectiligne uniforme (MRU)',
+  recto: [
+    { t: 'cols', w: '1.1fr 1fr', c: [
+      [ { t: 'txt', p: [
+          'Un objet est en **MRU** quand il se déplace en **ligne droite** à **vitesse constante** (même grandeur, même sens). Son accélération est **nulle**.',
+        ] },
+        { t: 'box', f: 'x<sub>f</sub> = x<sub>i</sub> + vΔt', note: 'ou Δx = vΔt' },
+        { t: 'list', h: 'les graphiques du MRU', items: [
+          '**x-t** : une **droite** oblique ; pente = vitesse.',
+          '**v-t** : une droite **horizontale** ; aire sous la droite = déplacement.',
+          '**a-t** : a = 0.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 230, h: 175, xmin: 0, xmax: 10, ymin: 0, ymax: 60, tick: 2, ticky: 10, grille: 1, nx: 't (s)', ny: 'x (m)',
+            courbes: [ { fn: t => 10 + 4 * t, lbl: 'x = 10 + 4t', at: [0.5, 50] } ],
+            pts: [ { x: 0, y: 10, lbl: 'x₀ = 10 m', dx: 5, dy: 12 }, { x: 10, y: 50 } ],
+            alt: 'droite position temps', cap: 'x-t : pente = {{40 m|10 s}} = 4 m/s' },
+        ] } ],
+    ] },
+    { t: 'list', h: 'problèmes de rencontre (deux mobiles)', items: [
+      '1. Écrire l\'équation de position de chaque mobile avec la **même origine** et le **même sens positif**.',
+      '2. Au moment de la rencontre, les deux positions sont **égales** : x<sub>A</sub> = x<sub>B</sub>.',
+      '3. Résoudre pour t, puis trouver la position.',
+    ] },
+    { t: 'list', h: 'le MRU dans la vie réelle', items: [
+      'Rare sur Terre (frottement) : une auto sur l\'autoroute avec régulateur de vitesse s\'en approche.',
+      '1<sup>re</sup> loi de Newton : si la force résultante est nulle, un objet en mouvement reste en MRU.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Une auto roule à 90 km/h pendant 2 h 30 min. Distance ?',
+      s: [ 'Δx = 90 km/h × 2,5 h = 225 km' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Deux autos partent en même temps de deux villes distantes de 300 km et roulent l\'une vers l\'autre, à 100 km/h (A) et à 80 km/h (B). Où et quand se croisent-elles ?',
+      s: [ 'x<sub>A</sub> = 100t · x<sub>B</sub> = 300 − 80t // origine : ville A', '100t = 300 − 80t', '180t = 300 → t ≈ 1,67 h (1 h 40 min)', 'x = 100 × 1,67 ≈ 167 km de la ville A' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Sur le graphique du recto, où est l\'objet à t = 7 s ?',
+      s: [ 'x = 10 + 4(7) = 38 m' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier la position initiale x<sub>i</sub>.',
+          'Donner le même signe aux vitesses de deux mobiles qui vont en sens contraires.',
+          'Laisser 2 h 30 min = 2,30 h (c\'est 2,5 h !).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'MRU : v constante, a = 0.',
+          'x<sub>f</sub> = x<sub>i</sub> + vΔt.',
+          'Rencontre : x<sub>A</sub> = x<sub>B</sub>.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 6. MRUA ============ */
+mrua: {
+  bulle: 'accélération et mrua',
+  sous: 'L\'accélération et le mouvement rectiligne uniformément accéléré (MRUA)',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'L\'**accélération** est la variation de la vitesse par unité de temps. Elle se mesure en **m/s<sup>2</sup>**.',
+          'En **MRUA**, l\'objet se déplace en ligne droite avec une accélération **constante**.',
+        ] },
+        { t: 'box', f: 'a = {{Δv|Δt}} = {{v<sub>f</sub> − v<sub>i</sub>|Δt}}' },
+        { t: 'list', h: 'le signe de a', items: [
+          'a et v de **même signe** : l\'objet **accélère** (va plus vite).',
+          'a et v de **signes contraires** : l\'objet **ralentit**.',
+          '« Décélération » = ralentissement, pas forcément a négatif !',
+        ] } ],
+      [ { t: 'form', h: 'les 4 équations du MRUA', items: [
+          ['sans Δx', 'v<sub>f</sub> = v<sub>i</sub> + aΔt'],
+          ['sans v<sub>f</sub>', 'Δx = v<sub>i</sub>Δt + ½aΔt<sup>2</sup>'],
+          ['sans Δt', 'v<sub>f</sub><sup>2</sup> = v<sub>i</sub><sup>2</sup> + 2aΔx'],
+          ['sans a', 'Δx = {{v<sub>i</sub> + v<sub>f</sub>|2}} Δt'],
+        ], note: 'Choisir l\'équation qui ne contient PAS la variable qu\'on ne connaît pas et qu\'on ne cherche pas.' } ],
+    ] },
+    { t: 'list', h: 'démarche', items: [
+      '1. Choisir le sens positif ; faire la liste : v<sub>i</sub>, v<sub>f</sub>, a, Δt, Δx (3 connues, 1 cherchée).',
+      '2. Convertir en m, s, m/s.',
+      '3. Choisir l\'équation ; isoler ; calculer.',
+      '4. Vérifier le signe et l\'ordre de grandeur.',
+    ] },
+    { t: 'list', h: 'indices dans les énoncés', items: [
+      '« part du repos », « démarre » → v<sub>i</sub> = 0.',
+      '« s\'arrête », « s\'immobilise » → v<sub>f</sub> = 0.',
+      '« tombe » (sans frottement) → a = −9,8 m/s<sup>2</sup> (vers le bas).',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Une auto part du repos et accélère à 3,0 m/s<sup>2</sup> pendant 5,0 s. Vitesse finale et distance ?',
+      s: [ 'v<sub>f</sub> = 0 + 3,0 × 5,0 = 15 m/s', 'Δx = 0 + ½ × 3,0 × 5,0<sup>2</sup> = 37,5 m' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une auto roulant à 25 m/s freine et s\'arrête sur 50 m. Accélération et durée du freinage ?',
+      s: [ '0<sup>2</sup> = 25<sup>2</sup> + 2a(50)', 'a = {{−625|100}} = −6,25 m/s<sup>2</sup> // sens contraire du mouvement', 'Δt = {{0 − 25|−6,25}} = 4,0 s' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un skieur passe de 4 m/s à 16 m/s sur 100 m. Durée ?',
+      s: [ 'Δx = {{v<sub>i</sub> + v<sub>f</sub>|2}}Δt', '100 = {{4 + 16|2}} Δt = 10Δt', 'Δt = 10 s' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier le signe négatif de a quand l\'objet ralentit.',
+          'Oublier le carré de Δt dans ½aΔt<sup>2</sup>.',
+          'Utiliser les équations du MRUA si l\'accélération n\'est pas constante.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'a = Δv / Δt.',
+          '4 équations : choisir celle sans l\'inconnue inutile.',
+          'Repos → v = 0.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 7. Graphiques ============ */
+graphiques: {
+  bulle: 'graphiques du mouvement',
+  sous: 'Les graphiques du mouvement (x-t, v-t, a-t)',
+  recto: [
+    { t: 'tab', full: true, lcol: true,
+      head: ['Graphique', 'La pente donne…', 'L\'aire sous la courbe donne…'],
+      rows: [
+        ['**position-temps** (x-t)', 'la **vitesse**', '(rien d\'utile)'],
+        ['**vitesse-temps** (v-t)', 'l\'**accélération**', 'le **déplacement** Δx'],
+        ['**accélération-temps** (a-t)', '—', 'la **variation de vitesse** Δv'],
+      ] },
+    { t: 'tab', h: 'reconnaître les mouvements', full: true, lcol: true,
+      head: ['Mouvement', 'x-t', 'v-t', 'a-t'],
+      rows: [
+        ['**repos**', 'horizontale', 'sur l\'axe (v = 0)', 'a = 0'],
+        ['**MRU**', 'droite oblique', 'horizontale', 'a = 0'],
+        ['**MRUA** (accélère)', 'courbe (parabole) de plus en plus inclinée', 'droite oblique', 'horizontale (≠ 0)'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'lire un graphique x-t', items: [
+          'Pente positive : l\'objet avance dans le sens positif.',
+          'Pente négative : il revient vers l\'origine (sens négatif).',
+          'Pente plus raide : plus vite.',
+          'Croiser l\'axe du temps : l\'objet passe à l\'origine.',
+        ] } ],
+      [ { t: 'list', h: 'lire un graphique v-t', items: [
+          'Au-dessus de l\'axe : mouvement dans le sens positif.',
+          'Aire **sous l\'axe** : déplacement négatif.',
+          'Aire totale d\'un trapèze : {{(B + b) × h|2}} ; d\'un triangle : {{b × h|2}}.',
+          'Croiser l\'axe du temps : l\'objet s\'arrête et change de sens.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple —', q: 'Analyser le graphique v-t ci-dessous.',
+      fig: { kind: 'plan', w: 270, h: 170, xmin: 0, xmax: 13, ymin: 0, ymax: 10, tick: 2, ticky: 2, grille: 1, nx: 't (s)', ny: 'v (m/s)',
+        zones: [ { pts: [[0, 0], [4, 8], [10, 8], [12, 0]] } ],
+        courbes: [ { fn: vt, n: 600 } ],
+        alt: 'graphique vitesse temps en trois phases', cap: 'aire jaune = déplacement' },
+      s: [ '0 à 4 s : a = {{8 − 0|4}} = 2 m/s<sup>2</sup> // MRUA, accélère', '4 à 10 s : a = 0 // MRU à 8 m/s', '10 à 12 s : a = {{0 − 8|2}} = −4 m/s<sup>2</sup> // ralentit', 'aire : {{4 × 8|2}} + 6 × 8 + {{2 × 8|2}}', '= 16 + 48 + 8 = 72 m' ],
+      r: 'déplacement total de 72 m ; vitesse moyenne 72 ÷ 12 = 6 m/s' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Sur un graphique x-t, la position passe de 30 m à 10 m en 5 s (droite). Vitesse ?',
+      s: [ 'v = {{10 − 30|5}} = −4 m/s // retour vers l\'origine' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Lire un graphique v-t comme un graphique x-t (une droite horizontale en v-t n\'est pas le repos !).',
+          'Oublier que l\'aire sous l\'axe est négative.',
+          'Prendre la valeur lue pour la pente.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'x-t : pente = v.',
+          'v-t : pente = a ; aire = Δx.',
+          'a-t : aire = Δv.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 8. Chute libre ============ */
+'chute-libre': {
+  bulle: 'chute libre',
+  sous: 'La chute libre',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'Un objet est en **chute libre** quand la **seule force** qui agit sur lui est la **gravité** (on néglige la résistance de l\'air).',
+          'Tous les objets tombent alors avec la **même accélération**, peu importe leur masse.',
+        ] },
+        { t: 'box', f: 'g = 9,8 m/s² vers le bas', note: 'avec l\'axe positif vers le haut : a = −9,8 m/s²' } ],
+      [ { t: 'form', h: 'équations (a = −g)', items: [
+          ['', 'v<sub>f</sub> = v<sub>i</sub> − gΔt'],
+          ['', 'Δy = v<sub>i</sub>Δt − ½gΔt<sup>2</sup>'],
+          ['', 'v<sub>f</sub><sup>2</sup> = v<sub>i</sub><sup>2</sup> − 2gΔy'],
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'objet lancé vers le haut', items: [
+          'Il ralentit en montant (a opposée à v).',
+          'Au **point le plus haut**, v = 0 (mais a = −9,8 m/s<sup>2</sup>, pas 0 !).',
+          'Le temps de montée = le temps de descente jusqu\'à la même hauteur.',
+          'Il repasse à sa hauteur de départ avec la même vitesse, mais vers le bas.',
+        ] } ],
+      [ { t: 'list', h: 'avec l\'air (réalité)', items: [
+          'La résistance de l\'air augmente avec la vitesse.',
+          'L\'objet finit par atteindre une **vitesse limite** (force de l\'air = poids).',
+          'Une plume tombe moins vite qu\'une pierre dans l\'air, mais à la même vitesse dans le vide.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'On laisse tomber une pierre d\'un pont de 45 m. Durée de la chute et vitesse à l\'arrivée ?',
+      s: [ '−45 = 0 − ½(9,8)Δt<sup>2</sup> // Δy négatif : vers le bas', 'Δt = √({{2 × 45|9,8}}) ≈ 3,0 s', 'v<sub>f</sub> = 0 − 9,8 × 3,03 ≈ −29,7 m/s // 29,7 m/s vers le bas' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une balle est lancée vers le haut à 15 m/s. Hauteur maximale et temps pour y arriver ?',
+      s: [ 'au sommet v<sub>f</sub> = 0', '0 = 15<sup>2</sup> − 2(9,8)Δy → Δy = {{225|19,6}} ≈ 11,5 m', 'Δt = {{15|9,8}} ≈ 1,53 s' ],
+      p: [ 'Elle revient à la main après 2 × 1,53 ≈ 3,06 s, à 15 m/s vers le bas.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Dire que a = 0 au sommet.',
+          'Croire qu\'un objet lourd tombe plus vite (sans air).',
+          'Mélanger les signes : choisis un sens positif et garde-le.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Chute libre : a = −9,8 m/s<sup>2</sup> (haut positif).',
+          'Sommet : v = 0.',
+          'Masse sans effet (dans le vide).',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 9. Projectiles ============ */
+projectiles: {
+  bulle: 'mouvement des projectiles',
+  sous: 'Le mouvement des projectiles',
+  recto: [
+    { t: 'cols', w: '1fr 1.05fr', c: [
+      [ { t: 'txt', p: [
+          'Un **projectile** est lancé puis soumis seulement à la gravité. Sa trajectoire est une **parabole**.',
+          'L\'astuce : on sépare le mouvement en **deux mouvements indépendants**.',
+        ] },
+        { t: 'tab', full: true, lcol: true,
+          head: ['', 'Horizontal (x)', 'Vertical (y)'],
+          rows: [
+            ['mouvement', '**MRU**', '**MRUA** (chute libre)'],
+            ['accélération', 'a<sub>x</sub> = 0', 'a<sub>y</sub> = −9,8 m/s<sup>2</sup>'],
+            ['vitesse initiale', 'v<sub>ix</sub> = v<sub>i</sub> cos θ', 'v<sub>iy</sub> = v<sub>i</sub> sin θ'],
+            ['équation', 'Δx = v<sub>ix</sub>Δt', 'Δy = v<sub>iy</sub>Δt − ½gΔt<sup>2</sup>'],
+          ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 250, h: 170, xmin: 0, xmax: 38, ymin: 0, ymax: 8, tick: 10, ticky: 2, grille: 2, nx: 'x (m)', ny: 'y (m)',
+            courbes: [ { fn: x => x * Math.tan(Math.PI / 6) - 9.8 * x * x / (2 * 400 * 0.75), x0: 0, x1: 35.35 } ],
+            fleches: [ { a: [0, 0], b: [8.66, 5], pk: true, lbl: 'vᵢ', at: [3, 4.5] } ],
+            pts: [ { x: 17.67, y: 5.1, lbl: 'hauteur max.', dx: -30, dy: -7 }, { x: 35.35, y: 0, lbl: 'portée', dx: -34, dy: -5 } ],
+            alt: 'trajectoire parabolique d’un projectile', cap: '20 m/s à 30° : parabole' },
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'ce qui relie les deux mouvements', items: [
+          'Le **temps** Δt est le même pour x et pour y.',
+          'On trouve souvent Δt avec le mouvement vertical, puis Δx avec l\'horizontal.',
+        ] },
+        { t: 'list', h: 'lancer horizontal', items: [
+          'v<sub>iy</sub> = 0 : le temps de chute ne dépend que de la hauteur.',
+          'Une balle lancée horizontalement et une balle lâchée de la même hauteur touchent le sol **en même temps**.',
+        ] } ],
+      [ { t: 'list', h: 'lancer oblique (même hauteur de départ et d\'arrivée)', items: [
+          'Au sommet : v<sub>y</sub> = 0, mais v<sub>x</sub> reste la même.',
+          'Temps de vol : Δt = {{2v<sub>iy</sub>|g}}.',
+          'Hauteur max. : {{v<sub>iy</sub><sup>2</sup>|2g}}.',
+          'Portée maximale à **45°** (sans air).',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Une balle roule à 5,0 m/s et quitte le bord d\'une falaise de 20 m. Temps de chute, distance horizontale et vitesse à l\'impact ?',
+      s: [ 'vertical : −20 = 0 − ½(9,8)Δt<sup>2</sup> → Δt ≈ 2,02 s', 'horizontal : Δx = 5,0 × 2,02 ≈ 10,1 m', 'v<sub>fy</sub> = −9,8 × 2,02 ≈ −19,8 m/s · v<sub>x</sub> = 5,0 m/s', 'v = √(5,0<sup>2</sup> + 19,8<sup>2</sup>) ≈ 20,4 m/s' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Un ballon est botté à 20 m/s à 30° au-dessus de l\'horizontale (terrain plat).',
+      s: [ 'v<sub>ix</sub> = 20 cos 30° ≈ 17,3 m/s · v<sub>iy</sub> = 20 sin 30° = 10 m/s', 'temps de vol : {{2 × 10|9,8}} ≈ 2,04 s', 'portée : 17,3 × 2,04 ≈ 35,3 m', 'hauteur max. : {{10<sup>2</sup>|2 × 9,8}} ≈ 5,1 m' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser la vitesse totale au lieu des composantes.',
+          'Mettre une accélération sur l\'axe horizontal.',
+          'Oublier que Δy est négatif quand l\'objet finit plus bas.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'x : MRU ; y : chute libre.',
+          'Même Δt pour les deux.',
+          'Portée max. à 45°.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+})();
+
+/* ---- 61-physique-dynamique.js ---- */
+/* Physique — Dynamique */
+(function () {
+  const s30 = 0.5, c30 = Math.sqrt(3) / 2;
+  const P = [4, 2.31]; // point d'application sur le plan incliné (30°)
+  const add = (a, v, k) => [a[0] + v[0] * k, a[1] + v[1] * k];
+  // boîte (carré) centrée à l'origine
+  const boite = [ { a: [-1, -1], b: [1, -1], cls: 'ln' }, { a: [1, -1], b: [1, 1], cls: 'ln' }, { a: [1, 1], b: [-1, 1], cls: 'ln' }, { a: [-1, 1], b: [-1, -1], cls: 'ln' } ];
+
+Object.assign(DATA.feuilles['physique'], {
+
+/* ============ 10. Forces et DCL ============ */
+forces: {
+  bulle: 'forces et dcl',
+  sous: 'Les forces et le diagramme de corps libre',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'Une **force** est une action (poussée ou traction) qui peut changer le mouvement d\'un objet ou le déformer. C\'est une grandeur **vectorielle**, mesurée en **newtons (N)** avec un dynamomètre.',
+          '1 N = 1 kg·m/s<sup>2</sup>',
+        ] },
+        { t: 'tab', h: 'les forces courantes', full: true, lcol: true,
+          head: ['Force', 'Symbole', 'Direction'],
+          rows: [
+            ['gravitationnelle (poids)', 'F<sub>g</sub>', 'vers le centre de la Terre'],
+            ['normale', 'F<sub>N</sub>', 'perpendiculaire à la surface, vers l\'extérieur'],
+            ['frottement', 'F<sub>f</sub>', 'parallèle à la surface, contre le mouvement'],
+            ['tension (corde)', 'F<sub>T</sub>', 'le long de la corde, en tirant'],
+            ['appliquée', 'F<sub>a</sub>', 'selon la poussée ou la traction'],
+            ['élastique (ressort)', 'F<sub>é</sub>', 'vers la position de repos du ressort'],
+          ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 230, h: 230, xmin: -4, xmax: 4, ymin: -4, ymax: 4, xlabels: [], ylabels: [], grille: 1,
+            segs: boite,
+            fleches: [ { a: [0, 0], b: [0, -3.3], pk: true, lbl: 'Fg', at: [0.2, -3.2] }, { a: [0, 0], b: [0, 3.3], lbl: 'FN', at: [0.2, 3.2] }, { a: [0, 0], b: [3.4, 0], vert: true, lbl: 'Fa', at: [2.6, 0.3] }, { a: [0, 0], b: [-2.2, 0], lbl: 'Ff', at: [-3.4, 0.3] } ],
+            alt: 'diagramme de corps libre d’une boîte tirée sur le sol', cap: 'DCL : boîte tirée vers la droite sur le sol' },
+        ] } ],
+    ] },
+    { t: 'list', h: 'tracer un diagramme de corps libre (DCL)', items: [
+      '1. Représenter l\'objet par un **point** ou une boîte.',
+      '2. Dessiner **toutes les forces qui s\'exercent SUR l\'objet**, à partir du centre, avec des flèches proportionnelles à leur grandeur.',
+      '3. Nommer chaque force. Ne pas dessiner les forces que l\'objet exerce sur les autres.',
+      '4. Choisir des axes (souvent parallèle et perpendiculaire au mouvement).',
+    ] },
+    { t: 'box', h: 'force résultante', f: 'F<sub>R</sub> = ΣF = somme vectorielle de toutes les forces', note: 'Si F<sub>R</sub> = 0 : équilibre (repos ou MRU). Si F<sub>R</sub> ≠ 0 : l\'objet accélère dans le sens de F<sub>R</sub>.' },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Une boîte de 10 kg est tirée sur le sol par une force de 50 N vers la droite ; le frottement vaut 20 N. Forces et résultante ?',
+      s: [ 'F<sub>g</sub> = 10 × 9,8 = 98 N vers le bas', 'F<sub>N</sub> = 98 N vers le haut // surface horizontale', 'vertical : 98 − 98 = 0', 'horizontal : 50 − 20 = 30 N vers la droite' ],
+      r: 'F<sub>R</sub> = 30 N vers la droite' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une lampe est suspendue au plafond par un fil. DCL ?',
+      p: [ 'Deux forces : F<sub>g</sub> vers le bas et F<sub>T</sub> (tension) vers le haut, de même grandeur : la lampe est en équilibre.' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Trois élèves tirent une caisse : 40 N vers l\'est, 30 N vers l\'est, 50 N vers l\'ouest. Résultante ?',
+      s: [ '40 + 30 − 50 = 20 N vers l\'est' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Ajouter une « force du mouvement » : elle n\'existe pas.',
+          'Dessiner la force que l\'objet exerce sur le sol au lieu de celle du sol sur l\'objet.',
+          'Oublier F<sub>g</sub> ou F<sub>N</sub>.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Force : vecteur, en N.',
+          'DCL : seulement les forces SUR l\'objet.',
+          'F<sub>R</sub> = somme vectorielle.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 11. 1re loi ============ */
+'newton-1': {
+  bulle: '1re loi de newton',
+  sous: 'La 1<sup>re</sup> loi de Newton : le principe d\'inertie',
+  recto: [
+    { t: 'box', f: 'Si la force résultante sur un objet est <b>nulle</b>, il reste au <b>repos</b> ou continue en <b>MRU</b>.' },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'l\'inertie', items: [
+          'L\'**inertie** est la tendance d\'un objet à **résister** à tout changement de son mouvement.',
+          'Plus la **masse** est grande, plus l\'inertie est grande (un camion est plus difficile à démarrer et à arrêter qu\'un vélo).',
+          'Un objet n\'a pas besoin d\'une force pour **continuer** à bouger ; il en faut une pour **changer** son mouvement.',
+        ] } ],
+      [ { t: 'list', h: 'l\'équilibre de translation', items: [
+          'ΣF = 0 ⇔ **a = 0**.',
+          'Deux situations possibles : **repos** ou **MRU**.',
+          'Pour le vérifier : ΣF<sub>x</sub> = 0 et ΣF<sub>y</sub> = 0.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'exemples de la vie courante', items: [
+      'Dans un autobus qui freine, les passagers sont projetés vers l\'**avant** : leur corps continue son mouvement.',
+      'Quand l\'autobus démarre, on est « poussé » vers l\'arrière : notre corps tend à rester au repos.',
+      'La **ceinture de sécurité** applique la force qui arrête le passager.',
+      'Dans l\'espace, une sonde continue en ligne droite sans moteur.',
+      'On secoue une bouteille de ketchup à l\'envers puis on l\'arrête brusquement : le ketchup continue vers le bas.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Une auto roule à 100 km/h constante sur une route droite. Le moteur produit une poussée de 1500 N. Frottement total ?',
+      s: [ 'MRU → a = 0 → ΣF = 0', 'F<sub>frottement</sub> = 1500 N, vers l\'arrière' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une rondelle glisse sur la glace et ralentit très peu. Pourquoi ne s\'arrête-t-elle pas tout de suite ?',
+      p: [ 'Le frottement est très faible : la force résultante est presque nulle. Par inertie, la rondelle continue presque en MRU.' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un parachutiste descend à vitesse constante. Que peut-on dire des forces ?',
+      p: [ 'Vitesse constante = MRU → ΣF = 0 : la résistance de l\'air est égale à son poids.' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Un livre est au repos sur une table. Il n\'y a aucune force sur lui ? ',
+      p: [ 'Faux : F<sub>g</sub> vers le bas et F<sub>N</sub> vers le haut s\'annulent. La résultante est nulle, pas les forces.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Croire qu\'il faut une force pour maintenir une vitesse constante (sans frottement, non).',
+          'Confondre « aucune force » et « force résultante nulle ».',
+          'Dire que l\'inertie est une force.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'ΣF = 0 → repos ou MRU.',
+          'Inertie ∝ masse.',
+          'Il faut une force pour CHANGER le mouvement.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 12. 2e loi ============ */
+'newton-2': {
+  bulle: '2e loi de newton',
+  sous: 'La 2<sup>e</sup> loi de Newton : ΣF = ma',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'box', f: 'ΣF = ma', note: 'ΣF en N · m en kg · a en m/s²' },
+        { t: 'list', items: [
+          'L\'accélération a le **même sens** que la force résultante.',
+          'Pour une même force, un objet deux fois plus massif accélère deux fois moins.',
+          'Pour une même masse, une force deux fois plus grande donne une accélération deux fois plus grande.',
+        ] } ],
+      [ { t: 'form', h: 'formes utiles', items: [
+          ['accélération', 'a = {{ΣF|m}}'],
+          ['masse', 'm = {{ΣF|a}}'],
+          ['poids', 'F<sub>g</sub> = mg (cas particulier : a = g)'],
+        ] } ],
+    ] },
+    { t: 'list', h: 'démarche', items: [
+      '1. Tracer le **DCL**.',
+      '2. Choisir des axes (un dans le sens du mouvement).',
+      '3. Écrire ΣF sur chaque axe : ΣF<sub>x</sub> = ma<sub>x</sub> ; ΣF<sub>y</sub> = ma<sub>y</sub>.',
+      '4. Résoudre ; utiliser au besoin les équations du MRUA pour la vitesse ou la distance.',
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'l\'ascenseur (poids apparent)', items: [
+          'La balance mesure F<sub>N</sub>, pas F<sub>g</sub>.',
+          'Accélère vers le haut : F<sub>N</sub> = m(g + a) → on se sent plus lourd.',
+          'Accélère vers le bas : F<sub>N</sub> = m(g − a) → plus léger.',
+          'Vitesse constante : F<sub>N</sub> = mg.',
+        ] } ],
+      [ { t: 'list', h: 'masse et poids', items: [
+          '**Masse** (kg) : quantité de matière, la même partout.',
+          '**Poids** (N) : force de gravité, dépend de g (plus petit sur la Lune).',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'Une force résultante de 3000 N agit sur une auto de 1200 kg.', s: [ 'a = {{3000|1200}} = 2,5 m/s<sup>2</sup>' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: '50 N vers l\'est et 20 N vers l\'ouest sur 5,0 kg.', s: [ 'ΣF = 30 N vers l\'est', 'a = {{30|5,0}} = 6,0 m/s<sup>2</sup> vers l\'est' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'On pousse une caisse de 20 kg avec 100 N sur un sol où μ<sub>c</sub> = 0,30. Accélération ?',
+      s: [ 'F<sub>N</sub> = mg = 20 × 9,8 = 196 N', 'F<sub>f</sub> = 0,30 × 196 = 58,8 N', 'ΣF = 100 − 58,8 = 41,2 N', 'a = {{41,2|20}} ≈ 2,1 m/s<sup>2</sup>' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Une personne de 60 kg est dans un ascenseur qui accélère vers le haut à 2,0 m/s<sup>2</sup>. Que lit la balance ?',
+      s: [ 'ΣF = F<sub>N</sub> − mg = ma', 'F<sub>N</sub> = m(g + a) = 60 × 11,8 = 708 N', 'masse « lue » : {{708|9,8}} ≈ 72 kg' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser une seule force au lieu de la **résultante**.',
+          'Confondre masse (kg) et poids (N).',
+          'Oublier le frottement.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'ΣF = ma.',
+          'DCL d\'abord, toujours.',
+          'a dans le sens de ΣF.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 13. 3e loi ============ */
+'newton-3': {
+  bulle: '3e loi de newton',
+  sous: 'La 3<sup>e</sup> loi de Newton : action-réaction',
+  recto: [
+    { t: 'box', f: 'Si A exerce une force sur B, alors B exerce sur A une force de <b>même grandeur</b> et de <b>sens opposé</b>.', note: 'F<sub>A sur B</sub> = −F<sub>B sur A</sub>' },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'caractéristiques d\'une paire action-réaction', items: [
+          'Même **grandeur**, même **direction**, sens **opposés**.',
+          'Elles agissent sur **deux objets différents** : elles ne s\'annulent donc jamais.',
+          'Elles sont de la **même nature** (deux forces de contact, deux forces gravitationnelles…).',
+          'Elles apparaissent et disparaissent **en même temps**.',
+        ] } ],
+      [ { t: 'list', h: 'pourquoi les effets sont différents ?', items: [
+          'Les forces sont égales, mais les **masses** peuvent être très différentes.',
+          'Avec ΣF = ma : même force, grande masse → petite accélération.',
+          'ex. La Terre attire une pomme, et la pomme attire la Terre avec la même force ; mais la Terre n\'accélère presque pas.',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'exemples de paires', full: true, lcol: true,
+      head: ['Action', 'Réaction'],
+      rows: [
+        ['le pied pousse le sol vers l\'arrière', 'le sol pousse le pied vers l\'avant (on avance)'],
+        ['la fusée pousse les gaz vers le bas', 'les gaz poussent la fusée vers le haut'],
+        ['le nageur pousse l\'eau vers l\'arrière', 'l\'eau pousse le nageur vers l\'avant'],
+        ['le fusil pousse la balle', 'la balle pousse le fusil (recul)'],
+        ['la Terre attire la Lune', 'la Lune attire la Terre (marées)'],
+      ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un livre est posé sur une table. F<sub>g</sub> et F<sub>N</sub> forment-elles une paire action-réaction ?',
+      p: [ '**Non.** Elles agissent sur le **même** objet (le livre) et sont de natures différentes. La vraie réaction de F<sub>g</sub> (Terre sur livre) est la force du **livre sur la Terre**. La réaction de F<sub>N</sub> (table sur livre) est la force du **livre sur la table**.' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une patineuse de 50 kg pousse un patineur de 80 kg avec une force de 120 N. Accélérations ?',
+      s: [ 'chacun subit 120 N (3<sup>e</sup> loi)', 'a<sub>patineuse</sub> = {{120|50}} = 2,4 m/s<sup>2</sup> // vers l\'arrière', 'a<sub>patineur</sub> = {{120|80}} = 1,5 m/s<sup>2</sup> // vers l\'avant' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Si la force du cheval sur la charrette est égale à celle de la charrette sur le cheval, comment le cheval peut-il avancer ?',
+      p: [ 'Ces deux forces agissent sur des objets différents. Pour savoir si le cheval avance, on regarde les forces **sur le cheval** : le sol le pousse vers l\'avant (réaction à ses sabots) plus fort que la charrette ne le retient.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Croire que l\'action et la réaction s\'annulent.',
+          'Prendre F<sub>g</sub> et F<sub>N</sub> pour une paire action-réaction.',
+          'Croire que le plus gros objet exerce la plus grande force.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'A sur B = − B sur A.',
+          'Deux objets différents.',
+          'Même force, effets différents selon la masse.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 14. Gravitation ============ */
+gravitation: {
+  bulle: 'gravitation et poids',
+  sous: 'La force gravitationnelle et le poids',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'loi de la gravitation universelle', p: [ 'Deux objets qui ont une masse s\'**attirent** toujours. Cette force augmente avec les masses et diminue avec le **carré** de la distance entre leurs centres.' ] },
+        { t: 'box', f: 'F<sub>g</sub> = {{G m<sub>1</sub> m<sub>2</sub>|d<sup>2</sup>}}', note: 'G = 6,67 × 10<sup>−11</sup> N·m²/kg² · d entre les centres (m)' } ],
+      [ { t: 'txt', h: 'le poids', p: [ 'Près de la surface d\'un astre, la force gravitationnelle sur un objet s\'appelle son **poids** :' ] },
+        { t: 'box', f: 'F<sub>g</sub> = mg', note: 'g = intensité du champ gravitationnel (N/kg = m/s²)' },
+        { t: 'tab', full: true, lcol: true,
+          head: ['Astre', 'g (N/kg)'],
+          rows: [ ['Terre', '9,8'], ['Lune', '1,6'], ['Mars', '3,7'], ['Jupiter', '24,8'] ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'effet de la distance', items: [
+          'Distance × 2 → force ÷ 4.',
+          'Distance × 3 → force ÷ 9.',
+          'Distance ÷ 2 → force × 4.',
+        ] } ],
+      [ { t: 'list', h: 'effet des masses', items: [
+          'Une masse × 2 → force × 2.',
+          'Les deux masses × 2 → force × 4.',
+          'La gravité entre deux objets du quotidien est minuscule : on ne la sent pas.',
+        ] } ],
+    ] },
+    { t: 'box', h: 'lien entre les deux formules', f: 'g = {{G M<sub>astre</sub>|r<sup>2</sup>}}', note: 'Pour la Terre : {{6,67 × 10<sup>−11</sup> × 5,97 × 10<sup>24</sup>|(6,37 × 10<sup>6</sup>)<sup>2</sup>}} ≈ 9,8 N/kg' },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'Poids d\'un élève de 70 kg sur la Terre et sur la Lune.', s: [ 'Terre : 70 × 9,8 = 686 N', 'Lune : 70 × 1,6 = 112 N', 'masse : 70 kg partout' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Deux élèves de 60 kg sont à 1,0 m l\'un de l\'autre.', s: [ 'F = {{6,67 × 10<sup>−11</sup> × 60 × 60|1,0<sup>2</sup>}}', 'F ≈ 2,4 × 10<sup>−7</sup> N // imperceptible' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un satellite est à une distance du centre de la Terre égale à 2 rayons terrestres. Son poids par rapport à la surface ?',
+      s: [ 'distance × 2 → force ÷ 2<sup>2</sup> = ÷ 4', 'g ≈ {{9,8|4}} ≈ 2,5 N/kg' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Un objet pèse 37 N sur Mars. Sa masse ?',
+      s: [ 'm = {{F<sub>g</sub>|g}} = {{37|3,7}} = 10 kg' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Dire « je pèse 70 kg » en physique : 70 kg est une masse ; le poids est 686 N.',
+          'Oublier le carré de la distance.',
+          'Mesurer d à partir de la surface au lieu du centre.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'F = Gm<sub>1</sub>m<sub>2</sub> / d<sup>2</sup>.',
+          'Poids = mg ; g Terre = 9,8 N/kg.',
+          'd × 2 → F ÷ 4.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 15. Normale et frottement ============ */
+'normale-frottement': {
+  bulle: 'normale et frottement',
+  sous: 'La force normale et la force de frottement',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'force normale F<sub>N</sub>', p: [
+          'Force exercée par une **surface** sur un objet qui s\'appuie sur elle, toujours **perpendiculaire** à la surface.',
+          'Sur une surface horizontale, sans autre force verticale : **F<sub>N</sub> = mg**.',
+          'Si on pousse vers le bas ou tire vers le haut, F<sub>N</sub> change (calculer avec ΣF<sub>y</sub> = 0).',
+        ] } ],
+      [ { t: 'txt', h: 'force de frottement F<sub>f</sub>', p: [
+          'Force qui s\'**oppose** au glissement (ou à la tendance à glisser) entre deux surfaces, **parallèle** à la surface.',
+        ] },
+        { t: 'box', f: 'F<sub>f</sub> = μF<sub>N</sub>', note: 'μ : coefficient de frottement (sans unité)' } ],
+    ] },
+    { t: 'tab', h: 'statique ou cinétique ?', full: true, lcol: true,
+      head: ['', 'Frottement **statique**', 'Frottement **cinétique**'],
+      rows: [
+        ['quand ?', 'l\'objet **ne glisse pas** encore', 'l\'objet **glisse**'],
+        ['valeur', 's\'ajuste pour empêcher le mouvement, jusqu\'à un maximum μ<sub>s</sub>F<sub>N</sub>', 'constante : μ<sub>c</sub>F<sub>N</sub>'],
+        ['comparaison', 'μ<sub>s</sub> > μ<sub>c</sub> : il est plus difficile de **démarrer** un objet que de le garder en mouvement', ''],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'facteurs', items: [
+          'La **nature des surfaces** (μ) et la **force normale**.',
+          'Pas l\'aire de contact (dans le modèle simple).',
+          'Lubrifiants, roulements à billes : diminuent μ.',
+        ] } ],
+      [ { t: 'list', h: 'frottement utile ou nuisible', items: [
+          'Utile : marcher, freiner, tenir un crayon, pneus d\'hiver.',
+          'Nuisible : usure, chaleur, perte d\'énergie dans les moteurs.',
+          'Résistance de l\'air : un frottement dans un fluide.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Une caisse de 40 kg repose sur le sol (μ<sub>s</sub> = 0,50 ; μ<sub>c</sub> = 0,35). Force minimale pour la faire bouger ? Force pour la garder à vitesse constante ?',
+      s: [ 'F<sub>N</sub> = 40 × 9,8 = 392 N', 'démarrer : F > μ<sub>s</sub>F<sub>N</sub> = 0,50 × 392 = 196 N', 'vitesse constante : F = μ<sub>c</sub>F<sub>N</sub> = 0,35 × 392 ≈ 137 N' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'On pousse cette caisse avec 100 N. Quelle est la force de frottement ?',
+      p: [ '100 N < 196 N : la caisse ne bouge pas. Le frottement **statique** vaut exactement **100 N** (il s\'ajuste), pas 196 N.' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Une personne appuie de 50 N vers le bas sur un livre de 2,0 kg posé sur une table. F<sub>N</sub> ?',
+      s: [ 'ΣF<sub>y</sub> = 0 : F<sub>N</sub> = mg + 50 = 19,6 + 50 ≈ 69,6 N' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Prendre F<sub>N</sub> = mg quand il y a une autre force verticale ou un plan incliné.',
+          'Utiliser μ<sub>s</sub>F<sub>N</sub> comme valeur du frottement statique même quand l\'objet ne bouge pas.',
+          'Donner une unité à μ.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'F<sub>N</sub> ⟂ surface ; F<sub>f</sub> ∥ surface.',
+          'F<sub>f</sub> = μF<sub>N</sub>.',
+          'μ<sub>s</sub> > μ<sub>c</sub>.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 16. Plan incliné ============ */
+'plan-incline': {
+  bulle: 'plan incliné',
+  sous: 'Le plan incliné',
+  recto: [
+    { t: 'cols', w: '1fr 1.05fr', c: [
+      [ { t: 'txt', p: [ 'Sur un plan incliné d\'angle θ, on choisit des axes **parallèle** et **perpendiculaire** au plan, puis on décompose le poids.' ] },
+        { t: 'form', h: 'composantes du poids', items: [
+          ['parallèle au plan', 'F<sub>g∥</sub> = mg sin θ (fait glisser vers le bas)'],
+          ['perpendiculaire', 'F<sub>g⟂</sub> = mg cos θ (presse l\'objet contre le plan)'],
+          ['normale', 'F<sub>N</sub> = mg cos θ'],
+          ['frottement', 'F<sub>f</sub> = μmg cos θ'],
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 260, h: 190, xmin: 0, xmax: 8.5, ymin: -0.3, ymax: 5.5, xlabels: [], ylabels: [], grille: 1,
+            segs: [ { a: [0, 0], b: [8, 4.62], cls: 'ln' }, { a: [0, 0], b: [8, 0], cls: 'ln' }, { a: [8, 0], b: [8, 4.62], cls: 'ln' } ],
+            fleches: [
+              { a: P, b: add(P, [0, -1], 2), pk: true, lbl: 'Fg', at: [4.15, 0.4] },
+              { a: P, b: add(P, [-s30, c30], 1.9), lbl: 'FN', at: [2.6, 4.1] },
+              { a: P, b: add(P, [-c30, -s30], 1), vert: true, dash: true, lbl: 'Fg∥', at: [2.2, 1.5] },
+              { a: P, b: add(P, [s30, -c30], 1.73), vert: true, dash: true, lbl: 'Fg⟂', at: [5.1, 0.9] },
+            ],
+            pts: [ { x: 1.2, y: 0.2, lbl: 'θ = 30°', dx: 2, dy: -3 } ],
+            alt: 'objet sur un plan incliné et décomposition du poids', cap: 'F<sub>g∥</sub> = mg sin θ ; F<sub>g⟂</sub> = mg cos θ' },
+        ] } ],
+    ] },
+    { t: 'form', h: 'accélération le long du plan (vers le bas)', items: [
+      ['sans frottement', 'a = g sin θ'],
+      ['avec frottement', 'a = g(sin θ − μ cos θ)'],
+      ['objet immobile', 'μ<sub>s</sub> ≥ tan θ'],
+    ] },
+    { t: 'list', h: 'à comprendre', items: [
+      'Plus θ est grand, plus F<sub>g∥</sub> est grande et plus F<sub>N</sub> est petite.',
+      'θ = 0° : plan horizontal (F<sub>N</sub> = mg) ; θ = 90° : chute libre (a = g).',
+      'La masse s\'annule dans a = g sin θ : sans frottement, tous les objets descendent avec la même accélération.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Une boîte de 10 kg glisse sur un plan incliné à 30° ; μ<sub>c</sub> = 0,20. Accélération ?',
+      s: [ 'F<sub>g∥</sub> = 10 × 9,8 × sin 30° = 49 N', 'F<sub>N</sub> = 10 × 9,8 × cos 30° ≈ 84,9 N', 'F<sub>f</sub> = 0,20 × 84,9 ≈ 17,0 N', 'ΣF = 49 − 17,0 = 32,0 N', 'a = {{32,0|10}} ≈ 3,2 m/s<sup>2</sup>' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Même plan, sans frottement. Accélération et vitesse après 2,0 m (départ du repos) ?',
+      s: [ 'a = 9,8 × sin 30° = 4,9 m/s<sup>2</sup>', 'v<sub>f</sub> = √(2 × 4,9 × 2,0) ≈ 4,4 m/s' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'À partir de quel angle un bloc (μ<sub>s</sub> = 0,40) commence-t-il à glisser ?',
+      s: [ 'tan θ = 0,40', 'θ = tan<sup>−1</sup>(0,40) ≈ 21,8°' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Inverser sin et cos : le long du plan, c\'est **sin**.',
+          'Écrire F<sub>N</sub> = mg sur un plan incliné.',
+          'Oublier que le frottement est vers le **haut** du plan quand l\'objet descend.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '∥ : mg sin θ ; ⟂ : mg cos θ.',
+          'a = g(sin θ − μ cos θ).',
+          'Axes parallèle / perpendiculaire au plan.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 17. Hooke ============ */
+hooke: {
+  bulle: 'loi de hooke',
+  sous: 'La loi de Hooke (force élastique)',
+  recto: [
+    { t: 'cols', w: '1.1fr 1fr', c: [
+      [ { t: 'txt', p: [
+          'Quand on étire ou comprime un ressort, il exerce une **force de rappel** qui tend à le ramener à sa **position de repos**. Tant qu\'on reste dans sa **limite d\'élasticité**, cette force est proportionnelle à la déformation.',
+        ] },
+        { t: 'box', f: 'F<sub>é</sub> = −kx', note: 'k : constante de rappel (N/m) · x : étirement ou compression (m) · le « − » : la force est opposée à la déformation' },
+        { t: 'list', items: [
+          'Grandeur de la force : F = kx.',
+          'Grand k : ressort **rigide** (difficile à étirer).',
+          'Au-delà de la **limite d\'élasticité**, le ressort se déforme de façon permanente : la loi ne s\'applique plus.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 230, h: 185, xmin: 0, xmax: 0.25, ymin: 0, ymax: 50, tick: 0.05, ticky: 10, grille: 0.05, nx: 'x (m)', ny: 'F (N)',
+            courbes: [ { fn: x => 200 * x, x1: 0.2 } ],
+            pts: [ { x: 0.1, y: 20, lbl: '(0,10 ; 20)', dx: 5, dy: 3 } ],
+            alt: 'force proportionnelle à l’étirement', cap: 'F-x : droite ; pente = k = 200 N/m' },
+        ] } ],
+    ] },
+    { t: 'list', h: 'mesurer k en laboratoire', items: [
+      'Suspendre des masses connues au ressort : F = mg.',
+      'Mesurer chaque allongement x (à partir de la longueur au repos !).',
+      'Tracer F en fonction de x : la **pente** de la droite est k.',
+    ] },
+    { t: 'list', h: 'applications', items: [
+      'Dynamomètre (peson), suspension d\'auto, trampoline, matelas, balance à ressort.',
+      'Énergie emmagasinée dans le ressort : E<sub>pé</sub> = ½kx<sup>2</sup> (voir la feuille sur l\'énergie élastique).',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Une masse de 2,0 kg suspendue étire un ressort de 9,8 cm. Constante k ?',
+      s: [ 'F = mg = 2,0 × 9,8 = 19,6 N', 'x = 0,098 m', 'k = {{F|x}} = {{19,6|0,098}} = 200 N/m' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Même ressort : de combien s\'étire-t-il avec une masse de 500 g ?',
+      s: [ 'F = 0,500 × 9,8 = 4,9 N', 'x = {{4,9|200}} = 0,0245 m ≈ 2,5 cm' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un ressort mesure 12 cm au repos et 15 cm quand on tire avec 6,0 N. k ?',
+      s: [ 'x = 15 − 12 = 3 cm = 0,03 m // allongement, pas la longueur', 'k = {{6,0|0,03}} = 200 N/m' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser la longueur totale au lieu de l\'allongement.',
+          'Laisser x en cm (k est en N/m).',
+          'Utiliser la masse (kg) au lieu de la force (N).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'F = kx (grandeur).',
+          'x = allongement en mètres.',
+          'Pente du graphique F-x = k.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+})();
+
+/* ---- 62-physique-energie.js ---- */
+/* Physique — Travail et énergie */
+Object.assign(DATA.feuilles['physique'], {
+
+/* ============ 18. Travail ============ */
+travail: {
+  bulle: 'le travail',
+  sous: 'Le travail d\'une force',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'En physique, une force effectue un **travail** quand elle **déplace** son point d\'application. Le travail est un **transfert d\'énergie**.',
+        ] },
+        { t: 'box', f: 'W = F d cos θ', note: 'W en joules (J) · F en N · d en m · θ = angle entre la force et le déplacement' },
+        { t: 'form', items: [
+          ['unité', '1 J = 1 N·m'],
+          ['force parallèle au déplacement', 'W = Fd (θ = 0°)'],
+        ] } ],
+      [ { t: 'tab', h: 'le signe du travail', full: true, lcol: true,
+          head: ['Angle θ', 'Travail', 'Exemple'],
+          rows: [
+            ['0°', 'positif, maximal', 'pousser un chariot vers l\'avant'],
+            ['entre 0° et 90°', 'positif', 'tirer un traîneau avec une corde inclinée'],
+            ['**90°**', '**nul**', 'porter un sac en marchant à l\'horizontale'],
+            ['180°', 'négatif', 'frottement, freinage'],
+          ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'pas de travail si…', items: [
+          'il n\'y a **pas de déplacement** (pousser un mur, tenir un sac immobile) ;',
+          'la force est **perpendiculaire** au déplacement (la force normale sur un objet qui glisse, le poids d\'un objet déplacé horizontalement).',
+        ] } ],
+      [ { t: 'list', h: 'cas utiles', items: [
+          'Soulever un objet à vitesse constante : W = mgh (F = mg).',
+          'Travail total = somme des travaux = travail de la force résultante.',
+          '**Théorème de l\'énergie cinétique** : W<sub>total</sub> = ΔE<sub>k</sub>.',
+          'Sur un graphique F-d, l\'**aire** sous la courbe = travail.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'On tire un traîneau sur 20 m avec une force de 50 N inclinée à 30° par rapport au sol.',
+      s: [ 'W = 50 × 20 × cos 30°', 'W ≈ 866 J' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'On soulève une boîte de 10 kg de 2,0 m à vitesse constante.',
+      s: [ 'F = mg = 98 N (vers le haut)', 'W = 98 × 2,0 = 196 J' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un élève porte son sac de 8 kg sur 50 m dans un corridor horizontal. Travail de la force qu\'il exerce pour le tenir ?',
+      p: [ 'La force est verticale, le déplacement horizontal : θ = 90° → **W = 0 J**. (Il se fatigue quand même : ses muscles dépensent de l\'énergie, mais le sac ne gagne aucune énergie.)' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Un frottement de 30 N agit sur une boîte qui glisse sur 4,0 m.',
+      s: [ 'W = 30 × 4,0 × cos 180° = −120 J // l\'énergie est retirée (chaleur)' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier cos θ quand la force est inclinée.',
+          'Dire qu\'on fait un travail en poussant un mur immobile.',
+          'Utiliser la masse au lieu de la force (mg !).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'W = Fd cos θ, en J.',
+          'Force ⟂ déplacement → W = 0.',
+          'W total = ΔE<sub>k</sub>.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 19. Puissance ============ */
+puissance: {
+  bulle: 'la puissance',
+  sous: 'La puissance mécanique',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [ 'La **puissance** est la **rapidité** à laquelle un travail est effectué (ou une énergie est transformée).' ] },
+        { t: 'box', f: 'P = {{W|Δt}} = {{E|Δt}}', note: 'P en watts (W) · W ou E en J · Δt en s' },
+        { t: 'form', h: 'autre forme (vitesse constante)', items: [
+          ['', 'P = Fv'],
+        ] } ],
+      [ { t: 'form', h: 'unités', items: [
+          ['watt', '1 W = 1 J/s'],
+          ['kilowatt', '1 kW = 1000 W'],
+          ['cheval-vapeur', '1 hp ≈ 746 W'],
+          ['kilowattheure', '1 kWh = 3,6 × 10<sup>6</sup> J (énergie, pas puissance !)'],
+        ] } ],
+    ] },
+    { t: 'list', h: 'à comprendre', items: [
+      'Deux élèves montent le même escalier : ils font le même travail, mais celui qui court développe une **puissance** plus grande.',
+      'Un moteur plus puissant fait le même travail en **moins de temps**.',
+      'Hydro-Québec facture l\'**énergie** en kWh : énergie = puissance × temps.',
+    ] },
+    { t: 'box', h: 'rendement', f: 'rendement = {{énergie (ou travail) utile|énergie consommée}} × 100 %' },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Une élève de 60 kg monte un escalier de 3,0 m de haut en 4,0 s. Puissance ?',
+      s: [ 'W = mgh = 60 × 9,8 × 3,0 = 1764 J', 'P = {{1764|4,0}} = 441 W' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Un moteur tire une charge avec une force de 2000 N à 1,5 m/s constante. Puissance ?',
+      s: [ 'P = Fv = 2000 × 1,5 = 3000 W = 3,0 kW' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Une chaufferette de 1500 W fonctionne pendant 2,0 h. Énergie consommée ?',
+      s: [ 'E = P × Δt = 1,5 kW × 2,0 h = 3,0 kWh', 'en joules : 1500 × 7200 = 1,08 × 10<sup>7</sup> J' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Un moteur consomme 500 J et soulève une charge qui gagne 400 J d\'énergie. Rendement ?',
+      s: [ '{{400|500}} × 100 % = 80 % // 100 J perdus en chaleur et en son' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Laisser le temps en minutes ou en heures dans P = W / Δt (en J/s).',
+          'Confondre kW (puissance) et kWh (énergie).',
+          'Rendement de plus de 100 % : impossible.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'P = W / Δt, en watts.',
+          'P = Fv.',
+          'Rendement = utile / consommée.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 20. Énergie cinétique ============ */
+'energie-cinetique': {
+  bulle: 'énergie cinétique',
+  sous: 'L\'énergie cinétique',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [ 'L\'**énergie cinétique** est l\'énergie que possède un objet parce qu\'il est **en mouvement**.' ] },
+        { t: 'box', f: 'E<sub>k</sub> = ½mv²', note: 'E<sub>k</sub> en J · m en kg · v en m/s' } ],
+      [ { t: 'list', h: 'à comprendre', items: [
+          'Masse × 2 → E<sub>k</sub> × 2.',
+          '**Vitesse × 2 → E<sub>k</sub> × 4** (à cause du carré).',
+          'E<sub>k</sub> est toujours **positive** (ou nulle au repos).',
+          'C\'est un **scalaire** : pas de direction.',
+        ] } ],
+    ] },
+    { t: 'box', h: 'théorème de l\'énergie cinétique', f: 'W<sub>total</sub> = ΔE<sub>k</sub> = ½mv<sub>f</sub>² − ½mv<sub>i</sub>²', note: 'Le travail total fait sur un objet change son énergie cinétique.' },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'formules dérivées', items: [
+          ['vitesse', 'v = √({{2E<sub>k</sub>|m}})'],
+          ['masse', 'm = {{2E<sub>k</sub>|v<sup>2</sup>}}'],
+        ] } ],
+      [ { t: 'list', h: 'sécurité routière', items: [
+          'À 100 km/h, une auto a environ 2 fois plus d\'énergie cinétique qu\'à 70 km/h (100<sup>2</sup> ÷ 70<sup>2</sup> ≈ 2).',
+          'La distance de freinage augmente donc beaucoup avec la vitesse.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Énergie cinétique d\'une auto de 1000 kg à 72 km/h.',
+      s: [ '72 km/h = 20 m/s', 'E<sub>k</sub> = ½ × 1000 × 20<sup>2</sup> = 200 000 J = 200 kJ' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Cette auto freine avec une force de frottement de 5000 N. Distance de freinage ?',
+      s: [ 'W<sub>frottement</sub> = ΔE<sub>k</sub> = 0 − 200 000 = −200 000 J', '−5000 × d = −200 000', 'd = 40 m' ],
+      p: [ 'À 144 km/h (vitesse × 2), E<sub>k</sub> × 4 → distance de freinage de 160 m !' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Une balle de 0,15 kg a 30 J d\'énergie cinétique. Vitesse ?',
+      s: [ 'v = √({{2 × 30|0,15}}) = √400 = 20 m/s' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier le carré de v.',
+          'Oublier le ½.',
+          'Utiliser des km/h ou des grammes.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'E<sub>k</sub> = ½mv<sup>2</sup>.',
+          'v × 2 → E<sub>k</sub> × 4.',
+          'W total = ΔE<sub>k</sub>.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 21. Énergie potentielle gravitationnelle ============ */
+'energie-gravitationnelle': {
+  bulle: 'énergie potentielle',
+  sous: 'L\'énergie potentielle gravitationnelle',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [ 'L\'**énergie potentielle gravitationnelle** est l\'énergie emmagasinée par un objet à cause de sa **position en hauteur** dans le champ gravitationnel.' ] },
+        { t: 'box', f: 'E<sub>p</sub> = mgh', note: 'm en kg · g = 9,8 N/kg · h en m (hauteur par rapport à un niveau de référence)' } ],
+      [ { t: 'list', h: 'le niveau de référence', items: [
+          'On choisit où h = 0 (le sol, la table, le bas d\'une pente).',
+          'La **valeur** de E<sub>p</sub> dépend de ce choix, mais la **variation** ΔE<sub>p</sub> = mgΔh, non.',
+          'Sous le niveau de référence, E<sub>p</sub> est négative.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'à comprendre', items: [
+      'Soulever un objet à vitesse constante : le travail fourni devient de l\'E<sub>p</sub> (W = mgh).',
+      'Quand l\'objet tombe, son E<sub>p</sub> se transforme en E<sub>k</sub>.',
+      'Le chemin suivi n\'a pas d\'importance : seule la **différence de hauteur** compte.',
+      'Exemples : eau d\'un barrage (centrale hydroélectrique), marteau levé, montagnes russes.',
+    ] },
+    { t: 'form', h: 'formules dérivées', items: [
+      ['hauteur', 'h = {{E<sub>p</sub>|mg}}'],
+      ['masse', 'm = {{E<sub>p</sub>|gh}}'],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un livre de 2,0 kg est sur une tablette à 1,5 m du sol.',
+      s: [ 'E<sub>p</sub> = 2,0 × 9,8 × 1,5 = 29,4 J // référence : le sol' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Même livre, en prenant comme référence une table de 0,75 m.',
+      s: [ 'h = 1,5 − 0,75 = 0,75 m', 'E<sub>p</sub> = 2,0 × 9,8 × 0,75 = 14,7 J' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un grimpeur de 70 kg monte de 300 m en altitude. Gain d\'énergie potentielle ?',
+      s: [ 'ΔE<sub>p</sub> = 70 × 9,8 × 300 ≈ 2,06 × 10<sup>5</sup> J' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'À quelle hauteur une balle de 0,50 kg a-t-elle 49 J d\'E<sub>p</sub> ?',
+      s: [ 'h = {{49|0,50 × 9,8}} = 10 m' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier de préciser le niveau de référence.',
+          'Utiliser la distance parcourue sur une pente au lieu de la **hauteur** verticale.',
+          'Utiliser g = 10 si ton enseignant exige 9,8.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'E<sub>p</sub> = mgh.',
+          'h vertical, depuis la référence.',
+          'Seule la différence de hauteur compte.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 22. Énergie potentielle élastique ============ */
+'energie-elastique': {
+  bulle: 'énergie élastique',
+  sous: 'L\'énergie potentielle élastique',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [ 'Un ressort (ou un élastique, un arc) déformé **emmagasine** de l\'énergie : l\'**énergie potentielle élastique**. Elle est libérée quand il reprend sa forme.' ] },
+        { t: 'box', f: 'E<sub>pé</sub> = ½kx²', note: 'k en N/m · x = étirement ou compression en m' } ],
+      [ { t: 'list', h: 'à comprendre', items: [
+          'Déformation × 2 → énergie × 4 (carré).',
+          'Étirer ou comprimer de la même distance donne la même énergie.',
+          'C\'est l\'**aire** du triangle sous le graphique F-x : ½ × x × kx.',
+          'Valable dans la limite d\'élasticité.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'transformations typiques', items: [
+      'Lance-pierre, arc : E<sub>pé</sub> → E<sub>k</sub> de la flèche.',
+      'Trampoline : E<sub>k</sub> → E<sub>pé</sub> → E<sub>k</sub> → E<sub>p</sub>.',
+      'Ressort vertical : échanges entre E<sub>k</sub>, E<sub>p</sub> et E<sub>pé</sub>.',
+    ] },
+    { t: 'form', h: 'formules dérivées', items: [
+      ['déformation', 'x = √({{2E<sub>pé</sub>|k}})'],
+      ['vitesse de lancement', '½kx<sup>2</sup> = ½mv<sup>2</sup> → v = x√({{k|m}}) (sans perte)'],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un ressort de k = 200 N/m est comprimé de 10 cm. Énergie emmagasinée ?',
+      s: [ 'x = 0,10 m', 'E<sub>pé</sub> = ½ × 200 × 0,10<sup>2</sup> = 1,0 J' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Ce ressort lance une bille de 20 g sur une surface sans frottement. Vitesse de la bille ?',
+      s: [ '½mv<sup>2</sup> = 1,0 J', 'v = √({{2 × 1,0|0,020}}) = √100 = 10 m/s' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Si on comprime le même ressort de 20 cm, que deviennent l\'énergie et la vitesse ?',
+      s: [ 'x × 2 → E × 4 = 4,0 J', 'v × 2 = 20 m/s // v proportionnelle à x' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Laisser x en cm.',
+          'Confondre la force (kx) et l\'énergie (½kx<sup>2</sup>).',
+          'Oublier que la masse du projectile n\'intervient pas dans E<sub>pé</sub>.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'E<sub>pé</sub> = ½kx<sup>2</sup>.',
+          'x × 2 → E × 4.',
+          'E<sub>pé</sub> → E<sub>k</sub> : ½kx<sup>2</sup> = ½mv<sup>2</sup>.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 23. Conservation ============ */
+conservation: {
+  bulle: 'conservation de l\'énergie',
+  sous: 'Conservation de l\'énergie mécanique et rendement',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'box', h: 'énergie mécanique', f: 'E<sub>m</sub> = E<sub>k</sub> + E<sub>p</sub> (+ E<sub>pé</sub>)' },
+        { t: 'box', h: 'sans frottement', f: 'E<sub>m initiale</sub> = E<sub>m finale</sub>', note: '½mv<sub>i</sub>² + mgh<sub>i</sub> = ½mv<sub>f</sub>² + mgh<sub>f</sub>' } ],
+      [ { t: 'list', h: 'la loi de conservation de l\'énergie', items: [
+          'L\'énergie ne se crée pas et ne se détruit pas : elle se **transforme**.',
+          'Sans frottement, l\'énergie mécanique reste **constante** : ce que l\'objet perd en E<sub>p</sub>, il le gagne en E<sub>k</sub>.',
+          'Avec frottement, une partie de l\'E<sub>m</sub> devient de l\'**énergie thermique** (chaleur) : E<sub>m</sub> diminue, mais l\'énergie totale est conservée.',
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'avec frottement', items: [
+          ['', 'E<sub>m i</sub> = E<sub>m f</sub> + énergie perdue'],
+          ['', 'énergie perdue = F<sub>f</sub> × d'],
+        ] },
+        { t: 'box', h: 'rendement', f: '{{énergie utile|énergie consommée}} × 100 %' } ],
+      [ { t: 'list', h: 'à comprendre', items: [
+          'La masse s\'annule quand on cherche une vitesse : v = √(2gh) pour une chute depuis le repos.',
+          'Au point le plus haut d\'un pendule : E<sub>p</sub> max, E<sub>k</sub> = 0 ; au point le plus bas : l\'inverse.',
+          'Aucune machine n\'a un rendement de 100 %.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'démarche', items: [
+      '1. Choisir un **niveau de référence** (h = 0) et deux positions (i et f).',
+      '2. Écrire E<sub>m</sub> à chaque position (E<sub>k</sub> + E<sub>p</sub> + E<sub>pé</sub>).',
+      '3. Égaler (ou ajouter l\'énergie perdue s\'il y a frottement), puis isoler.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un wagon de montagnes russes part du repos d\'une hauteur de 20 m (sans frottement). Vitesse en bas (h = 0) et à 5,0 m ?',
+      s: [ 'mgh<sub>i</sub> = ½mv<sup>2</sup> → v = √(2gh)', 'en bas : v = √(2 × 9,8 × 20) ≈ 19,8 m/s', 'à 5,0 m : v = √(2 × 9,8 × 15) ≈ 17,1 m/s // on a descendu 15 m' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Un pendule est lâché de 0,45 m au-dessus de son point le plus bas. Vitesse maximale ?',
+      s: [ 'v = √(2 × 9,8 × 0,45) ≈ 3,0 m/s' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un enfant de 30 kg descend une glissade de 3,0 m de haut et arrive en bas à 6,0 m/s. Énergie perdue et rendement ?',
+      s: [ 'E<sub>m i</sub> = 30 × 9,8 × 3,0 = 882 J', 'E<sub>m f</sub> = ½ × 30 × 6,0<sup>2</sup> = 540 J', 'perdue : 882 − 540 = 342 J // chaleur', 'rendement : {{540|882}} × 100 % ≈ 61 %' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier que la hauteur finale n\'est pas toujours 0.',
+          'Dire que l\'énergie « disparaît » avec le frottement : elle devient de la chaleur.',
+          'Croire que la vitesse en bas dépend de la masse (sans frottement, non).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'E<sub>m</sub> = E<sub>k</sub> + E<sub>p</sub> constante sans frottement.',
+          'v = √(2gh) depuis le repos.',
+          'Frottement → chaleur ; rendement < 100 %.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+
+/* ---- 63-physique-optique.js ---- */
+/* Physique — Optique et feuille Général */
+(function () {
+  const rad = d => d * Math.PI / 180;
+  const R3 = (a, b) => ({ a, b, cls: 'ln3' });
+  const axeOptique = { a: [0, 0], b: [1, 0], cls: 'ln', dash: true };
+
+Object.assign(DATA.feuilles['physique'], {
+
+/* ============ 24. Lumière ============ */
+lumiere: {
+  bulle: 'la lumière',
+  sous: 'La lumière et les rayons lumineux',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'propriétés de la lumière', items: [
+          'Elle se propage en **ligne droite** dans un milieu homogène (d\'où les ombres).',
+          'Elle n\'a pas besoin de matière : elle voyage dans le **vide**.',
+          'Sa vitesse dans le vide : **c = 3,00 × 10<sup>8</sup> m/s**. Elle est plus lente dans l\'eau, le verre…',
+          'Elle transporte de l\'**énergie**.',
+          'La lumière blanche est un mélange de toutes les couleurs (prisme, arc-en-ciel).',
+        ] } ],
+      [ { t: 'list', h: 'le modèle du rayon', items: [
+          'Un **rayon lumineux** est une droite fléchée qui indique le trajet de la lumière.',
+          '**Faisceau** : ensemble de rayons ; il peut être **parallèle**, **convergent** (les rayons se rapprochent) ou **divergent** (ils s\'éloignent).',
+          'Sources **primaires** (produisent la lumière : Soleil, ampoule) et **secondaires** (la réfléchissent : Lune, objets).',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'lumière et matière', full: true, lcol: true,
+      head: ['Milieu', 'Ce qui se passe', 'Exemple'],
+      rows: [
+        ['**transparent**', 'laisse passer la lumière ; on voit clairement à travers', 'verre, eau, air'],
+        ['**translucide**', 'laisse passer la lumière, mais en la diffusant', 'papier ciré, verre givré'],
+        ['**opaque**', 'bloque la lumière (absorbe ou réfléchit)', 'bois, métal, corps humain'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'ombres', items: [
+          '**Ombre** : zone qui ne reçoit aucune lumière de la source.',
+          '**Pénombre** : zone qui reçoit une partie de la lumière (source étendue).',
+          'Éclipses : la Lune ou la Terre fait de l\'ombre.',
+        ] } ],
+      [ { t: 'form', h: 'formules', items: [
+          ['vitesse', 'v = {{d|Δt}}'],
+          ['indice de réfraction', 'n = {{c|v}}'],
+          ['année-lumière', '≈ 9,46 × 10<sup>15</sup> m'],
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Le Soleil est à 1,5 × 10<sup>11</sup> m de la Terre. Temps pour que sa lumière nous parvienne ?',
+      s: [ 'Δt = {{1,5 × 10<sup>11</sup>|3,00 × 10<sup>8</sup>}} = 500 s', '500 s ≈ 8 min 20 s' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Vitesse de la lumière dans l\'eau (n = 1,33) ?',
+      s: [ 'v = {{c|n}} = {{3,00 × 10<sup>8</sup>|1,33}} ≈ 2,26 × 10<sup>8</sup> m/s' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Pourquoi voit-on un éclair avant d\'entendre le tonnerre ?',
+      p: [ 'La lumière (3 × 10<sup>8</sup> m/s) va près d\'un million de fois plus vite que le son (≈ 340 m/s). Chaque 3 s d\'écart correspond à environ 1 km de distance.' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Un poteau de 3,0 m fait une ombre de 4,0 m. Au même moment, un arbre fait une ombre de 12 m. Hauteur de l\'arbre ?',
+      s: [ 'triangles semblables (propagation rectiligne)', 'h = 3,0 × {{12|4,0}} = 9,0 m' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Croire que la lumière a besoin d\'air pour se propager.',
+          'Confondre translucide et transparent.',
+          'Oublier les puissances de 10 dans les calculs.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Propagation rectiligne.',
+          'c = 3,00 × 10<sup>8</sup> m/s.',
+          'n = c / v.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 25. Miroirs plans ============ */
+'miroirs-plans': {
+  bulle: 'réflexion et miroirs plans',
+  sous: 'La réflexion et les miroirs plans',
+  recto: [
+    { t: 'cols', w: '1.1fr 1fr', c: [
+      [ { t: 'list', h: 'les lois de la réflexion', items: [
+          '1. Le rayon incident, la **normale** et le rayon réfléchi sont dans le **même plan**.',
+          '2. L\'**angle d\'incidence** est égal à l\'**angle de réflexion** : θ<sub>i</sub> = θ<sub>r</sub>.',
+          'Les angles se mesurent **à partir de la normale** (droite perpendiculaire au miroir), pas à partir du miroir !',
+        ] },
+        { t: 'list', h: 'deux types de réflexion', items: [
+          '**Spéculaire** (régulière) : sur une surface lisse ; les rayons parallèles restent parallèles → on voit une image.',
+          '**Diffuse** : sur une surface rugueuse ; la lumière est renvoyée dans toutes les directions → on voit l\'objet, pas d\'image.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 230, h: 180, xmin: -3.5, xmax: 2.5, ymin: -0.5, ymax: 2.2, xlabels: [], ylabels: [], grille: 0.5,
+            segs: [ { a: [0, -0.4], b: [0, 2.1], cls: 'ln' }, R3([-2, 1.5], [0, 0.9]), R3([0, 0.9], [-3, 0]), { a: [0, 0.9], b: [2, 1.5], cls: 'ln3', dash: true } ],
+            fleches: [ { a: [-2, 0], b: [-2, 1.5], lbl: 'objet', at: [-2.4, 1.75] }, { a: [2, 0], b: [2, 1.5], pk: true, dash: true, lbl: 'image', at: [1.4, 1.8] } ],
+            pts: [ { x: -3, y: 0, lbl: 'œil', dx: -6, dy: 13 } ],
+            alt: 'image dans un miroir plan', cap: 'l\'image semble venir de derrière le miroir' },
+        ] } ],
+    ] },
+    { t: 'tab', h: 'caractéristiques de l\'image dans un miroir plan', full: true, lcol: true,
+      head: ['Caractéristique', 'Image'],
+      rows: [
+        ['nature', '**virtuelle** (on ne peut pas la capter sur un écran)'],
+        ['position', 'derrière le miroir, **à la même distance** que l\'objet'],
+        ['grandeur', '**même grandeur** que l\'objet'],
+        ['sens', '**droite** (à l\'endroit), mais **inversée gauche-droite**'],
+      ] },
+    { t: 'list', h: 'tracer l\'image', items: [
+      'Placer chaque point de l\'image **symétriquement** par rapport au miroir.',
+      'Pour tracer un rayon vu par l\'œil : relier l\'œil à l\'image ; la partie devant le miroir est réelle, celle derrière est en pointillé (prolongement).',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un rayon arrive sur un miroir en faisant un angle de 25° **avec le miroir**. Angle de réflexion ?',
+      s: [ 'angle d\'incidence (avec la normale) = 90° − 25° = 65°', 'angle de réflexion = 65°' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une personne se tient à 1,5 m d\'un miroir plan. Distance entre elle et son image ?',
+      s: [ 'image à 1,5 m derrière le miroir', 'distance = 1,5 + 1,5 = 3,0 m' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Elle recule de 0,5 m. De combien son image s\'éloigne-t-elle d\'elle ?',
+      s: [ 'nouvelle distance : 2 × 2,0 = 4,0 m', 'l\'écart augmente de 1,0 m' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Pourquoi le mot AMBULANCE est-il écrit à l\'envers sur le devant des ambulances ?',
+      p: [ 'Le miroir inverse gauche-droite : le conducteur devant le lit correctement « AMBULANCE » dans son rétroviseur.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Mesurer les angles à partir du miroir au lieu de la normale.',
+          'Placer l\'image sur le miroir.',
+          'Dire que l\'image est inversée haut-bas.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'θ<sub>i</sub> = θ<sub>r</sub> (depuis la normale).',
+          'Image virtuelle, symétrique, même grandeur.',
+          'Inversion gauche-droite.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 26. Miroirs courbes ============ */
+'miroirs-courbes': {
+  bulle: 'miroirs courbes',
+  sous: 'Les miroirs courbes : tracé des rayons et équations',
+  recto: [
+    { t: 'cols', w: '1fr 1.1fr', c: [
+      [ { t: 'list', h: 'vocabulaire', items: [
+          '**Concave** (creux, comme l\'intérieur d\'une cuillère) : **convergent**.',
+          '**Convexe** (bombé) : **divergent**.',
+          '**C** : centre de courbure · **F** : foyer · **S** : sommet.',
+          '**Distance focale** f = {{R|2}} (F est au milieu entre C et S).',
+        ] },
+        { t: 'list', h: 'les 3 rayons principaux (concave)', items: [
+          '1. Parallèle à l\'axe → se réfléchit en passant par **F**.',
+          '2. Passant par **F** → se réfléchit **parallèle** à l\'axe.',
+          '3. Passant par **C** → revient sur lui-même.',
+          'L\'image est au croisement des rayons réfléchis.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 275, h: 200, xmin: -7, xmax: 1, ymin: -2.5, ymax: 1.8, xlabels: [[-4, 'C'], [-2, 'F']], ylabels: [], grille: 1,
+            param: [ { px: y => -4 + Math.sqrt(16 - y * y), py: y => y, t0: -2.4, t1: 1.7, cls: 'ln' } ],
+            segs: [ R3([-6, 1], [0, 1]), R3([0, 1], [-3, -0.5]), R3([-6, 1], [0, -0.5]), R3([0, -0.5], [-3, -0.5]), R3([-6, 1], [0, -2]) ],
+            fleches: [ { a: [-6, 0], b: [-6, 1], lbl: 'objet', at: [-6.9, 1.35] }, { a: [-3, 0], b: [-3, -0.5], pk: true, lbl: 'image', at: [-3.3, -0.9] } ],
+            alt: 'tracé des rayons pour un miroir concave', cap: 'concave : objet au-delà de C → image réelle, inversée, réduite' },
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'équations', items: [
+          ['équation des miroirs', '{{1|f}} = {{1|d<sub>o</sub>}} + {{1|d<sub>i</sub>}}'],
+          ['grandissement', 'G = {{h<sub>i</sub>|h<sub>o</sub>}} = −{{d<sub>i</sub>|d<sub>o</sub>}}'],
+        ] },
+        { t: 'tab', h: 'conventions de signes', full: true, lcol: true,
+          head: ['', '+', '−'],
+          rows: [
+            ['f', 'concave', 'convexe'],
+            ['d<sub>i</sub>', 'image réelle (devant)', 'image virtuelle (derrière)'],
+            ['h<sub>i</sub>, G', 'image droite', 'image inversée'],
+          ] } ],
+      [ { t: 'tab', h: 'images d\'un miroir concave', full: true, lcol: true,
+          head: ['Objet', 'Image'],
+          rows: [
+            ['au-delà de C', 'réelle, inversée, réduite'],
+            ['sur C', 'réelle, inversée, même grandeur'],
+            ['entre C et F', 'réelle, inversée, agrandie'],
+            ['sur F', 'aucune image (rayons parallèles)'],
+            ['entre F et le miroir', 'virtuelle, droite, agrandie'],
+          ],
+          note: 'Miroir convexe : toujours virtuelle, droite, réduite (rétroviseurs, miroirs de sécurité).' } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Miroir concave, f = 10 cm. Objet de 4,0 cm à 30 cm du miroir.',
+      s: [ '{{1|d<sub>i</sub>}} = {{1|10}} − {{1|30}} = {{2|30}} → d<sub>i</sub> = 15 cm', 'G = −{{15|30}} = −0,5 → h<sub>i</sub> = −2,0 cm' ],
+      r: 'image réelle (d<sub>i</sub> > 0), inversée, réduite, à 15 cm devant le miroir' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Même miroir, objet à 5,0 cm (miroir grossissant de maquillage).',
+      s: [ '{{1|d<sub>i</sub>}} = {{1|10}} − {{1|5}} = −{{1|10}} → d<sub>i</sub> = −10 cm', 'G = −{{−10|5}} = +2' ],
+      r: 'image virtuelle, droite, 2 fois plus grande' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Miroir convexe, f = −15 cm, objet à 30 cm.',
+      s: [ '{{1|d<sub>i</sub>}} = −{{1|15}} − {{1|30}} = −{{3|30}} → d<sub>i</sub> = −10 cm', 'G = −{{−10|30}} = +{{1|3}}' ],
+      r: 'virtuelle, droite, réduite (3 fois plus petite)' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier le signe négatif de f pour un miroir convexe.',
+          'Oublier d\'inverser la fraction à la fin : on trouve {{1|d<sub>i</sub>}}, pas d<sub>i</sub>.',
+          'Confondre f et R (f = R ÷ 2).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '1/f = 1/d<sub>o</sub> + 1/d<sub>i</sub>.',
+          'G = −d<sub>i</sub>/d<sub>o</sub>.',
+          'd<sub>i</sub> > 0 : réelle ; G < 0 : inversée.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 27. Réfraction ============ */
+refraction: {
+  bulle: 'la réfraction',
+  sous: 'La réfraction et la loi de Snell-Descartes',
+  recto: [
+    { t: 'cols', w: '1.1fr 1fr', c: [
+      [ { t: 'txt', p: [ 'La **réfraction** est la **déviation** de la lumière quand elle passe d\'un milieu transparent à un autre, parce que sa **vitesse change**.' ] },
+        { t: 'box', f: 'n<sub>1</sub> sin θ<sub>1</sub> = n<sub>2</sub> sin θ<sub>2</sub>', note: 'angles mesurés à partir de la normale' },
+        { t: 'list', h: 'le sens de la déviation', items: [
+          'Vers un milieu **plus réfringent** (n plus grand, lumière plus lente) : le rayon **se rapproche** de la normale.',
+          'Vers un milieu **moins réfringent** : il **s\'éloigne** de la normale.',
+          'Incidence perpendiculaire (θ<sub>1</sub> = 0°) : aucune déviation.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 230, h: 210, xmin: -3, xmax: 3, ymin: -3, ymax: 3, xlabels: [], ylabels: [], grille: 0.5,
+            zones: [ { pts: [[-3, 0], [3, 0], [3, -3], [-3, -3]], cls: 'zone2' } ],
+            segs: [ { a: [-3, 0], b: [3, 0], cls: 'ln' }, { a: [0, -3], b: [0, 3], cls: 'ln', dash: true } ],
+            fleches: [
+              { a: [-3 * Math.sin(rad(40)), 3 * Math.cos(rad(40))], b: [0, 0], lbl: '40°', at: [-0.8, 2.3] },
+              { a: [0, 0], b: [2.8 * Math.sin(rad(28.9)), -2.8 * Math.cos(rad(28.9))], pk: true, lbl: '28,9°', at: [0.25, -2.2] },
+            ],
+            pts: [ { x: -2.9, y: 0.25, lbl: 'air (n = 1,00)', dx: 0, dy: -3 }, { x: -2.9, y: -0.3, lbl: 'eau (n = 1,33)', dx: 0, dy: 12 } ],
+            alt: 'rayon qui se rapproche de la normale en entrant dans l’eau', cap: 'air → eau : le rayon se rapproche de la normale' },
+        ] } ],
+    ] },
+    { t: 'tab', h: 'indices de réfraction', full: true,
+      head: ['vide', 'air', 'eau', 'verre', 'diamant'],
+      rows: [ ['1', '1,00', '1,33', '≈ 1,50', '2,42'] ],
+      note: 'n = c / v : plus n est grand, plus la lumière y est lente.' },
+    { t: 'list', h: 'phénomènes', items: [
+      'Une paille semble **cassée** dans un verre d\'eau ; le fond d\'une piscine paraît **moins profond**.',
+      '**Dispersion** : chaque couleur est déviée un peu différemment → prisme, arc-en-ciel.',
+      'Mirages : l\'air chaud au-dessus de la route dévie la lumière.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un rayon passe de l\'air à l\'eau avec un angle d\'incidence de 40°. Angle de réfraction ?',
+      s: [ '1,00 × sin 40° = 1,33 × sin θ<sub>2</sub>', 'sin θ<sub>2</sub> = {{0,643|1,33}} ≈ 0,483', 'θ<sub>2</sub> ≈ 28,9° // plus près de la normale ✓' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Un rayon sort du verre (n = 1,50) vers l\'air avec un angle de 30°.',
+      s: [ '1,50 × sin 30° = 1,00 × sin θ<sub>2</sub>', 'sin θ<sub>2</sub> = 0,75 → θ<sub>2</sub> ≈ 48,6° // s\'éloigne de la normale' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Dans un liquide inconnu, un rayon venant de l\'air à 50° est réfracté à 35°. Indice du liquide ?',
+      s: [ 'n<sub>2</sub> = {{1,00 × sin 50°|sin 35°}} = {{0,766|0,574}} ≈ 1,34' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Mesurer l\'angle à partir de la surface au lieu de la normale.',
+          'Calculatrice en radians.',
+          'Oublier de faire sin<sup>−1</sup> à la fin.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'n<sub>1</sub> sin θ<sub>1</sub> = n<sub>2</sub> sin θ<sub>2</sub>.',
+          'n ↑ → rayon vers la normale.',
+          'Angles depuis la normale.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 28. Réflexion totale interne ============ */
+'reflexion-totale': {
+  bulle: 'réflexion totale interne',
+  sous: 'La réflexion totale interne et l\'angle critique',
+  recto: [
+    { t: 'cols', w: '1fr 1.1fr', c: [
+      [ { t: 'txt', p: [ 'Quand la lumière passe d\'un milieu **plus réfringent** à un milieu **moins réfringent** (ex. eau → air), elle s\'éloigne de la normale. Si l\'angle d\'incidence est assez grand, elle ne sort plus : **toute** la lumière est réfléchie.' ] },
+        { t: 'box', h: 'angle critique', f: 'sin θ<sub>c</sub> = {{n<sub>2</sub>|n<sub>1</sub>}}', note: 'avec n<sub>1</sub> > n<sub>2</sub> (seulement dans ce sens !)' },
+        { t: 'list', items: [
+          'θ<sub>i</sub> < θ<sub>c</sub> : réfraction (et un peu de réflexion).',
+          'θ<sub>i</sub> = θ<sub>c</sub> : le rayon réfracté longe la surface (90°).',
+          'θ<sub>i</sub> > θ<sub>c</sub> : **réflexion totale interne**.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 260, h: 200, xmin: -0.5, xmax: 6, ymin: -2.8, ymax: 2.2, xlabels: [], ylabels: [], grille: 0.5,
+            zones: [ { pts: [[-0.5, 0], [6, 0], [6, -2.8], [-0.5, -2.8]], cls: 'zone2' } ],
+            segs: [ { a: [-0.5, 0], b: [6, 0], cls: 'ln' }, R3([0, -2.5], [1, 0]), R3([1, 0], [2.14, 2]), R3([0, -2.5], [2.85, 0]), { a: [2.85, 0], b: [4.6, 0.04], cls: 'ln2' }, R3([0, -2.5], [4, 0]), R3([4, 0], [6, -1.25]) ],
+            pts: [ { x: 0, y: -2.5, lbl: 'source', dx: 5, dy: 4 }, { x: 2.85, y: 0, lbl: 'θc', dx: -12, dy: -5, pk: true }, { x: 4, y: 0, lbl: 'réflexion totale', dx: -30, dy: -7 } ],
+            alt: 'trois rayons sortant de l’eau : réfracté, critique, totalement réfléchi', cap: 'eau → air : au-delà de θ<sub>c</sub> ≈ 48,8°, tout est réfléchi' },
+        ] } ],
+    ] },
+    { t: 'tab', h: 'angles critiques (vers l\'air)', full: true,
+      head: ['eau', 'verre (n = 1,50)', 'diamant'],
+      rows: [ ['48,8°', '41,8°', '24,4°'] ],
+      note: 'Le diamant a un très petit angle critique : la lumière y rebondit plusieurs fois avant de sortir, d\'où son éclat.' },
+    { t: 'list', h: 'applications', items: [
+      '**Fibre optique** : la lumière reste piégée dans le cœur de la fibre par réflexions totales successives (Internet, endoscopes médicaux).',
+      'Prismes de jumelles et de périscopes.',
+      'Brillance des diamants ; reflets vus sous l\'eau.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Angle critique pour la lumière qui passe de l\'eau (1,33) à l\'air.',
+      s: [ 'sin θ<sub>c</sub> = {{1,00|1,33}} ≈ 0,752', 'θ<sub>c</sub> ≈ 48,8°' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Un rayon dans le verre (n = 1,50) frappe la surface verre-air à 45°. Sort-il ?',
+      s: [ 'θ<sub>c</sub> = sin<sup>−1</sup>({{1,00|1,50}}) ≈ 41,8°', '45° > 41,8°' ], r: 'non : réflexion totale interne' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Peut-il y avoir réflexion totale quand la lumière passe de l\'air à l\'eau ?',
+      p: [ '**Non.** Elle va vers un milieu plus réfringent : le rayon se rapproche de la normale et peut toujours entrer. {{n<sub>2</sub>|n<sub>1</sub>}} serait plus grand que 1, ce qui est impossible pour un sinus.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Chercher un angle critique de l\'air vers l\'eau.',
+          'Inverser n<sub>1</sub> et n<sub>2</sub> dans la formule.',
+          'Oublier sin<sup>−1</sup>.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Seulement de n grand vers n petit.',
+          'sin θ<sub>c</sub> = n<sub>2</sub> / n<sub>1</sub>.',
+          'Fibre optique = réflexions totales.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 29. Lentilles : tracé ============ */
+'lentilles-trace': {
+  bulle: 'lentilles : tracé',
+  sous: 'Les lentilles : tracé des rayons',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'les deux types', items: [
+          '**Convergente** : plus épaisse au centre ; fait converger les rayons parallèles au **foyer image F\'**.',
+          '**Divergente** : plus mince au centre ; fait diverger les rayons, qui semblent venir du foyer **F** (côté objet).',
+          'Chaque lentille a deux foyers, de part et d\'autre, à la distance **f** du centre optique O.',
+        ] } ],
+      [ { t: 'list', h: 'les 3 rayons principaux (convergente)', items: [
+          '1. Parallèle à l\'axe → sort en passant par **F\'**.',
+          '2. Passant par le **centre optique** → n\'est pas dévié.',
+          '3. Passant par **F** → sort **parallèle** à l\'axe.',
+          'Divergente : le rayon parallèle sort comme s\'il venait de **F** (prolongement en pointillé).',
+        ] } ],
+    ] },
+    { t: 'fig', figs: [
+      { kind: 'plan', w: 330, h: 190, xmin: -4, xmax: 7, ymin: -2.6, ymax: 1.8, xlabels: [[-2, 'F'], [2, 'F′']], ylabels: [], grille: 1,
+        segs: [ { a: [0, -2.4], b: [0, 1.6], cls: 'ln' }, R3([-3, 1], [0, 1]), R3([0, 1], [6, -2]), R3([-3, 1], [6, -2]), R3([-3, 1], [0, -2]), R3([0, -2], [6, -2]) ],
+        fleches: [ { a: [-3, 0], b: [-3, 1], lbl: 'objet', at: [-3.9, 1.35] }, { a: [6, 0], b: [6, -2], pk: true, lbl: 'image', at: [6.1, -0.5] } ],
+        alt: 'tracé des rayons pour une lentille convergente', cap: '<b>convergente</b>, objet entre F et 2F : image réelle, inversée, agrandie' },
+      { kind: 'plan', w: 260, h: 190, xmin: -4.5, xmax: 3.5, ymin: -1.2, ymax: 2.8, xlabels: [[-2, 'F'], [2, 'F′']], ylabels: [], grille: 1,
+        segs: [ { a: [0, -1.1], b: [0, 2.7], cls: 'ln' }, R3([-4, 1], [0, 1]), R3([0, 1], [3, 2.5]), { a: [0, 1], b: [-2, 0], cls: 'ln3', dash: true }, R3([-4, 1], [3, -0.75]) ],
+        fleches: [ { a: [-4, 0], b: [-4, 1], lbl: 'objet', at: [-4.4, 1.3] }, { a: [-4 / 3, 0], b: [-4 / 3, 1 / 3], pk: true, lbl: 'image', at: [-1.2, 0.6] } ],
+        alt: 'tracé des rayons pour une lentille divergente', cap: '<b>divergente</b> : image virtuelle, droite, réduite' },
+    ] },
+    { t: 'tab', h: 'images d\'une lentille convergente', full: true, lcol: true,
+      head: ['Objet', 'Image', 'Application'],
+      rows: [
+        ['au-delà de 2F', 'réelle, inversée, réduite', 'appareil photo, œil'],
+        ['entre 2F et F', 'réelle, inversée, agrandie', 'projecteur'],
+        ['sur F', 'aucune (rayons parallèles)', 'phare'],
+        ['entre F et la lentille', 'virtuelle, droite, agrandie', 'loupe'],
+      ],
+      note: 'Lentille divergente : toujours virtuelle, droite, réduite.' },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Analyser le tracé convergent du recto (f = 2 carreaux, objet à 3 carreaux).',
+      s: [ 'rayon parallèle → passe par F\' (2, 0)', 'rayon par O → tout droit', 'rayon par F → ressort parallèle', 'croisement en (6 ; −2)' ],
+      r: 'image réelle (derrière la lentille), inversée, 2 fois plus grande' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Où placer un objet pour qu\'une lentille convergente serve de loupe ?',
+      p: [ 'Entre le foyer F et la lentille : l\'image est virtuelle, droite et agrandie. On la voit en regardant à travers la lentille.' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Comment reconnaître une lentille au toucher ou en regardant à travers ?',
+      p: [ 'Convergente : bords minces, grossit les objets proches. Divergente : bords épais, rapetisse toujours les objets.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre F et F\' : pour une convergente, le rayon parallèle passe par F\' (de l\'autre côté).',
+          'Dessiner une image réelle avec une lentille divergente.',
+          'Oublier les pointillés pour les prolongements (images virtuelles).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '3 rayons : parallèle, centre, foyer.',
+          'Convergente : souvent réelle ; loupe si l\'objet est près.',
+          'Divergente : virtuelle, droite, réduite.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 30. Lentilles : équation ============ */
+'lentilles-equation': {
+  bulle: 'lentilles : équations',
+  sous: 'Équation des lentilles minces, grandissement et dioptries',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'équations', items: [
+          ['lentilles minces', '{{1|f}} = {{1|d<sub>o</sub>}} + {{1|d<sub>i</sub>}}'],
+          ['grandissement', 'G = {{h<sub>i</sub>|h<sub>o</sub>}} = −{{d<sub>i</sub>|d<sub>o</sub>}}'],
+          ['puissance', 'P = {{1|f}}  (f en mètres, P en dioptries δ)'],
+        ] },
+        { t: 'list', h: 'lire le résultat', items: [
+          'd<sub>i</sub> > 0 : image **réelle**, de l\'autre côté de la lentille.',
+          'd<sub>i</sub> < 0 : image **virtuelle**, du même côté que l\'objet.',
+          'G < 0 : inversée · G > 0 : droite · |G| > 1 : agrandie.',
+        ] } ],
+      [ { t: 'tab', h: 'signes', full: true, lcol: true,
+          head: ['', '+', '−'],
+          rows: [
+            ['f et P', 'convergente', 'divergente'],
+            ['d<sub>o</sub>', 'objet réel (toujours ici)', '—'],
+            ['d<sub>i</sub>', 'image réelle', 'image virtuelle'],
+            ['h<sub>i</sub>', 'droite', 'inversée'],
+          ] },
+        { t: 'list', h: 'les dioptries', items: [
+          'Plus |P| est grand, plus la lentille dévie fortement la lumière.',
+          'Lunettes de +2 δ : convergentes, f = 0,5 m.',
+          'Lentilles accolées : P<sub>totale</sub> = P<sub>1</sub> + P<sub>2</sub>.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'démarche', items: [
+      '1. Identifier f (avec son signe) et d<sub>o</sub>.',
+      '2. {{1|d<sub>i</sub>}} = {{1|f}} − {{1|d<sub>o</sub>}}, puis **inverser**.',
+      '3. Calculer G, puis h<sub>i</sub> = G × h<sub>o</sub>.',
+      '4. Décrire l\'image : nature, sens, grandeur, position. Vérifier avec un tracé rapide.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Lentille convergente f = 20 cm ; objet de 3,0 cm à 60 cm.',
+      s: [ '{{1|d<sub>i</sub>}} = {{1|20}} − {{1|60}} = {{2|60}} → d<sub>i</sub> = 30 cm', 'G = −{{30|60}} = −0,5 → h<sub>i</sub> = −1,5 cm' ],
+      r: 'réelle, inversée, 2 fois plus petite, à 30 cm derrière la lentille' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Même lentille ; objet à 10 cm (loupe).',
+      s: [ '{{1|d<sub>i</sub>}} = {{1|20}} − {{1|10}} = −{{1|20}} → d<sub>i</sub> = −20 cm', 'G = −{{−20|10}} = +2' ],
+      r: 'virtuelle, droite, 2 fois plus grande' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Lentille divergente f = −20 cm ; objet à 30 cm.',
+      s: [ '{{1|d<sub>i</sub>}} = −{{1|20}} − {{1|30}} = −{{5|60}} → d<sub>i</sub> = −12 cm', 'G = −{{−12|30}} = +0,4' ],
+      r: 'virtuelle, droite, réduite' },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Puissance d\'une lentille de f = 25 cm ? d\'une lentille de f = −50 cm ?',
+      s: [ 'P = {{1|0,25 m}} = +4 δ', 'P = {{1|−0,50 m}} = −2 δ' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Calculer P avec f en cm.',
+          'Oublier le signe « − » de f pour une divergente.',
+          'Oublier d\'inverser 1/d<sub>i</sub>.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '1/f = 1/d<sub>o</sub> + 1/d<sub>i</sub>.',
+          'G = −d<sub>i</sub>/d<sub>o</sub>.',
+          'P = 1/f (m) en dioptries.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 31. Œil et instruments ============ */
+oeil: {
+  bulle: 'l\'œil et les instruments',
+  sous: 'L\'œil et les instruments d\'optique',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'tab', h: 'les parties de l\'œil', full: true, lcol: true,
+          head: ['Partie', 'Rôle'],
+          rows: [
+            ['**cornée**', 'surface transparente bombée : fait la plus grande partie de la convergence'],
+            ['**iris** et **pupille**', 'l\'iris règle l\'ouverture de la pupille selon la lumière'],
+            ['**cristallin**', 'lentille **convergente** souple : fait la mise au point'],
+            ['**rétine**', 'écran où se forme l\'image (réelle, inversée) ; cellules sensibles à la lumière'],
+            ['**nerf optique**', 'transmet l\'information au cerveau, qui « redresse » l\'image'],
+          ] },
+        { t: 'list', h: 'l\'accommodation', items: [
+          'Pour voir de près, les muscles bombent le **cristallin** : sa distance focale diminue (sa puissance augmente).',
+          'Punctum proximum : point le plus proche vu net (≈ 25 cm chez un jeune adulte).',
+        ] } ],
+      [ { t: 'tab', h: 'défauts de la vision', full: true, lcol: true,
+          head: ['Défaut', 'Problème', 'Correction'],
+          rows: [
+            ['**myopie**', 'voit mal **de loin** ; image formée **avant** la rétine (œil trop convergent)', 'lentille **divergente**'],
+            ['**hypermétropie**', 'voit mal **de près** ; image **derrière** la rétine', 'lentille **convergente**'],
+            ['**presbytie**', 'cristallin moins souple avec l\'âge : difficulté de près', 'lentille convergente (lunettes de lecture)'],
+            ['**astigmatisme**', 'cornée irrégulière : vision floue ou déformée', 'lentille cylindrique'],
+          ] } ],
+    ] },
+    { t: 'tab', h: 'instruments d\'optique', full: true, lcol: true,
+      head: ['Instrument', 'Principe'],
+      rows: [
+        ['**loupe**', 'une lentille convergente ; objet entre F et la lentille → image virtuelle agrandie'],
+        ['**appareil photo**', 'lentille convergente qui forme une image réelle, inversée, réduite sur le capteur'],
+        ['**microscope**', 'deux lentilles convergentes : l\'objectif forme une image réelle agrandie, l\'oculaire l\'agrandit encore (comme une loupe)'],
+        ['**lunette astronomique**', 'objectif de grande distance focale + oculaire'],
+        ['**télescope**', 'miroir concave pour capter la lumière + oculaire'],
+        ['**projecteur**', 'objet entre F et 2F → image réelle agrandie sur l\'écran'],
+      ],
+      note: 'Grossissement d\'un microscope ≈ grossissement de l\'objectif × grossissement de l\'oculaire.' },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Une personne myope voit net jusqu\'à 2,0 m seulement. Quelle lentille lui faut-il ?',
+      s: [ 'lentille divergente dont le foyer est à son point éloigné', 'f = −2,0 m → P = {{1|−2,0}} = −0,5 δ' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Pourquoi l\'image sur la rétine est-elle inversée, alors qu\'on voit le monde à l\'endroit ?',
+      p: [ 'L\'œil agit comme une lentille convergente avec un objet très éloigné (au-delà de 2F) : l\'image est réelle et inversée. C\'est le **cerveau** qui l\'interprète à l\'endroit.' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un microscope a un objectif × 40 et un oculaire × 10. Grossissement total ?',
+      s: [ '40 × 10 = 400 fois' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Une personne a besoin de lunettes de +2,5 δ pour lire. Défaut probable ?',
+      p: [ 'P > 0 → lentille **convergente** : hypermétropie ou presbytie (difficulté à voir de près).' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Corriger la myopie avec une lentille convergente (c\'est divergente).',
+          'Dire que la pupille fait la mise au point (c\'est le cristallin).',
+          'Additionner les grossissements d\'un microscope au lieu de les multiplier.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Cristallin = lentille convergente qui accommode.',
+          'Myopie → divergente ; hypermétropie → convergente.',
+          'Image sur la rétine : réelle, inversée.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ GÉNÉRAL ============ */
+general: {
+  bulle: 'physique : tout en 1',
+  sous: 'Résumé de l\'année — Physique, secondaire 5',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'cinématique', items: [
+          ['vitesse', 'v = Δx / Δt ; km/h ÷ 3,6 = m/s'],
+          ['accélération', 'a = Δv / Δt'],
+          ['MRU', 'x<sub>f</sub> = x<sub>i</sub> + vΔt'],
+          ['MRUA', 'v<sub>f</sub> = v<sub>i</sub> + aΔt'],
+          ['', 'Δx = v<sub>i</sub>Δt + ½aΔt<sup>2</sup>'],
+          ['', 'v<sub>f</sub><sup>2</sup> = v<sub>i</sub><sup>2</sup> + 2aΔx'],
+          ['chute libre', 'a = −9,8 m/s<sup>2</sup> (haut +)'],
+          ['projectile', 'x : MRU ; y : chute libre ; même Δt'],
+          ['graphiques', 'x-t : pente = v · v-t : pente = a, aire = Δx'],
+        ] } ],
+      [ { t: 'form', h: 'dynamique', items: [
+          ['Newton 1', 'ΣF = 0 → repos ou MRU'],
+          ['Newton 2', 'ΣF = ma'],
+          ['Newton 3', 'F<sub>A→B</sub> = −F<sub>B→A</sub>'],
+          ['poids', 'F<sub>g</sub> = mg ; g = 9,8 N/kg'],
+          ['gravitation', 'F = Gm<sub>1</sub>m<sub>2</sub> / d<sup>2</sup>'],
+          ['frottement', 'F<sub>f</sub> = μF<sub>N</sub>'],
+          ['plan incliné', 'mg sin θ (∥) ; mg cos θ (⟂)'],
+          ['Hooke', 'F = kx'],
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'énergie', items: [
+          ['travail', 'W = Fd cos θ'],
+          ['puissance', 'P = W / Δt'],
+          ['cinétique', 'E<sub>k</sub> = ½mv<sup>2</sup>'],
+          ['potentielle', 'E<sub>p</sub> = mgh'],
+          ['élastique', 'E<sub>pé</sub> = ½kx<sup>2</sup>'],
+          ['conservation', 'E<sub>m i</sub> = E<sub>m f</sub> (sans frottement)'],
+          ['rendement', 'utile / consommée × 100 %'],
+        ] } ],
+      [ { t: 'form', h: 'optique', items: [
+          ['réflexion', 'θ<sub>i</sub> = θ<sub>r</sub> (depuis la normale)'],
+          ['indice', 'n = c / v ; c = 3,00 × 10<sup>8</sup> m/s'],
+          ['Snell-Descartes', 'n<sub>1</sub> sin θ<sub>1</sub> = n<sub>2</sub> sin θ<sub>2</sub>'],
+          ['angle critique', 'sin θ<sub>c</sub> = n<sub>2</sub> / n<sub>1</sub>'],
+          ['miroirs, lentilles', '1/f = 1/d<sub>o</sub> + 1/d<sub>i</sub>'],
+          ['grandissement', 'G = −d<sub>i</sub>/d<sub>o</sub>'],
+          ['puissance', 'P = 1/f (m), en δ'],
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'MRUA —', q: '25 m/s → arrêt sur 50 m', s: [ 'a = −625 / 100 = −6,25 m/s<sup>2</sup>' ] },
+        { t: 'ex', h: 'Chute —', q: 'lâché de 45 m', s: [ 'Δt ≈ 3,0 s ; v ≈ 29,7 m/s' ] },
+        { t: 'ex', h: 'Projectile —', q: '20 m/s à 30°', s: [ 'portée ≈ 35,3 m ; h<sub>max</sub> ≈ 5,1 m' ] },
+        { t: 'ex', h: 'Newton —', q: '100 N sur 20 kg, μ = 0,30', s: [ 'a = (100 − 58,8) / 20 ≈ 2,1 m/s<sup>2</sup>' ] } ],
+      [ { t: 'ex', h: 'Plan incliné —', q: '30°, μ = 0,20', s: [ 'a = 9,8(sin 30° − 0,20 cos 30°) ≈ 3,2 m/s<sup>2</sup>' ] },
+        { t: 'ex', h: 'Énergie —', q: 'chute de 20 m depuis le repos', s: [ 'v = √(2gh) ≈ 19,8 m/s' ] },
+        { t: 'ex', h: 'Réfraction —', q: 'air → eau à 40°', s: [ 'θ<sub>2</sub> ≈ 28,9°' ] },
+        { t: 'ex', h: 'Lentille —', q: 'f = 20 cm, d<sub>o</sub> = 60 cm', s: [ 'd<sub>i</sub> = 30 cm ; G = −0,5' ] } ],
+    ] },
+    { t: 'pieges', items: [
+      'Unités : m, s, kg, N, m/s (convertir km/h et cm) ; calculatrice en degrés.',
+      'Distance ≠ déplacement ; masse (kg) ≠ poids (N).',
+      'Utiliser une seule force au lieu de la résultante dans ΣF = ma.',
+      'Plan incliné : sin pour la composante parallèle ; F<sub>N</sub> ≠ mg.',
+      'Oublier le carré de v dans E<sub>k</sub> ; oublier cos θ dans W.',
+      'Angles en optique mesurés depuis la **normale** ; signes de f et de d<sub>i</sub>.',
+    ] },
+    { t: 'retenir', items: [
+      'Toujours : schéma (DCL, tracé de rayons), liste des données, formule, unités.',
+      'Choisir un sens positif et le garder.',
+      'L\'énergie se conserve : elle se transforme, notamment en chaleur avec le frottement.',
+      'Vérifier le bon sens physique de chaque réponse (ordre de grandeur, signe).',
+    ] },
+  ],
+},
+
+});
+})();
+
 </script>
 <script>
 /* =========================================================
