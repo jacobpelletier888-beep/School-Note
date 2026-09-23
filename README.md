@@ -38,4 +38,4 @@ Réglages : format Lettre, marges « Aucune », « Graphiques d'arrière-plan »
 - [x] Chimie (Général + 28 concepts)
 - [x] Physique (Général + 31 concepts)
 - [x] Monde contemporain (Général + 14 feuilles)
-- [ ] Éducation financière
+- [x] Éducation financière (Général + 20 concepts)
