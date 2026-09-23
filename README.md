@@ -18,6 +18,11 @@ node tests/verif-pages.mjs          # vérifie toutes les feuilles
 node tests/verif-pages.mjs math-cst # vérifie une seule matière
 ```
 
+## Héberger avec GitHub Pages
+
+`node build.mjs` génère aussi `index.html` à la racine du dépôt.
+Dans Settings → Pages : Source « Deploy from a branch », branche `claude/sec5-study-app-quebec-rsj109`, dossier `/ (root)`, puis Save.
+
 ## Imprimer
 
 Ouvrir `dist/school-note-imprimable.html` dans un navigateur, choisir une feuille, cliquer sur « Imprimer ».

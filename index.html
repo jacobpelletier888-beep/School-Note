@@ -1,0 +1,2870 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>Notes de sec 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Patrick+Hand&display=swap">
+<style>
+/* ---------- Jetons : interface (suit le thème) ---------- */
+:root {
+  --bg: #f2f3f6;
+  --bg-grid: #e2e5eb;
+  --surface: #ffffff;
+  --ink: #25242c;
+  --muted: #66656f;
+  --line: #d5d6de;
+  --accent: #c93d62;
+  --accent-soft: #fbe1e8;
+  --ok: #2f7d57;
+  --ok-soft: #dcf1e5;
+  --wait: #8a6d10;
+  --wait-soft: #fbf0c8;
+  --shadow: 0 1px 2px rgba(30, 20, 40, .08), 0 6px 18px rgba(30, 20, 40, .08);
+  /* papier : toujours une feuille blanche, peu importe le thème */
+  --paper: #ffffff;
+  --paper-grid: #e4e7ec;
+  --paper-ink: #26252d;
+  --paper-rule: #8e8c98;
+  --paper-pink: #cc3f64;
+  --paper-pink-soft: #fde6ec;
+  --paper-hl: #fff09c;
+  --paper-note: #fff8d6;
+  --hand: "Patrick Hand", "Segoe Print", "Comic Sans MS", "Chalkboard SE", cursive;
+  --bubble: "Fredoka", "Arial Rounded MT Bold", "Varela Round", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #16161b;
+    --bg-grid: #212129;
+    --surface: #202028;
+    --ink: #ecebf2;
+    --muted: #a3a2ae;
+    --line: #34343f;
+    --accent: #f27a99;
+    --accent-soft: #3a2029;
+    --ok: #7fd3a6;
+    --ok-soft: #1c3328;
+    --wait: #e8c860;
+    --wait-soft: #3a3217;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 22px rgba(0, 0, 0, .35);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #16161b;
+  --bg-grid: #212129;
+  --surface: #202028;
+  --ink: #ecebf2;
+  --muted: #a3a2ae;
+  --line: #34343f;
+  --accent: #f27a99;
+  --accent-soft: #3a2029;
+  --ok: #7fd3a6;
+  --ok-soft: #1c3328;
+  --wait: #e8c860;
+  --wait-soft: #3a3217;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 22px rgba(0, 0, 0, .35);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font-family: var(--hand);
+  font-size: 18px;
+  line-height: 1.35;
+}
+button, a { font-family: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* ---------- Barre du haut ---------- */
+.topbar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-in {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+}
+.brand { font-family: var(--bubble); font-weight: 600; color: var(--accent); font-size: 19px; letter-spacing: .01em; }
+.crumb { color: var(--muted); font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1; }
+.btn {
+  appearance: none;
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 5px 14px 4px;
+  font-size: 18px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--accent-soft); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(1.06); }
+.btn svg { width: 16px; height: 16px; }
+
+main { max-width: 900px; margin: 0 auto; padding-block: 20px 60px; padding-inline: 16px; }
+
+/* ---------- Titres bulles (interface) ---------- */
+.app-title {
+  font-family: var(--bubble);
+  font-weight: 600;
+  font-size: clamp(34px, 8vw, 54px);
+  line-height: 1.05;
+  margin: 8px 0 4px;
+  color: var(--accent-soft);
+  -webkit-text-stroke: 2px var(--accent);
+  paint-order: stroke fill;
+  text-wrap: balance;
+}
+.lede { color: var(--muted); margin: 0 0 20px; max-width: 60ch; }
+
+/* ---------- Accueil ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+.tile {
+  position: relative;
+  text-align: left;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 22px 16px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .12s ease, box-shadow .12s ease;
+  font-size: 18px;
+}
+.tile:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--ink); }
+.tile:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+.tile .tab {
+  position: absolute;
+  top: -2px;
+  left: 16px;
+  width: 54px;
+  height: 10px;
+  border: 2px solid var(--ink);
+  border-top: 0;
+  border-radius: 0 0 6px 6px;
+  background: var(--tab);
+}
+.tile .name { font-family: var(--bubble); font-weight: 600; font-size: 22px; line-height: 1.1; }
+.tile .meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: var(--muted); font-size: 16px; }
+.chip {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 1;
+  padding: 5px 9px 4px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.wait { background: var(--wait-soft); color: var(--wait); }
+.bar { height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+
+/* ---------- Liste des concepts ---------- */
+.general-card {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-bottom: 22px;
+}
+.general-card:hover { filter: brightness(1.03); }
+.general-card .gname { font-family: var(--bubble); font-weight: 600; font-size: 24px; color: var(--accent); }
+.general-card .gtext { flex: 1; min-width: 0; }
+.general-card .gsub { color: var(--muted); font-size: 16px; }
+.sec-name {
+  font-family: var(--bubble);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 22px 0 8px;
+}
+.clist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.crow {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 18px;
+}
+.crow:hover { border-color: var(--ink); }
+.crow .num {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1.5px dashed var(--muted);
+  display: grid; place-items: center;
+  font-size: 15px; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.crow.done .num { border-style: solid; border-color: var(--ok); color: var(--ok); }
+.crow.todo .ctitle { color: var(--muted); }
+
+/* ---------- Écran feuille ---------- */
+.sheet-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.print-hint { color: var(--muted); font-size: 15px; margin: 0 0 14px; }
+.print-note {
+  background: var(--wait-soft);
+  color: var(--ink);
+  border: 1.5px solid var(--wait);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 16px;
+  margin: 0 0 16px;
+}
+.side-label {
+  font-family: var(--bubble);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--accent);
+  margin: 18px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.side-label::after { content: ""; flex: 1; border-top: 2px dashed var(--line); }
+.soon {
+  background: var(--surface);
+  border: 2px dashed var(--line);
+  border-radius: 16px;
+  padding: 40px 20px;
+  text-align: center;
+}
+.soon .app-title { font-size: clamp(28px, 6vw, 40px); }
+
+/* =========================================================
+   LA FEUILLE (format lettre 8,5 x 11 po)
+   ========================================================= */
+.page {
+  --pad-x: 0.42in;
+  width: 8.5in;
+  height: 11in;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--paper-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+  background-size: 0.25in 0.25in;
+  background-position: -1px -1px;
+  color: var(--paper-ink);
+  font-family: var(--hand);
+  font-size: 15.6px;
+  line-height: 1.26;
+  padding: 0.3in var(--pad-x) 0.24in;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 4px rgba(0,0,0,.08), 0 12px 30px rgba(0,0,0,.12);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.page a { color: var(--paper-pink); }
+.p-head { display: flex; align-items: center; gap: 12px; }
+.corner { flex: 0 0 auto; width: 104px; display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+.corner .tag { color: var(--paper-pink); font-size: 15px; line-height: 1; transform: rotate(-4deg); margin-left: 4px; }
+.corner .tag.b { font-size: 12.5px; opacity: .8; margin-top: 2px; }
+.corner svg { width: 98px; height: 30px; display: block; margin: 2px 0; }
+.bubble {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+  font-family: var(--bubble);
+  font-weight: 600;
+  line-height: 1.02;
+  color: #fff3f6;
+  -webkit-text-stroke: 1.8px var(--paper-pink);
+  paint-order: stroke fill;
+  text-shadow: 2px 2px 0 #f5b6c7;
+  letter-spacing: .01em;
+  text-wrap: balance;
+}
+.p-sub { text-align: center; font-size: 15.5px; color: #55535e; margin: 2px 0 2px; }
+.p-body { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+.p-foot {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  font-size: 13px; color: #6f6d78;
+  border-top: 2px dashed var(--paper-rule);
+  padding-top: 4px;
+}
+.p-foot a { font-size: 14px; }
+
+/* blocs de premier niveau séparés par un pointillé, comme dans un cahier */
+.blk { padding: 7px 0 8px; }
+.blk + .blk { border-top: 2px dashed var(--paper-rule); }
+.p-body > .blk:first-child { border-top: 2px dashed var(--paper-rule); }
+.blk h3 {
+  font-family: var(--hand);
+  font-weight: 400;
+  font-size: 1.25em;
+  margin: 0 0 3px;
+  line-height: 1.15;
+}
+.blk h3 span {
+  background: linear-gradient(transparent 38%, var(--paper-hl) 38%, var(--paper-hl) 92%, transparent 92%);
+  padding: 0 3px;
+}
+.blk p { margin: 0 0 4px; }
+.blk p:last-child { margin-bottom: 0; }
+.kw {
+  font-weight: 700;
+  background: linear-gradient(transparent 30%, var(--paper-hl) 30%, var(--paper-hl) 94%, transparent 94%);
+  padding: 0 2px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.pk { color: var(--paper-pink); }
+.fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; line-height: 1.02; margin: 0 2px; font-size: .92em; }
+.fr > span:first-child { border-bottom: 1.4px solid currentColor; padding: 0 2px; }
+.fr > span:last-child { padding: 0 2px; }
+sup, sub { font-size: .72em; line-height: 0; }
+ul.hl { margin: 0; padding-left: 16px; }
+ul.hl li { margin: 1px 0; }
+ul.hl li::marker { content: "•  "; color: var(--paper-pink); }
+
+.cols { display: grid; gap: 0; }
+.cols > .col { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.cols > .col + .col { border-left: 2px dashed var(--paper-rule); padding-left: 12px; margin-left: 12px; }
+.cols .blk { padding: 0; border: 0 !important; }
+
+.form { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-items: baseline; }
+.form .fl { color: #4f4d58; }
+.form .fv { font-size: 1.06em; }
+.box {
+  border: 2px solid var(--paper-pink);
+  background: var(--paper-pink-soft);
+  border-radius: 10px;
+  padding: 4px 12px;
+  display: inline-block;
+  font-size: 1.09em;
+}
+.center { text-align: center; }
+
+table.tab { border-collapse: collapse; font-size: .96em; margin: 2px 0; }
+table.tab th, table.tab td { border: 1.4px solid #6e6c77; padding: 1px 7px; text-align: center; background: rgba(255,255,255,.75); }
+table.tab th { font-weight: 700; background: var(--paper-note); }
+table.tab td.l, table.tab th.l { text-align: left; }
+.tabwrap { overflow-x: auto; }
+.note { font-size: .9em; color: #5d5b66; }
+
+/* exemples */
+.ex { display: grid; grid-template-columns: minmax(0, 1fr); gap: 3px 16px; }
+.ex.has-fig { grid-template-columns: minmax(0, 1fr) auto; }
+.ex .fig { grid-row: span 3; align-self: start; }
+.ex-h { font-weight: 700; color: var(--paper-pink); margin-right: 4px; }
+.steps {
+  display: grid;
+  grid-template-columns: max-content auto max-content minmax(0, 1fr);
+  gap: 0 6px;
+  align-items: baseline;
+  font-size: 1.06em;
+  margin: 2px 0 0 10px;
+}
+.steps .l { text-align: right; }
+.steps .o { text-align: center; }
+.steps .full { grid-column: 1 / 4; }
+.steps .c { color: var(--paper-pink); font-size: .88em; padding-left: 8px; }
+.rep { margin-top: 2px; }
+.rep b { background: var(--paper-hl); padding: 0 4px; }
+
+/* figures */
+.fig { text-align: center; }
+.fig svg { display: block; margin: 0 auto; max-width: 100%; height: auto; overflow: visible; }
+.fig .cap { font-size: .8em; color: #5d5b66; }
+.figs { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: center; align-items: flex-start; }
+svg .ax { stroke: #3e3c47; stroke-width: 1.3; }
+svg .gd { stroke: #d6d9df; stroke-width: 1; }
+svg .tk { font-size: 10.5px; fill: #55535e; font-family: var(--hand); }
+svg .ln { stroke: #2d6fa8; stroke-width: 2; fill: none; }
+svg .ln2 { stroke: var(--paper-pink); stroke-width: 2; fill: none; }
+svg .ln3 { stroke: #2f8a5b; stroke-width: 2; fill: none; }
+svg .dash { stroke-dasharray: 6 4; }
+svg .zone { fill: rgba(250, 214, 80, .38); stroke: none; }
+svg .zone2 { fill: rgba(204, 63, 100, .14); stroke: none; }
+svg .pt { fill: #26252d; }
+svg .pt.open { fill: #fff; stroke: #26252d; stroke-width: 1.5; }
+svg .lb { font-size: 13px; fill: #26252d; font-family: var(--hand); }
+svg .lb.pk { fill: var(--paper-pink); }
+svg .edge { stroke: #3e3c47; stroke-width: 1.8; fill: none; }
+svg .edge.hot { stroke: var(--paper-pink); stroke-width: 3.2; }
+svg .edge.cold { stroke: #b5b3bd; stroke-dasharray: 4 4; }
+svg .node { fill: #fff; stroke: #26252d; stroke-width: 1.8; }
+svg .nlab { font-size: 13px; fill: #26252d; font-family: var(--hand); text-anchor: middle; dominant-baseline: central; }
+svg .w { font-size: 12px; fill: #26252d; font-family: var(--hand); text-anchor: middle; dominant-baseline: central; }
+svg .wbg { fill: #fff; }
+
+/* pièges et à retenir */
+.pieges h3 span { background: linear-gradient(transparent 38%, var(--paper-pink-soft) 38%, var(--paper-pink-soft) 92%, transparent 92%); }
+.pieges ul { margin: 0; padding-left: 18px; }
+.pieges li { margin: 1px 0; }
+.pieges li::marker { content: "✗  "; color: var(--paper-pink); font-weight: 700; }
+.retenir {
+  position: relative;
+  background: var(--paper-note);
+  border: 1.6px solid #e0c95c;
+  border-radius: 4px;
+  padding: 10px 14px 7px;
+  margin-top: 6px;
+  transform: rotate(-.4deg);
+}
+.retenir::before {
+  content: "";
+  position: absolute;
+  top: -8px; left: 50%;
+  width: 80px; height: 16px;
+  margin-left: -40px;
+  background: rgba(244, 170, 190, .6);
+  transform: rotate(-3deg);
+}
+.retenir h3 { text-align: center; }
+.retenir ul { margin: 0; padding-left: 18px; }
+.retenir li::marker { content: "★  "; color: #c9a21a; }
+.blk.retenir + .blk, .blk + .blk.retenir { border-top: 0; }
+
+/* ---------- Téléphone : la feuille se replie en largeur ---------- */
+@media screen and (max-width: 880px) {
+  .page {
+    width: 100%;
+    height: auto;
+    --pad-x: 14px;
+    padding: 16px var(--pad-x) 12px;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+  .p-body { overflow: visible; }
+  .p-head { flex-direction: column-reverse; gap: 4px; }
+  .corner { flex-direction: row; align-items: center; width: auto; gap: 6px; }
+  .corner svg { width: 70px; height: 22px; }
+  .bubble { font-size: 30px !important; }
+  .cols { grid-template-columns: 1fr !important; }
+  .cols > .col + .col { border-left: 0; margin-left: 0; padding-left: 0; border-top: 2px dashed var(--paper-rule); padding-top: 8px; margin-top: 8px; }
+  .ex.has-fig { grid-template-columns: minmax(0, 1fr); }
+  .ex .fig { grid-row: auto; }
+  .steps { font-size: 1em; margin-left: 0; }
+  .steps .c { grid-column: 1 / -1; padding-left: 0; margin-bottom: 2px; }
+  table.tab { font-size: .9em; }
+  .p-foot { flex-direction: column; gap: 2px; margin-top: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile { transition: none; }
+}
+
+/* ---------- Impression : exactement 2 pages ---------- */
+@page { size: letter; margin: 0; }
+@media print {
+  html, body { background: #fff !important; }
+  body { background-image: none !important; }
+  :root { padding: 0 !important; }
+  .topbar, .no-print, .side-label, .print-hint, .print-note { display: none !important; }
+  main { max-width: none; padding: 0; margin: 0; }
+  .page {
+    box-shadow: none;
+    margin: 0;
+    height: 10.98in;
+    break-after: page;
+    page-break-after: always;
+  }
+  .page.last { break-after: auto; page-break-after: auto; }
+}
+</style>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <button class="btn" id="btn-retour" type="button" hidden>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Retour
+    </button>
+    <span class="brand" id="brand">notes de sec 5</span>
+    <span class="crumb" id="crumb"></span>
+    <button class="btn primary" id="btn-imprimer" type="button" hidden>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6V2h8v4M4 12H2V6h12v6h-2M4 9h8v5H4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      Imprimer
+    </button>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+/* =========================================================
+   CONTENU (données seulement — voir src/data/)
+   ========================================================= */
+/* ---- 00-matieres.js ---- */
+/* Liste des matières et de leurs concepts (navigation).
+   Le contenu des feuilles est dans un fichier par matière : DATA.feuilles[idMatière][idConcept]. */
+const DATA = {
+  matieres: [
+    {
+      id: 'math-cst', nom: 'Mathématique CST', court: 'math CST', couleur: '#f6a9bd',
+      sections: [
+        { nom: 'Optimisation', concepts: [
+          { id: 'inequations', titre: 'Inéquations du 1er degré à deux variables' },
+          { id: 'systemes', titre: "Systèmes d'inéquations et polygone de contraintes" },
+          { id: 'fonction-optimiser', titre: 'Fonction à optimiser et droite baladeuse' },
+          { id: 'probleme-optimisation', titre: "Résoudre un problème d'optimisation" },
+          { id: 'scenarios', titre: 'Modifier un scénario' },
+        ] },
+        { nom: 'Graphes', concepts: [
+          { id: 'graphes-vocabulaire', titre: 'Vocabulaire des graphes' },
+          { id: 'euler-hamilton', titre: 'Chaînes et cycles eulériens et hamiltoniens' },
+          { id: 'chaine-courte', titre: 'Graphes orientés et pondérés, chaîne la plus courte' },
+          { id: 'arbres', titre: 'Arbres et arbre de valeur minimale' },
+          { id: 'chemin-critique', titre: 'Chemin critique' },
+          { id: 'coloration', titre: 'Coloration de graphes et nombre chromatique' },
+        ] },
+        { nom: 'Probabilités', concepts: [
+          { id: 'proba-rappels', titre: 'Rappels : événements et dénombrement' },
+          { id: 'proba-conditionnelle', titre: 'Probabilité conditionnelle, événements dépendants et indépendants' },
+          { id: 'chances', titre: 'Chances pour et chances contre' },
+          { id: 'esperance', titre: 'Espérance mathématique et jeu équitable' },
+        ] },
+        { nom: 'Choix social', concepts: [
+          { id: 'vote', titre: 'Procédures de vote' },
+          { id: 'vote-analyse', titre: "Analyser un résultat de vote (critères, paradoxes)" },
+        ] },
+        { nom: 'Géométrie', concepts: [
+          { id: 'figures-equivalentes', titre: 'Figures planes équivalentes' },
+          { id: 'solides-equivalents', titre: 'Solides équivalents' },
+          { id: 'optimisation-geometrie', titre: 'Optimisation en géométrie' },
+        ] },
+      ],
+    },
+    {
+      id: 'math-ts', nom: 'Mathématique TS', court: 'math TS', couleur: '#a9d3f6',
+      sections: [
+        { nom: 'Exponentielles et logarithmes', concepts: [
+          { id: 'exposants', titre: 'Lois des exposants et des radicaux (rappel)' },
+          { id: 'exponentielle', titre: 'Fonction exponentielle' },
+          { id: 'log-definition', titre: 'Logarithme : définition et changement de base' },
+          { id: 'log-lois', titre: 'Lois des logarithmes' },
+          { id: 'logarithmique', titre: 'Fonction logarithmique' },
+          { id: 'equations-exp-log', titre: 'Équations et inéquations exponentielles et logarithmiques' },
+        ] },
+        { nom: 'Fonctions', concepts: [
+          { id: 'reciproque', titre: 'Fonction réciproque' },
+          { id: 'operations-fonctions', titre: 'Opérations sur les fonctions et composition' },
+        ] },
+        { nom: 'Trigonométrie', concepts: [
+          { id: 'cercle-trigo', titre: 'Radian et cercle trigonométrique' },
+          { id: 'sinus-cosinus', titre: 'Fonctions sinus et cosinus' },
+          { id: 'tangente', titre: 'Fonction tangente' },
+          { id: 'equations-trigo', titre: 'Équations trigonométriques' },
+          { id: 'identites-trigo', titre: 'Identités trigonométriques' },
+        ] },
+        { nom: 'Vecteurs', concepts: [
+          { id: 'vecteurs-base', titre: 'Vecteurs : notions de base' },
+          { id: 'vecteurs-operations', titre: 'Opérations sur les vecteurs' },
+          { id: 'produit-scalaire', titre: 'Produit scalaire et combinaison linéaire' },
+        ] },
+        { nom: 'Coniques', concepts: [
+          { id: 'cercle', titre: 'Lieux géométriques et cercle' },
+          { id: 'ellipse', titre: 'Ellipse' },
+          { id: 'hyperbole', titre: 'Hyperbole' },
+          { id: 'parabole', titre: 'Parabole (conique)' },
+          { id: 'systemes-coniques', titre: 'Systèmes avec des coniques' },
+        ] },
+      ],
+    },
+    {
+      id: 'math-sn', nom: 'Mathématique SN', court: 'math SN', couleur: '#b9e3c0',
+      sections: [
+        { nom: 'Fonctions', concepts: [
+          { id: 'valeur-absolue', titre: 'Fonction valeur absolue' },
+          { id: 'racine-carree', titre: 'Fonction racine carrée' },
+          { id: 'rationnelle', titre: 'Fonction rationnelle' },
+          { id: 'operations-fonctions', titre: 'Opérations sur les fonctions et composition' },
+          { id: 'reciproque', titre: 'Fonction réciproque' },
+        ] },
+        { nom: 'Exponentielles et logarithmes', concepts: [
+          { id: 'exposants', titre: 'Lois des exposants et des radicaux' },
+          { id: 'exponentielle', titre: 'Fonction exponentielle' },
+          { id: 'logarithmes', titre: 'Logarithmes et leurs lois' },
+          { id: 'logarithmique', titre: 'Fonction logarithmique' },
+          { id: 'equations-exp-log', titre: 'Équations et inéquations exponentielles et logarithmiques' },
+        ] },
+        { nom: 'Optimisation', concepts: [
+          { id: 'systemes-inequations', titre: "Systèmes d'inéquations et polygone de contraintes" },
+          { id: 'optimisation', titre: 'Optimisation (fonction à optimiser, solution optimale)' },
+        ] },
+        { nom: 'Trigonométrie', concepts: [
+          { id: 'cercle-trigo', titre: 'Radian et cercle trigonométrique' },
+          { id: 'sinus-cosinus', titre: 'Fonctions sinus et cosinus' },
+          { id: 'tangente', titre: 'Fonction tangente' },
+          { id: 'equations-trigo', titre: 'Équations trigonométriques' },
+          { id: 'identites-trigo', titre: 'Identités trigonométriques' },
+        ] },
+        { nom: 'Vecteurs', concepts: [
+          { id: 'vecteurs-base', titre: 'Vecteurs : notions de base' },
+          { id: 'vecteurs-operations', titre: 'Opérations sur les vecteurs' },
+          { id: 'produit-scalaire', titre: 'Produit scalaire et combinaison linéaire' },
+        ] },
+        { nom: 'Coniques', concepts: [
+          { id: 'cercle', titre: 'Cercle (conique)' },
+          { id: 'ellipse', titre: 'Ellipse' },
+          { id: 'hyperbole', titre: 'Hyperbole' },
+          { id: 'parabole', titre: 'Parabole (conique)' },
+          { id: 'systemes-coniques', titre: 'Systèmes avec des coniques' },
+        ] },
+      ],
+    },
+    {
+      id: 'francais', nom: 'Français', court: 'français', couleur: '#f7d58a',
+      sections: [
+        { nom: 'Lecture et écriture argumentatives', concepts: [
+          { id: 'texte-argumentatif', titre: 'Le texte argumentatif : structure' },
+          { id: 'strategies', titre: 'Stratégies argumentatives' },
+          { id: 'procedes', titre: 'Procédés argumentatifs' },
+          { id: 'point-de-vue', titre: 'Point de vue, modalisation et marques de subjectivité' },
+          { id: 'enonciation', titre: 'Énonciation (énonciateur, destinataire, ton)' },
+          { id: 'sequences', titre: 'Séquences textuelles' },
+          { id: 'genres', titre: 'Genres argumentatifs (lettre ouverte, éditorial, critique, chronique)' },
+          { id: 'epreuve-unique', titre: "Épreuve unique d'écriture : méthode et critères" },
+          { id: 'coherence', titre: 'Cohérence textuelle (reprise de l\'information, progression)' },
+          { id: 'organisateurs', titre: 'Organisateurs textuels et marqueurs de relation' },
+          { id: 'discours-rapporte', titre: 'Discours rapporté' },
+        ] },
+        { nom: 'Littérature', concepts: [
+          { id: 'figures-style', titre: 'Figures de style' },
+          { id: 'univers-narratif', titre: 'Univers narratif (roman, nouvelle)' },
+          { id: 'poesie', titre: 'Poésie (versification, rimes, strophes)' },
+          { id: 'theatre', titre: 'Théâtre' },
+          { id: 'appreciation', titre: "Appréciation critique d'une œuvre" },
+        ] },
+        { nom: 'Grammaire', concepts: [
+          { id: 'classes-mots', titre: 'Classes de mots' },
+          { id: 'phrase-base', titre: 'Phrase de base, manipulations et fonctions syntaxiques' },
+          { id: 'types-formes', titre: 'Types et formes de phrases' },
+          { id: 'subordonnees', titre: 'Subordonnées relative, complétive et circonstancielle' },
+          { id: 'coordination', titre: 'Coordination et juxtaposition' },
+          { id: 'ponctuation', titre: 'Ponctuation' },
+          { id: 'accords-gn-gv', titre: 'Accords dans le GN et le GV' },
+          { id: 'participe-passe', titre: 'Accord du participe passé' },
+          { id: 'conjugaison', titre: 'Conjugaison : modes, temps et concordance' },
+          { id: 'lexique', titre: 'Lexique : formation des mots, sens, variétés de langue' },
+        ] },
+        { nom: 'Oral', concepts: [
+          { id: 'oral', titre: 'Communication orale : débat et exposé argumentatif' },
+        ] },
+      ],
+    },
+    {
+      id: 'anglais', nom: 'Anglais', court: 'anglais', couleur: '#c9b8f2', plusTard: true,
+      sections: [
+        { nom: 'Compétences et processus', concepts: [
+          { id: 'response-process', titre: 'Response Process' },
+          { id: 'writing-process', titre: 'Writing Process' },
+          { id: 'production-process', titre: 'Production Process' },
+          { id: 'opinion-texts', titre: 'Opinion and persuasive texts' },
+          { id: 'other-texts', titre: 'Narrative texts, feature articles, letters and emails' },
+          { id: 'functional-language', titre: 'Functional language' },
+          { id: 'strategies', titre: 'Communication and learning strategies' },
+        ] },
+        { nom: 'Grammaire', concepts: [
+          { id: 'present', titre: 'Simple and continuous present' },
+          { id: 'past', titre: 'Simple and continuous past' },
+          { id: 'present-perfect', titre: 'Present perfect' },
+          { id: 'past-perfect', titre: 'Past perfect' },
+          { id: 'future', titre: 'Future forms' },
+          { id: 'modals', titre: 'Modals' },
+          { id: 'conditionals', titre: 'Conditionals' },
+          { id: 'passive', titre: 'Passive voice' },
+          { id: 'reported-speech', titre: 'Reported speech' },
+          { id: 'gerunds', titre: 'Gerunds and infinitives' },
+          { id: 'adjectives', titre: 'Adjectives, adverbs, comparatives and superlatives' },
+          { id: 'pronouns', titre: 'Pronouns, determiners and articles' },
+          { id: 'questions', titre: 'Questions' },
+          { id: 'linking-words', titre: 'Linking words' },
+          { id: 'phrasal-verbs', titre: 'Phrasal verbs and idioms' },
+          { id: 'prepositions', titre: 'Prepositions' },
+          { id: 'faux-amis', titre: 'Faux amis et erreurs fréquentes' },
+        ] },
+        { nom: 'Examen', concepts: [
+          { id: 'examen', titre: 'Épreuve ministérielle : méthode' },
+        ] },
+      ],
+    },
+    {
+      id: 'chimie', nom: 'Chimie', court: 'chimie', couleur: '#9fe0d6',
+      sections: [
+        { nom: 'Les gaz', concepts: [
+          { id: 'rappels', titre: 'Rappels : mole, masse molaire, concentration, stœchiométrie' },
+          { id: 'theorie-cinetique', titre: 'Propriétés des gaz et théorie cinétique' },
+          { id: 'pression', titre: 'Pression (unités, manomètres)' },
+          { id: 'boyle', titre: 'Loi de Boyle-Mariotte' },
+          { id: 'charles', titre: 'Loi de Charles' },
+          { id: 'gay-lussac', titre: 'Loi de Gay-Lussac' },
+          { id: 'avogadro', titre: "Loi d'Avogadro et volume molaire" },
+          { id: 'loi-generale', titre: 'Loi générale des gaz' },
+          { id: 'gaz-parfaits', titre: 'Loi des gaz parfaits' },
+          { id: 'dalton', titre: 'Loi de Dalton (pressions partielles)' },
+          { id: 'stoechio-gaz', titre: 'Stœchiométrie des gaz' },
+        ] },
+        { nom: 'Aspect énergétique des transformations', concepts: [
+          { id: 'endo-exo', titre: 'Réactions endothermiques et exothermiques, diagramme énergétique' },
+          { id: 'energie-activation', titre: "Énergie d'activation et complexe activé" },
+          { id: 'enthalpie', titre: "Variation d'enthalpie et chaleur molaire de réaction" },
+          { id: 'energie-liaison', titre: 'Énergie de liaison et calcul de ΔH' },
+          { id: 'calorimetrie', titre: 'Calorimétrie' },
+          { id: 'hess', titre: 'Loi de Hess' },
+        ] },
+        { nom: 'Vitesse de réaction', concepts: [
+          { id: 'vitesse', titre: 'Vitesse de réaction : définition et mesure' },
+          { id: 'collisions', titre: 'Théorie des collisions' },
+          { id: 'facteurs', titre: 'Facteurs qui influencent la vitesse' },
+          { id: 'loi-vitesses', titre: 'Loi des vitesses de réaction' },
+        ] },
+        { nom: 'Équilibre chimique', concepts: [
+          { id: 'equilibre', titre: 'Équilibre chimique : conditions et caractéristiques' },
+          { id: 'le-chatelier', titre: 'Principe de Le Chatelier' },
+          { id: 'kc', titre: "Constante d'équilibre (Kc)" },
+          { id: 'keau-ph', titre: "Constante d'ionisation de l'eau, pH et pOH" },
+          { id: 'ka-kb', titre: 'Ka et Kb' },
+          { id: 'kps', titre: 'Constante du produit de solubilité (Kps)' },
+          { id: 'graphiques-equilibre', titre: "Graphiques d'équilibre" },
+        ] },
+      ],
+    },
+    {
+      id: 'physique', nom: 'Physique', court: 'physique', couleur: '#f7b98a',
+      sections: [
+        { nom: 'Outils', concepts: [
+          { id: 'mesure', titre: 'Mesure, incertitude et chiffres significatifs' },
+          { id: 'vecteurs', titre: 'Vecteurs : addition et décomposition' },
+        ] },
+        { nom: 'Cinématique', concepts: [
+          { id: 'position', titre: 'Référentiel, position, distance et déplacement' },
+          { id: 'vitesse', titre: 'Vitesse moyenne et vitesse instantanée' },
+          { id: 'mru', titre: 'Mouvement rectiligne uniforme (MRU)' },
+          { id: 'mrua', titre: 'Accélération et MRUA' },
+          { id: 'graphiques', titre: 'Graphiques du mouvement' },
+          { id: 'chute-libre', titre: 'Chute libre' },
+          { id: 'projectiles', titre: 'Mouvement des projectiles' },
+        ] },
+        { nom: 'Dynamique', concepts: [
+          { id: 'forces', titre: 'Forces et diagramme de corps libre' },
+          { id: 'newton-1', titre: '1re loi de Newton' },
+          { id: 'newton-2', titre: '2e loi de Newton' },
+          { id: 'newton-3', titre: '3e loi de Newton' },
+          { id: 'gravitation', titre: 'Force gravitationnelle et poids' },
+          { id: 'normale-frottement', titre: 'Force normale et frottement' },
+          { id: 'plan-incline', titre: 'Plan incliné' },
+          { id: 'hooke', titre: 'Loi de Hooke' },
+        ] },
+        { nom: 'Énergie', concepts: [
+          { id: 'travail', titre: 'Travail' },
+          { id: 'puissance', titre: 'Puissance' },
+          { id: 'energie-cinetique', titre: 'Énergie cinétique' },
+          { id: 'energie-gravitationnelle', titre: 'Énergie potentielle gravitationnelle' },
+          { id: 'energie-elastique', titre: 'Énergie potentielle élastique' },
+          { id: 'conservation', titre: "Conservation de l'énergie mécanique et rendement" },
+        ] },
+        { nom: 'Optique', concepts: [
+          { id: 'lumiere', titre: 'Lumière et rayons lumineux' },
+          { id: 'miroirs-plans', titre: 'Réflexion et miroirs plans' },
+          { id: 'miroirs-courbes', titre: 'Miroirs courbes' },
+          { id: 'refraction', titre: 'Réfraction et loi de Snell-Descartes' },
+          { id: 'reflexion-totale', titre: 'Réflexion totale interne et angle critique' },
+          { id: 'lentilles-trace', titre: 'Lentilles : tracé des rayons' },
+          { id: 'lentilles-equation', titre: 'Équation des lentilles minces, grandissement et dioptries' },
+          { id: 'oeil', titre: "L'œil et les instruments d'optique" },
+        ] },
+      ],
+    },
+    {
+      id: 'monde-contemporain', nom: 'Monde contemporain', court: 'monde contemp.', couleur: '#d7c3a4',
+      sections: [
+        { nom: 'Thèmes', concepts: [
+          { id: 'environnement-concepts', titre: 'Environnement : concepts' },
+          { id: 'environnement-enjeux', titre: 'Environnement : enjeux' },
+          { id: 'population-concepts', titre: 'Population : concepts' },
+          { id: 'population-enjeux', titre: 'Population : enjeux' },
+          { id: 'pouvoir-concepts', titre: 'Pouvoir : concepts' },
+          { id: 'pouvoir-enjeux', titre: 'Pouvoir : enjeux' },
+          { id: 'richesse-concepts', titre: 'Richesse : concepts' },
+          { id: 'richesse-enjeux', titre: 'Richesse : enjeux' },
+          { id: 'tensions-concepts', titre: 'Tensions et conflits : concepts' },
+          { id: 'tensions-enjeux', titre: 'Tensions et conflits : enjeux' },
+        ] },
+        { nom: 'Méthode', concepts: [
+          { id: 'interpreter', titre: 'Interpréter un problème du monde contemporain' },
+          { id: 'prendre-position', titre: 'Prendre position sur un enjeu' },
+          { id: 'sources', titre: 'Analyser des documents et des sources' },
+          { id: 'organisations', titre: 'Organisations internationales à connaître' },
+        ] },
+      ],
+    },
+    {
+      id: 'education-financiere', nom: 'Éducation financière', court: 'éduc. financière', couleur: '#b5dc8f',
+      sections: [
+        { nom: 'Consommer des biens et des services', concepts: [
+          { id: 'besoins-desirs', titre: 'Besoins, désirs et influences' },
+          { id: 'budget', titre: 'Budget' },
+          { id: 'modes-paiement', titre: 'Modes de paiement' },
+          { id: 'credit', titre: 'Crédit et dossier de crédit' },
+          { id: 'interets', titre: 'Intérêt simple et composé, coût du crédit' },
+          { id: 'prets', titre: 'Types de prêts' },
+          { id: 'louer-acheter', titre: 'Louer ou acheter' },
+          { id: 'contrats', titre: 'Contrats et protection du consommateur' },
+          { id: 'assurances', titre: 'Assurances' },
+          { id: 'epargne', titre: 'Épargne et placements' },
+        ] },
+        { nom: 'Intégrer le monde du travail', concepts: [
+          { id: 'statuts', titre: 'Statuts de travail' },
+          { id: 'droits', titre: 'Droits et obligations au travail' },
+          { id: 'salaire', titre: 'Salaire brut et net, talon de paie' },
+          { id: 'retenues', titre: 'Retenues à la source' },
+          { id: 'impots', titre: 'Impôts et déclaration de revenus' },
+          { id: 'avantages', titre: 'Avantages sociaux' },
+        ] },
+        { nom: 'Poursuivre des études', concepts: [
+          { id: 'cout-etudes', titre: 'Coût des études' },
+          { id: 'financement', titre: 'Financement des études' },
+          { id: 'budget-etudiant', titre: 'Budget étudiant et endettement' },
+          { id: 'choix-etudes', titre: 'Choisir ses études et en évaluer la rentabilité' },
+        ] },
+      ],
+    },
+  ],
+  feuilles: {},
+};
+
+/* ---- 10-math-cst.js ---- */
+/* Mathématique CST — secondaire 5 */
+DATA.feuilles['math-cst'] = DATA.feuilles['math-cst'] || {};
+Object.assign(DATA.feuilles['math-cst'], {
+
+/* ============ 1. Inéquations ============ */
+inequations: {
+  bulle: 'inéquations',
+  sous: 'Inéquations du 1er degré à deux variables',
+  recto: [
+    { t: 'cols', w: '1.15fr 1fr', c: [
+      [ { t: 'txt', p: [
+        'Une **inéquation du 1er degré à deux variables** est une inégalité entre deux expressions du 1er degré qui contiennent deux variables (souvent x et y).',
+        'ex. 2x + 3y ≤ 12  ·  y > 4x − 1  ·  x ≥ 5',
+      ] } ],
+      [ { t: 'txt', p: [
+        'Une **solution** est un couple (x, y) qui rend l\'inégalité vraie.',
+        'L\'**ensemble-solution** est un **demi-plan** : toute une région du plan cartésien, pas juste une droite.',
+      ] } ],
+    ] },
+    { t: 'tab', h: 'traduire les mots en symboles', full: true, lcol: true,
+      head: ['Symbole', 'Se lit', 'Mots-clés dans un problème', 'Droite frontière'],
+      rows: [
+        ['<', 'plus petit que', 'moins de, inférieur à', 'pointillée'],
+        ['≤', 'plus petit ou égal à', 'au plus, au maximum, ne dépasse pas, n\'excède pas', 'pleine'],
+        ['>', 'plus grand que', 'plus de, supérieur à, dépasse', 'pointillée'],
+        ['≥', 'plus grand ou égal à', 'au moins, au minimum, un minimum de', 'pleine'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'la droite frontière', items: [
+          'On remplace le symbole par = : on obtient la droite qui sépare le plan en deux.',
+          '**Pleine** si ≤ ou ≥ (les points de la droite font partie de la solution).',
+          '**Pointillée** si < ou > (ils n\'en font pas partie).',
+          'Pour la tracer : isoler y (forme y = ax + b) ou trouver les deux points à l\'origine.',
+        ] } ],
+      [ { t: 'list', h: 'quel demi-plan colorier ?', items: [
+          'Après avoir isolé y : **y > …** ou **y ≥ …** → au-dessus de la droite.',
+          '**y < …** ou **y ≤ …** → en dessous de la droite.',
+          '**x > k** → à droite de la droite verticale x = k ; **x < k** → à gauche.',
+          '**Point-test** : on remplace un point (souvent (0, 0)) dans l\'inéquation. Vrai → on colorie son côté. Faux → l\'autre côté.',
+        ] } ],
+    ] },
+    { t: 'cols', w: '1.2fr 1fr', c: [
+      [ { t: 'box', h: 'règle d\'or', f: 'multiplier ou diviser par un nombre <b>négatif</b> → on <b>inverse</b> le symbole', note: 'ex. −2y ≤ 8  devient  y ≥ −4' },
+        { t: 'list', h: 'contraintes de non-négativité', items: [
+          'Quand x et y représentent des quantités (objets, heures, personnes), on ajoute **x ≥ 0** et **y ≥ 0**.',
+          'Si ce sont des objets entiers, seuls les points à coordonnées entières comptent.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 230, h: 190, xmin: -1, xmax: 6, ymin: -1, ymax: 5, tick: 1,
+            zones: [ { pts: [[-1, 14 / 3], [6, 0], [6, -1], [-1, -1]] } ],
+            droites: [ { a: [0, 4], b: [6, 0], lbl: 'y = −(2/3)x + 4', at: [2.2, 3.4] } ],
+            pts: [ { x: 0, y: 0, lbl: '(0, 0) : vrai', dx: 5, dy: 13 } ],
+            alt: 'demi-plan sous la droite 2x + 3y = 12', cap: '2x + 3y ≤ 12 : droite pleine, région en dessous' },
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Représenter l\'ensemble-solution de 3x − 2y > 6.',
+      fig: { kind: 'plan', w: 210, h: 190, xmin: -2, xmax: 5, ymin: -4, ymax: 3, tick: 1,
+        zones: [ { pts: [[-2, -6], [5, 4.5], [5, -4], [-2, -4]] } ],
+        droites: [ { a: [0, -3], b: [2, 0], dash: true, lbl: 'y = 1,5x − 3', at: [0.2, 2.2] } ],
+        pts: [ { x: 0, y: -3, lbl: '(0, −3)', dx: 6, dy: 4 }, { x: 2, y: 0, lbl: '(2, 0)', dx: 6, dy: 13 } ],
+        alt: 'demi-plan sous une droite pointillée', cap: 'pointillée (>) et région en dessous' },
+      s: [
+        '3x − 2y > 6',
+        '−2y > −3x + 6 // on soustrait 3x des deux côtés',
+        'y < 1,5x − 3 // ÷ (−2) : on INVERSE le symbole',
+        'ordonnée à l\'origine : b = −3',
+        'abscisse à l\'origine : 0 = 1,5x − 3 → x = 2',
+      ],
+      p: [ 'Point-test (0, 0) : 3(0) − 2(0) = 0 > 6 ? **Faux** → (0, 0) n\'est pas dans la région. On colorie bien le côté en dessous.' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une salle offre **au plus** 250 places. On vend des billets adultes (x) et étudiants (y). Il doit y avoir **au moins le double** de billets étudiants que de billets adultes. Les recettes doivent **dépasser** 3000 $ (adulte : 20 $, étudiant : 12 $). Traduire en inéquations.',
+      s: [
+        'x : nombre de billets adultes  ·  y : nombre de billets étudiants',
+        'x + y ≤ 250 // « au plus » → ≤',
+        'y ≥ 2x // étudiants ≥ 2 × adultes',
+        '20x + 12y > 3000 // « dépasser » → >',
+        'x ≥ 0 et y ≥ 0 // non-négativité',
+      ],
+      p: [ 'Vérification de y ≥ 2x : si on vend 10 billets adultes, il faut au moins 20 billets étudiants. 20 ≥ 2(10) ✓' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier d\'**inverser** le symbole en divisant par un négatif.',
+          'Tracer une droite pleine pour < ou > (elle doit être pointillée).',
+          'Écrire 2y ≥ x pour « au moins le double de billets étudiants que d\'adultes ». Vérifie toujours avec un exemple chiffré !',
+          'Oublier x ≥ 0 et y ≥ 0 quand les variables sont des quantités.',
+          'Colorier le mauvais côté : fais toujours le point-test.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Solution d\'une inéquation à 2 variables = **demi-plan**.',
+          '≤, ≥ → trait plein · <, > → pointillé.',
+          'Isoler y : « > » au-dessus, « < » en dessous.',
+          'Négatif × ou ÷ → on inverse.',
+          'Point-test (0, 0) pour valider.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 2. Systèmes et polygone de contraintes ============ */
+systemes: {
+  bulle: 'polygone de contraintes',
+  sous: 'Systèmes d\'inéquations et polygone de contraintes',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+        'Un **système d\'inéquations** est un ensemble de deux inéquations ou plus qui doivent être vraies **en même temps**.',
+        'Son ensemble-solution est la région où **tous** les demi-plans se superposent.',
+      ] } ],
+      [ { t: 'txt', p: [
+        'En optimisation, cette région s\'appelle le **polygone de contraintes** (ou région réalisable).',
+        'Chaque point du polygone respecte toutes les contraintes du problème.',
+      ] } ],
+    ] },
+    { t: 'cols', w: '1fr 1fr', c: [
+      [ { t: 'list', h: 'vocabulaire', items: [
+          '**Contrainte** : une condition du problème traduite en inéquation.',
+          '**Sommet** : un coin du polygone, à l\'intersection de deux droites frontières.',
+          '**Polygone fermé (borné)** : on peut l\'entourer complètement.',
+          '**Polygone ouvert (non borné)** : il s\'étend à l\'infini dans une direction.',
+          '**Sommet exclu** (point creux) : au moins une des deux droites est pointillée.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 240, h: 200, xmin: 0, xmax: 11, ymin: 0, ymax: 9, tick: 2, grille: 1,
+            zones: [ { pts: [[0, 0], [10, 0], [6, 4], [0, 7]] } ],
+            droites: [
+              { a: [0, 10], b: [10, 0], lbl: 'x + y = 10', at: [7.9, 3.4] },
+              { a: [0, 7], b: [14, 0], cls: 'ln2', lbl: 'x + 2y = 14', at: [0.6, 7.8], pk: true },
+            ],
+            pts: [ { x: 0, y: 0 }, { x: 10, y: 0, lbl: '(10, 0)', dx: -18, dy: -6 }, { x: 6, y: 4, lbl: '(6, 4)', dx: 6, dy: -4 }, { x: 0, y: 7, lbl: '(0, 7)', dx: 5, dy: 14 } ],
+            alt: 'polygone de contraintes à quatre sommets', cap: 'polygone fermé à 4 sommets' },
+        ] } ],
+    ] },
+    { t: 'list', h: 'démarche pour tracer le polygone', items: [
+      '1. Définir les variables (x = …, y = …) avec leurs unités.',
+      '2. Traduire chaque contrainte en inéquation, sans oublier x ≥ 0 et y ≥ 0.',
+      '3. Tracer chaque droite frontière (pleine ou pointillée).',
+      '4. Garder la région qui respecte **toutes** les inéquations (point-test pour chacune).',
+      '5. Trouver les coordonnées de chaque sommet.',
+    ] },
+    { t: 'tab', h: 'trouver un sommet = résoudre un système d\'équations', full: true, lcol: true,
+      head: ['Méthode', 'Quand l\'utiliser', 'Comment'],
+      rows: [
+        ['Comparaison', 'les deux équations sont déjà « y = … »', 'on pose les deux expressions égales'],
+        ['Substitution', 'une variable est déjà isolée', 'on remplace cette variable dans l\'autre équation'],
+        ['Réduction', 'équations sous la forme ax + by = c', 'on additionne ou soustrait les équations pour éliminer une variable'],
+      ],
+      note: 'Garde les coordonnées exactes (fractions) : n\'arrondis pas un sommet.' },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Trouver les sommets du polygone défini par : x ≥ 0, y ≥ 0, x + y ≤ 10 et x + 2y ≤ 14.',
+      s: [
+        'Sommet sur les axes : (0, 0)',
+        'x + y = 10 avec y = 0 → (10, 0) // vérif. : 10 + 2(0) = 10 ≤ 14 ✓',
+        'x + 2y = 14 avec x = 0 → (0, 7) // vérif. : 0 + 7 = 7 ≤ 10 ✓',
+        'Intersection de x + 2y = 14 et x + y = 10 :',
+        '(x + 2y) − (x + y) = 14 − 10 // réduction',
+        'y = 4',
+        'x + 4 = 10 → x = 6',
+      ],
+      r: 'sommets (0, 0), (10, 0), (6, 4) et (0, 7)' },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Sommet formé par y = 2x et x + y = 12 (substitution).',
+          s: [ 'x + 2x = 12', '3x = 12', 'x = 4', 'y = 2(4) = 8' ],
+          r: '(4, 8)' } ],
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'Les points (0, 12) et (12, 0) sont-ils des sommets du polygone de l\'ex. 1 ?',
+          p: [ '(0, 12) : 0 + 2(12) = 24 ≤ 14 ? **Non.** Il est à l\'extérieur.',
+               '(12, 0) : 12 + 0 = 12 ≤ 10 ? **Non.**',
+               'Ce sont des intersections de droites, mais pas des sommets du polygone.' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Polygone ouvert : x ≥ 0, y ≥ 0, x + y ≥ 6 et x + 3y ≥ 12.',
+      fig: { kind: 'plan', w: 210, h: 170, xmin: 0, xmax: 13, ymin: 0, ymax: 8, tick: 3, grille: 1,
+        zones: [ { pts: [[0, 8], [0, 6], [3, 3], [12, 0], [13, 0], [13, 8]] } ],
+        droites: [ { a: [0, 6], b: [6, 0] }, { a: [0, 4], b: [12, 0], cls: 'ln2' } ],
+        pts: [ { x: 0, y: 6, lbl: '(0, 6)', dx: 5, dy: -4 }, { x: 3, y: 3, lbl: '(3, 3)', dx: 5, dy: -5 }, { x: 12, y: 0, lbl: '(12, 0)', dx: -12, dy: -7 } ],
+        alt: 'polygone non borné', cap: 'la région continue vers le haut et la droite' },
+      s: [ 'x + 3y = 12 et x + y = 6', '2y = 6 // on soustrait les équations', 'y = 3 et x = 3' ],
+      p: [ 'Sommets : (0, 6), (3, 3) et (12, 0). Le polygone est **ouvert** : il n\'a pas de limite vers le haut ni vers la droite.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Prendre une intersection de droites qui est **hors** du polygone pour un sommet. Vérifie-la dans toutes les contraintes.',
+          'Oublier qu\'un sommet est **exclu** si une de ses deux droites est pointillée.',
+          'Arrondir les coordonnées d\'un sommet.',
+          'Oublier les axes (x ≥ 0, y ≥ 0) qui ferment souvent le polygone.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Polygone = région qui respecte **toutes** les contraintes.',
+          'Sommet = intersection de 2 droites **qui respecte les autres contraintes**.',
+          'Comparaison, substitution ou réduction pour le trouver.',
+          'Fermé ou ouvert : à vérifier avant d\'optimiser.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+
+/* ---- 11-math-cst-optimisation.js ---- */
+/* Mathématique CST — Optimisation (suite) */
+Object.assign(DATA.feuilles['math-cst'], {
+
+/* ============ 3. Fonction à optimiser ============ */
+'fonction-optimiser': {
+  bulle: 'fonction à optimiser',
+  sous: 'Fonction à optimiser et droite baladeuse',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+        'La **fonction à optimiser** (ou fonction objectif) est la règle de la quantité qu\'on veut rendre la plus grande possible (**maximiser**) ou la plus petite possible (**minimiser**).',
+        'Forme : <b>Z = ax + by + c</b>',
+      ] } ],
+      [ { t: 'list', h: 'exemples', items: [
+          'Profit : Z = 18x + 20y → à **maximiser**',
+          'Coût : C = 4x + 7y + 50 → à **minimiser**',
+          'Temps, distance, nombre de personnes, etc.',
+        ] } ],
+    ] },
+    { t: 'box', h: 'le principe clé', f: 'Si une solution optimale existe, elle se trouve à un <b>sommet</b> du polygone de contraintes.' },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'méthode 1 : tableau des sommets', items: [
+          'Trouver tous les sommets du polygone.',
+          'Calculer la valeur de Z à chaque sommet.',
+          'La plus grande valeur = **maximum** ; la plus petite = **minimum**.',
+          'Le couple (x, y) qui la donne = la **solution optimale**.',
+        ] },
+        { t: 'list', h: 'méthode 2 : droite baladeuse', items: [
+          'On trace des droites ax + by = k (k = valeur de Z). Elles sont toutes **parallèles**, de pente −{{a|b}}.',
+          'On « promène » la droite parallèlement à elle-même sur le polygone.',
+          'Le **dernier sommet** qu\'elle touche en s\'éloignant (Z grandit) donne le maximum. Le premier qu\'elle touche donne le minimum.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 250, h: 215, xmin: 0, xmax: 13, ymin: 0, ymax: 9, tick: 2, grille: 1,
+            zones: [ { pts: [[0, 0], [10, 0], [6, 4], [0, 7]] } ],
+            droites: [
+              { a: [0, 3], b: [5, 0], cls: 'ln2', dash: true, lbl: 'Z = 15', at: [4.2, 1.1], pk: true },
+              { a: [0, 6], b: [10, 0], cls: 'ln2', dash: true, lbl: 'Z = 30', at: [9.2, 1.4], pk: true },
+              { a: [0, 7.6], b: [38 / 3, 0], cls: 'ln2', dash: true, lbl: 'Z = 38', at: [10, 2.6], pk: true },
+            ],
+            pts: [ { x: 6, y: 4, lbl: '(6, 4) max', dx: 6, dy: -6, pk: true }, { x: 10, y: 0 }, { x: 0, y: 7 }, { x: 0, y: 0 } ],
+            alt: 'droites baladeuses parallèles sur le polygone', cap: 'Z = 3x + 5y : les droites baladeuses sont parallèles' },
+        ] } ],
+    ] },
+    { t: 'tab', h: 'cas particuliers', full: true, lcol: true,
+      head: ['Situation', 'Conséquence'],
+      rows: [
+        ['Deux sommets voisins donnent la même valeur optimale', 'la droite baladeuse est parallèle à un côté : **tous** les points de ce côté sont des solutions optimales'],
+        ['Polygone **ouvert** (non borné), a et b positifs', 'il y a un minimum, mais **pas de maximum** (Z peut grandir sans fin)'],
+        ['Variables entières et sommet optimal non entier', 'on teste les points entiers du polygone les plus proches de ce sommet'],
+      ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Polygone de sommets (0, 0), (10, 0), (6, 4) et (0, 7). Maximiser Z = 3x + 5y.',
+      s: [ 'Z(0, 0) = 3(0) + 5(0) = 0', 'Z(10, 0) = 3(10) + 5(0) = 30', 'Z(6, 4) = 3(6) + 5(4) = 18 + 20 = 38', 'Z(0, 7) = 3(0) + 5(7) = 35' ],
+      r: 'maximum de 38 au sommet (6, 4) ; minimum de 0 en (0, 0)' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Même polygone. Maximiser Z = x + 2y.',
+      s: [ 'Z(0, 0) = 0', 'Z(10, 0) = 10', 'Z(6, 4) = 6 + 8 = 14', 'Z(0, 7) = 0 + 14 = 14' ],
+      p: [ 'Deux sommets voisins donnent 14 : la droite baladeuse x + 2y = k est parallèle au côté x + 2y = 14. **Tous** les points du segment entre (0, 7) et (6, 4) sont optimaux.',
+           'Points entiers de ce segment : (0, 7), (2, 6), (4, 5) et (6, 4).' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Polygone ouvert de sommets (0, 6), (3, 3) et (12, 0). Minimiser Z = 2x + 3y.',
+      s: [ 'Z(0, 6) = 0 + 18 = 18', 'Z(3, 3) = 6 + 9 = 15', 'Z(12, 0) = 24 + 0 = 24' ],
+      p: [ 'Minimum de 15 en (3, 3). Il n\'y a **pas de maximum** : le polygone s\'étend à l\'infini, donc Z peut devenir aussi grand qu\'on veut.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Évaluer Z à un point qui n\'est pas un sommet du polygone.',
+          'Oublier un sommet (souvent (0, 0) ou un point sur un axe).',
+          'Conclure qu\'il y a un maximum sur un polygone ouvert.',
+          'Donner seulement la valeur de Z sans dire le couple (x, y), ou l\'inverse.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'L\'optimum est toujours à un **sommet**.',
+          'Tableau des sommets : on teste chaque sommet dans Z.',
+          'Droite baladeuse : pente −{{a|b}}, toujours parallèle.',
+          'Égalité entre 2 sommets voisins → tout le côté est optimal.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 4. Problème d'optimisation complet ============ */
+'probleme-optimisation': {
+  bulle: 'résoudre un problème',
+  sous: 'Résoudre un problème d\'optimisation : la démarche complète',
+  recto: [
+    { t: 'txt', p: [
+      'Un **problème d\'optimisation** demande de trouver la meilleure décision possible (le plus grand profit, le plus petit coût…) en respectant des **contraintes** (temps, budget, matériel…).',
+    ] },
+    { t: 'list', h: 'la démarche en 7 étapes', items: [
+      '**1. Définir les variables** : « x : nombre de … », « y : nombre de … ». Toujours avec l\'unité.',
+      '**2. Organiser les données** dans un tableau (une ligne par ressource, une colonne par variable).',
+      '**3. Écrire le système de contraintes**, sans oublier la non-négativité (x ≥ 0, y ≥ 0).',
+      '**4. Écrire la fonction à optimiser** et préciser : maximiser ou minimiser ?',
+      '**5. Tracer le polygone de contraintes** dans le plan cartésien (bonne graduation !).',
+      '**6. Trouver les sommets et évaluer la fonction** à chacun (tableau des sommets).',
+      '**7. Répondre à la question** par une phrase complète, avec les unités.',
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'vocabulaire', items: [
+          '**Solution optimale** : le couple (x, y) qui donne la meilleure valeur.',
+          '**Valeur optimale** : la valeur de la fonction à ce couple.',
+          '**Contrainte** : limite ou exigence du problème.',
+          '**Région réalisable** : l\'ensemble des couples qui respectent toutes les contraintes.',
+        ] } ],
+      [ { t: 'list', h: 'trucs d\'examen', items: [
+          'Relis la question : on cherche peut-être seulement x, seulement le profit, ou « combien de plus ».',
+          'Choisis une échelle qui laisse voir tous les sommets.',
+          'Vérifie chaque sommet dans **toutes** les contraintes.',
+          'Des objets se comptent en **nombres entiers** : si le sommet optimal ne l\'est pas, teste les points entiers voisins dans le polygone.',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'modèle de tableau de données', full: true, lcol: true,
+      head: ['Ressource', 'Produit A (x)', 'Produit B (y)', 'Limite'],
+      rows: [
+        ['Temps (h)', 'temps pour 1 A', 'temps pour 1 B', '≤ temps disponible'],
+        ['Matériel', 'quantité pour 1 A', 'quantité pour 1 B', '≤ quantité disponible'],
+        ['Profit ($)', 'profit par A', 'profit par B', 'à maximiser'],
+      ],
+      note: 'Chaque ligne « ressource » devient une contrainte ; la ligne profit (ou coût) devient la fonction à optimiser.' },
+  ],
+  verso: [
+    { t: 'txt', h: 'Problème résolu', p: [
+      'Une artisane tricote des **tuques** et des **foulards**. Une tuque demande 2 h de tricot et 1 pelote de laine ; un foulard, 3 h et 1 pelote. Elle dispose d\'au plus **60 h** et de **25 pelotes** par mois, et elle a une commande d\'**au moins 5 foulards**. Elle fait un profit de **18 $** par tuque et de **20 $** par foulard. Combien doit-elle en faire de chaque sorte pour maximiser son profit ?',
+    ] },
+    { t: 'cols', w: '1.1fr 1fr', c: [
+      [ { t: 'ex', h: '1.', q: 'x : nombre de tuques · y : nombre de foulards' },
+        { t: 'tab', h: '', head: ['2.', 'tuque (x)', 'foulard (y)', 'limite'], rows: [ ['heures', '2', '3', '≤ 60'], ['pelotes', '1', '1', '≤ 25'], ['profit', '18 $', '20 $', 'max.'] ] },
+        { t: 'ex', h: '3.', q: 'Contraintes :',
+          s: [ '2x + 3y ≤ 60 // heures', 'x + y ≤ 25 // pelotes', 'y ≥ 5 // commande', 'x ≥ 0 // non-négativité' ] },
+        { t: 'ex', h: '4.', q: 'Maximiser le profit : <b>P = 18x + 20y</b>' },
+        { t: 'ex', h: '6.', q: 'Sommet entre x + y = 25 et 2x + 3y = 60 :',
+          s: [ 'x = 25 − y // on isole x', '2(25 − y) + 3y = 60 // substitution', '50 + y = 60', 'y = 10 et x = 15' ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 250, h: 230, xmin: 0, xmax: 27, ymin: 0, ymax: 22, tick: 5, ticky: 5, grille: 5, nx: 'x (tuques)', ny: 'y',
+            zones: [ { pts: [[0, 5], [20, 5], [15, 10], [0, 20]] } ],
+            droites: [
+              { a: [0, 25], b: [25, 0], lbl: 'x + y = 25', at: [19.5, 8.4] },
+              { a: [0, 20], b: [30, 0], cls: 'ln2', lbl: '2x + 3y = 60', at: [1, 21], pk: true },
+              { a: [0, 5], b: [1, 5], cls: 'ln3', lbl: 'y = 5', at: [22.5, 5.8] },
+            ],
+            pts: [ { x: 0, y: 5, lbl: '(0, 5)', dx: 4, dy: 13 }, { x: 20, y: 5, lbl: '(20, 5)', dx: -10, dy: 14 }, { x: 15, y: 10, lbl: '(15, 10)', dx: 6, dy: -4 }, { x: 0, y: 20, lbl: '(0, 20)', dx: 5, dy: 13 } ],
+            alt: 'polygone du problème des tuques et foulards', cap: '5. polygone de contraintes (fermé)' },
+        ] } ],
+    ] },
+    { t: 'tab', h: '6. tableau des sommets', full: true,
+      head: ['Sommet', '(0, 5)', '(20, 5)', '(15, 10)', '(0, 20)'],
+      rows: [
+        ['P = 18x + 20y', '0 + 100 = 100', '360 + 100 = 460', '270 + 200 = <b>470</b>', '0 + 400 = 400'],
+      ] },
+    { t: 'txt', h: '7. réponse', p: [
+      'Elle doit tricoter **15 tuques et 10 foulards**, pour un profit maximal de **470 $**. (Vérif. : 2(15) + 3(10) = 60 h ✓ · 15 + 10 = 25 pelotes ✓ · 10 ≥ 5 ✓)',
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Mélanger les unités (heures et minutes) dans une même contrainte.',
+          'Oublier une contrainte cachée dans le texte (« au moins 5 foulards »).',
+          'Répondre « (15, 10) » sans phrase ni unités.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Variables → tableau → contraintes → fonction → polygone → sommets → réponse.',
+          'La réponse est une phrase complète avec des unités.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 5. Modifier un scénario ============ */
+scenarios: {
+  bulle: 'modifier un scénario',
+  sous: 'Analyser et modifier un scénario d\'optimisation',
+  recto: [
+    { t: 'txt', p: [
+      'Une fois le problème résolu, on peut changer une donnée et voir si la **solution optimale** change. C\'est l\'analyse d\'un **scénario**. On compare toujours l\'**ancienne** et la **nouvelle** solution.',
+    ] },
+    { t: 'tab', h: 'ce qu\'on peut modifier', full: true, lcol: true,
+      head: ['Modification', 'Ce qui change', 'Ce qu\'on refait'],
+      rows: [
+        ['un coefficient de la fonction à optimiser (ex. le profit d\'un article)', 'la **pente** de la droite baladeuse ; le polygone reste le même', 'recalculer Z aux mêmes sommets'],
+        ['une contrainte (ajout, retrait, nouvelle limite)', 'la **forme** du polygone et ses sommets', 'retracer, trouver les nouveaux sommets, recalculer Z'],
+        ['le but (maximiser ↔ minimiser)', 'le sommet recherché', 'relire le tableau des sommets'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'box', h: 'quand un sommet reste-t-il optimal ?', f: 'pente de la 1<sup>re</sup> droite ≤ pente de la droite baladeuse ≤ pente de la 2<sup>e</sup> droite', note: 'Les deux droites sont celles qui se croisent à ce sommet. À l\'égalité, il y a plusieurs solutions optimales (tout un côté).' } ],
+      [ { t: 'list', h: 'vocabulaire', items: [
+          '**Contrainte non essentielle** (redondante) : on peut l\'enlever sans changer le polygone.',
+          '**Contrainte essentielle** : elle forme un côté du polygone.',
+          '**Pente** de ax + by = k : −{{a|b}}.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'questions typiques', items: [
+      '« Quel profit minimal faut-il par tuque pour que … devienne la solution optimale ? » → inéquation avec les pentes.',
+      '« Si on ajoute la contrainte …, de combien le profit diminue-t-il ? » → nouveau polygone, puis différence.',
+      '« Cette contrainte est-elle nécessaire ? » → vérifier si elle touche le polygone.',
+      '« Proposer une modification pour que … » → plusieurs réponses possibles, il faut justifier.',
+    ] },
+  ],
+  verso: [
+    { t: 'txt', p: [ 'On repart du problème des tuques (x) et foulards (y) : 2x + 3y ≤ 60, x + y ≤ 25, y ≥ 5, x ≥ 0 ; P = 18x + 20y ; solution optimale (15, 10) pour 470 $.' ] },
+    { t: 'ex', h: 'Exemple 1 —', q: 'Entre quelles valeurs le profit <i>a</i> par tuque peut-il varier pour que (15, 10) reste optimal ? (P = ax + 20y)',
+      s: [
+        'pentes au sommet (15, 10) : x + y = 25 → −1 et 2x + 3y = 60 → −{{2|3}}',
+        'pente de la droite baladeuse : −{{a|20}}',
+        '−1 ≤ −{{a|20}} ≤ −{{2|3}}',
+        '20 ≥ a ≥ {{40|3}} // × (−20) : on inverse les symboles',
+      ],
+      r: 'entre 13,33 $ et 20 $ par tuque',
+      p: [ 'Vérif. avec a = 25 $ : P(20, 5) = 600 > P(15, 10) = 575 → la solution change bien quand a > 20.' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Nouvelle contrainte : au plus 12 tuques (x ≤ 12). De combien le profit maximal diminue-t-il ?',
+      s: [
+        'x = 12 et 2x + 3y = 60 → 24 + 3y = 60 → y = 12 // nouveau sommet (12, 12)',
+        'x = 12 et y = 5 // nouveau sommet (12, 5)',
+        'P(0, 5) = 100 · P(12, 5) = 316 · P(12, 12) = 456 · P(0, 20) = 400',
+        '470 − 456 = 14',
+      ],
+      r: '12 tuques et 12 foulards ; le profit baisse de 14 $' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Elle a maintenant 30 pelotes (x + y ≤ 30). Nouvelle solution ?',
+      s: [
+        'sur y = 5 : 2x + 15 = 60 → x = 22,5 // x + y = 27,5 ≤ 30 : la contrainte des pelotes ne touche plus le polygone',
+        'sommets : (0, 5), (22,5 ; 5), (0, 20) → P = 100, 505, 400',
+        '(22,5 ; 5) n\'est pas entier → on teste les points entiers voisins',
+        'P(22, 5) = 496 · P(21, 6) = 378 + 120 = 498 // (21, 6) : 2(21) + 3(6) = 60 ✓',
+      ],
+      r: '21 tuques et 6 foulards, pour 498 $',
+      p: [ 'La contrainte « pelotes » est devenue **non essentielle**.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Inverser les symboles quand on multiplie une double inéquation par un négatif (on l\'oublie souvent !).',
+          'Garder l\'ancien polygone après avoir ajouté une contrainte.',
+          'Donner un nombre non entier de tuques ou de foulards.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Coefficient de Z modifié → mêmes sommets, nouveau calcul.',
+          'Contrainte modifiée → nouveau polygone.',
+          'Sommet optimal : pente baladeuse entre les 2 pentes.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+
+/* ---- 12-math-cst-graphes.js ---- */
+/* Mathématique CST — Graphes */
+(function () {
+  // graphe « G » réutilisé dans les feuilles 6 et 7
+  const G = {
+    kind: 'graphe', w: 320, h: 145,
+    sommets: { A: [30, 35], B: [130, 22], C: [100, 115], D: [210, 80], E: [292, 118] },
+    aretes: [['A', 'B'], ['A', 'C'], ['B', 'C'], ['B', 'D'], ['C', 'D'], ['D', 'E']],
+    alt: 'graphe G à 5 sommets et 6 arêtes',
+  };
+
+Object.assign(DATA.feuilles['math-cst'], {
+
+/* ============ 6. Vocabulaire ============ */
+'graphes-vocabulaire': {
+  bulle: 'vocabulaire des graphes',
+  sous: 'Les graphes : définitions de base',
+  recto: [
+    { t: 'cols', w: '1fr 1.05fr', c: [
+      [ { t: 'txt', p: [
+        'Un **graphe** est un ensemble de **sommets** (points) reliés par des **arêtes** (lignes). Il sert à modéliser des réseaux : routes, amitiés, horaires, réseaux informatiques…',
+        'La position des sommets et la forme des arêtes n\'ont **pas d\'importance** : seules les liaisons comptent.',
+      ] } ],
+      [ { t: 'fig', figs: [ Object.assign({}, G, { cap: 'graphe G : 5 sommets, 6 arêtes' }) ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'les sommets', items: [
+          '**Ordre** d\'un graphe : son nombre de sommets.',
+          '**Degré** d\'un sommet : nombre d\'arêtes qui y touchent (une boucle compte pour 2).',
+          '**Sommets adjacents** : reliés par une arête.',
+          '**Sommet isolé** : de degré 0.',
+        ] },
+        { t: 'list', h: 'les arêtes', items: [
+          '**Boucle** : arête qui part d\'un sommet et y revient.',
+          '**Arêtes multiples** : plusieurs arêtes relient les deux mêmes sommets.',
+          '**Graphe simple** : sans boucle et sans arête multiple.',
+        ] } ],
+      [ { t: 'list', h: 'chaînes et cycles', items: [
+          '**Chaîne** : suite d\'arêtes qui se suivent (ex. A–B–D–E).',
+          '**Longueur** d\'une chaîne : son nombre d\'arêtes.',
+          '**Chaîne simple** : ne passe pas deux fois par la même arête.',
+          '**Cycle** : chaîne simple qui revient à son point de départ (ex. A–B–C–A).',
+          '**Distance** entre deux sommets : longueur de la plus courte chaîne qui les relie.',
+          '**Diamètre** : la plus grande distance entre deux sommets du graphe.',
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'types de graphes', items: [
+          '**Connexe** : on peut aller de n\'importe quel sommet à n\'importe quel autre.',
+          '**Complet** : chaque sommet est relié à tous les autres.',
+          '**Orienté** : les arêtes ont un sens (flèches).',
+          '**Pondéré** (valué) : chaque arête porte un nombre.',
+        ] } ],
+      [ { t: 'form', h: 'formules', items: [
+          ['Somme des degrés', '= 2 × nombre d\'arêtes'],
+          ['Graphe complet à n sommets', '{{n(n − 1)|2}} arêtes'],
+        ], note: 'Conséquence : le nombre de sommets de degré **impair** est toujours **pair**.' } ],
+    ] },
+    { t: 'ex', h: 'Petit exemple —', q: 'Un graphe a 7 arêtes, et ses sommets sont tous de degré 2. Quel est son ordre ?',
+      s: [ 'somme des degrés = 2 × 7 = 14', '2 × n = 14 → n = 7 // n = nombre de sommets' ],
+      r: '7 sommets' },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Décrire le graphe G.',
+      fig: Object.assign({}, G, { w: 260, h: 125, sommets: { A: [22, 30], B: [105, 18], C: [82, 100], D: [175, 70], E: [245, 104] } }),
+      s: [
+        'ordre : 5 sommets · 6 arêtes',
+        'degrés : A = 2, B = 3, C = 3, D = 3, E = 1',
+        '2 + 3 + 3 + 3 + 1 = 12 = 2 × 6 // la formule est vérifiée ✓',
+        'connexe ? oui, tous les sommets sont reliés',
+        'complet ? non : il en faudrait {{5 × 4|2}} = 10 arêtes',
+        'distance(A, E) = 3 // A–B–D–E ou A–C–D–E',
+        'diamètre = 3 // aucune paire n\'est plus éloignée',
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Peut-on dessiner un graphe dont les sommets ont les degrés 3, 3, 2 et 1 ?',
+          s: [ '3 + 3 + 2 + 1 = 9 // impair' ],
+          p: [ 'La somme des degrés doit être le double du nombre d\'arêtes, donc **paire**. Un tel graphe est **impossible**.' ] } ],
+      [ { t: 'ex', h: 'Exemple 3 —', q: '8 amis se serrent tous la main une fois. Combien de poignées de main ?',
+          s: [ 'graphe complet à 8 sommets', '{{8 × 7|2}} = {{56|2}} = 28' ],
+          r: '28 poignées de main' } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Compter une boucle comme 1 dans le degré (elle compte pour **2**).',
+          'Confondre l\'ordre (nombre de sommets) et le nombre d\'arêtes.',
+          'Croire que deux arêtes qui se croisent sur le dessin créent un sommet.',
+          'Confondre distance (nombre d\'arêtes) et poids (valeurs sur les arêtes).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Σ degrés = 2 × arêtes.',
+          'Complet : n(n − 1) ÷ 2 arêtes.',
+          'Distance = plus courte chaîne ; diamètre = la plus grande distance.',
+          'Connexe = « tout le monde est relié ».',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 7. Euler et Hamilton ============ */
+'euler-hamilton': {
+  bulle: 'euler et hamilton',
+  sous: 'Chaînes et cycles eulériens et hamiltoniens',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'eulérien : les ARÊTES', p: [
+        'Une **chaîne eulérienne** passe par **chaque arête une seule fois**.',
+        'Un **cycle eulérien** est une chaîne eulérienne qui revient au sommet de départ.',
+        'Utile pour : déneiger toutes les rues, livrer le courrier, tracer une figure sans lever le crayon.',
+      ] } ],
+      [ { t: 'txt', h: 'hamiltonien : les SOMMETS', p: [
+        'Une **chaîne hamiltonienne** passe par **chaque sommet une seule fois**.',
+        'Un **cycle hamiltonien** est une chaîne hamiltonienne qui revient au sommet de départ.',
+        'Utile pour : une tournée de clients, un voyage qui visite chaque ville une fois.',
+      ] } ],
+    ] },
+    { t: 'tab', h: 'théorème d\'Euler (graphe connexe)', full: true, lcol: true,
+      head: ['Nombre de sommets de degré impair', 'Conclusion'],
+      rows: [
+        ['0', 'il existe un **cycle eulérien** (on peut partir de n\'importe quel sommet)'],
+        ['2', 'il existe une **chaîne eulérienne** (pas de cycle) : elle part d\'un sommet impair et finit à l\'autre'],
+        ['plus de 2', '**aucune** chaîne eulérienne'],
+      ],
+      note: 'Un graphe non connexe n\'a jamais de chaîne eulérienne (s\'il a des arêtes dans plus d\'un morceau).' },
+    { t: 'cols', w: '1.2fr 1fr', c: [
+      [ { t: 'list', h: 'pour Hamilton : pas de théorème simple', items: [
+          'On cherche par **essais** : on essaie de visiter tous les sommets sans repasser.',
+          'Un sommet de degré 1 empêche un cycle hamiltonien (on ne pourrait pas en ressortir).',
+          'Un graphe complet (3 sommets ou plus) a toujours un cycle hamiltonien.',
+        ] },
+        { t: 'box', f: 'Euler → chaque <b>arête</b> une fois · Hamilton → chaque <b>sommet</b> une fois' } ],
+      [ { t: 'fig', figs: [
+          { kind: 'graphe', w: 190, h: 150, sommets: { A: [30, 25], B: [160, 25], C: [160, 125], D: [30, 125] },
+            aretes: [['A', 'B'], ['B', 'C'], ['C', 'D'], ['D', 'A'], ['A', 'C']],
+            alt: 'carré avec une diagonale', cap: 'degrés : A = 3, B = 2, C = 3, D = 2' },
+        ] } ],
+    ] },
+    { t: 'txt', h: 'le problème historique', p: [
+      'En 1736, Euler a prouvé qu\'on ne pouvait pas traverser les 7 ponts de Königsberg une seule fois chacun : les 4 sommets du graphe étaient de degré impair.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Le carré avec une diagonale (recto) : chaîne ou cycle eulérien ? Cycle hamiltonien ?',
+      fig: { kind: 'graphe', w: 170, h: 130, sommets: { A: [25, 20], B: [145, 20], C: [145, 110], D: [25, 110] },
+        aretes: [['A', 'B', 1], ['B', 'C', 2], ['C', 'D', 3], ['D', 'A', 4], ['A', 'C', 5, [10, -8]]],
+        alt: 'ordre de parcours de la chaîne eulérienne', cap: 'ordre de passage : 1 à 5' },
+      s: [
+        'sommets impairs : A (3) et C (3) → 2 sommets impairs',
+        'donc une chaîne eulérienne, de A vers C, mais pas de cycle',
+        'A–B–C–D–A–C // 5 arêtes, chacune une fois ✓',
+        'cycle hamiltonien : A–B–C–D–A // 4 sommets, chacun une fois ✓',
+      ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Le graphe G de la feuille « vocabulaire » (degrés A = 2, B = 3, C = 3, D = 3, E = 1).',
+      s: [
+        'sommets impairs : B, C, D et E → 4 // plus de 2',
+        'donc aucune chaîne eulérienne',
+        'chaîne hamiltonienne : A–B–C–D–E ✓',
+        'cycle hamiltonien : impossible // E est de degré 1',
+      ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un camion de déneigement doit passer une fois dans chaque rue d\'un quartier et revenir au garage. Quelle condition le graphe des rues doit-il respecter ?',
+      p: [ 'On cherche un **cycle eulérien** (les rues sont les arêtes). Le graphe doit être connexe et **tous** ses sommets (intersections) doivent être de **degré pair**.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre Euler (arêtes) et Hamilton (sommets).',
+          'Chercher un cycle eulérien quand il y a 2 sommets impairs : il n\'y a qu\'une chaîne.',
+          'Commencer une chaîne eulérienne à un sommet pair alors qu\'il y a 2 sommets impairs.',
+          'Pour Hamilton : oublier que le cycle doit revenir au départ sans repasser par un sommet.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Compte les sommets de degré **impair** : 0 → cycle, 2 → chaîne, plus → rien.',
+          'Hamilton : on essaie, pas de règle simple.',
+          'Degré 1 → pas de cycle hamiltonien.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 8. Orientés, pondérés, chaîne la plus courte ============ */
+'chaine-courte': {
+  bulle: 'chaîne la plus courte',
+  sous: 'Graphes orientés et pondérés, chaîne la plus courte',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'graphe orienté', p: [
+          'Chaque arête a un **sens** : on l\'appelle un **arc** et on la dessine avec une flèche. On ne peut la suivre que dans ce sens.',
+          'Dans un graphe orienté, on parle de **chemin** (au lieu de chaîne) et de **circuit** (au lieu de cycle).',
+          'Exemples : rues à sens unique, abonnements sur un réseau social, ordre des tâches d\'un projet.',
+        ] } ],
+      [ { t: 'txt', h: 'graphe pondéré (valué)', p: [
+          'Chaque arête porte un nombre : son **poids** (distance, coût, temps…).',
+          'Le **poids d\'une chaîne** est la somme des poids de ses arêtes.',
+          'La **chaîne la plus courte** entre deux sommets est celle qui a le **plus petit poids**, pas forcément le moins d\'arêtes.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'algorithme de Dijkstra (chaîne la plus courte)', items: [
+      '1. Le sommet de départ reçoit 0. Tous les autres reçoivent ∞ (inconnu).',
+      '2. On **fixe** le sommet non fixé qui a la plus petite valeur.',
+      '3. Pour chacun de ses voisins non fixés : valeur du sommet fixé + poids de l\'arête. Si c\'est plus petit que la valeur actuelle, on la remplace et on note d\'où on vient.',
+      '4. On recommence à l\'étape 2 jusqu\'à ce que le sommet d\'arrivée soit fixé.',
+      '5. On remonte les « d\'où on vient » à partir de l\'arrivée pour lire la chaîne.',
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'fig', figs: [
+          { kind: 'graphe', w: 320, h: 165, sommets: { A: [22, 85], B: [125, 22], C: [125, 145], D: [235, 50], E: [300, 128] },
+            aretes: [['A', 'B', 4], ['A', 'C', 2], ['C', 'B', 1, [10, 0]], ['B', 'D', 5], ['C', 'D', 8], ['C', 'E', 10], ['D', 'E', 2]],
+            gras: ['A-C', 'C-B', 'B-D', 'D-E'],
+            alt: 'graphe pondéré avec la chaîne la plus courte en rose', cap: 'chaîne la plus courte de A à E (en rose) : poids 10' },
+        ] } ],
+      [ { t: 'list', h: 'trucs', items: [
+          'Dans un petit graphe, on peut aussi **énumérer** toutes les chaînes et comparer leurs poids.',
+          'La chaîne directe n\'est pas toujours la meilleure : ici A–B (4) est plus long que A–C–B (3).',
+          'Dans un graphe orienté, on respecte le sens des flèches.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'tab', h: 'Exemple 1 — Dijkstra de A à E (graphe du recto)', full: true,
+      head: ['Sommet fixé', 'A', 'B', 'C', 'D', 'E'],
+      rows: [
+        ['départ', '<b>0</b>', '∞', '∞', '∞', '∞'],
+        ['A (0)', '✓', '4 (A)', '2 (A)', '∞', '∞'],
+        ['C (2)', '✓', '3 (C)', '✓', '10 (C)', '12 (C)'],
+        ['B (3)', '✓', '✓', '✓', '8 (B)', '12 (C)'],
+        ['D (8)', '✓', '✓', '✓', '✓', '10 (D)'],
+        ['E (10)', '✓', '✓', '✓', '✓', '✓'],
+      ],
+      note: 'Ligne C : B passe de 4 à 2 + 1 = 3. Ligne B : D passe de 10 à 3 + 5 = 8. Ligne D : E passe de 12 à 8 + 2 = 10.' },
+    { t: 'ex', h: 'Remontée :', q: 'E vient de D, D vient de B, B vient de C, C vient de A.',
+      s: [ 'chaîne : A–C–B–D–E', 'poids : 2 + 1 + 5 + 2 = 10' ],
+      r: 'A–C–B–D–E, de poids 10' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Graphe orienté : trouver le chemin le plus court de S à T.',
+      fig: { kind: 'graphe', oriente: true, w: 230, h: 130, sommets: { S: [20, 65], A: [110, 18], B: [110, 112], T: [210, 65] },
+        aretes: [['S', 'A', 3], ['S', 'B', 6], ['A', 'B', 2, [10, 0]], ['B', 'T', 1], ['A', 'T', 5]],
+        gras: ['S-A', 'A-B', 'B-T'], alt: 'graphe orienté pondéré' },
+      s: [ 'S → A → T : 3 + 5 = 8', 'S → B → T : 6 + 1 = 7', 'S → A → B → T : 3 + 2 + 1 = 6 // le plus court' ],
+      r: 'S → A → B → T, de poids 6' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Choisir la chaîne qui a le moins d\'arêtes au lieu du plus petit poids.',
+          'Oublier de mettre à jour une valeur quand on trouve un meilleur passage.',
+          'Suivre une flèche à l\'envers dans un graphe orienté.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Poids d\'une chaîne = somme des poids.',
+          'Dijkstra : fixer le plus petit, mettre à jour les voisins, recommencer.',
+          'Toujours noter d\'où l\'on vient pour remonter la chaîne.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 9. Arbres ============ */
+arbres: {
+  bulle: 'arbres',
+  sous: 'Arbres et arbre de valeur minimale',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'Un **arbre** est un graphe **connexe** et **sans cycle**.',
+        ] },
+        { t: 'list', h: 'propriétés d\'un arbre à n sommets', items: [
+          'Il a exactement **n − 1 arêtes**.',
+          'Entre deux sommets, il y a **une seule** chaîne.',
+          'Enlever une arête le coupe en deux (il n\'est plus connexe).',
+          'Ajouter une arête crée un cycle.',
+        ] } ],
+      [ { t: 'txt', h: 'arbre de valeur minimale', p: [
+          'Dans un graphe pondéré, c\'est un arbre qui relie **tous les sommets** avec la **plus petite somme de poids** possible.',
+          'Aussi appelé arbre de poids minimal. Exemples : relier des villages par la fibre optique ou des chalets par des sentiers au plus bas coût.',
+          'L\'**arbre de valeur maximale** relie tous les sommets avec la plus grande somme de poids.',
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'algorithme de Kruskal', items: [
+          '1. Classer les arêtes par poids **croissant**.',
+          '2. Prendre les arêtes dans l\'ordre. On garde une arête seulement si elle **ne crée pas de cycle**.',
+          '3. Arrêter quand on a **n − 1 arêtes**.',
+          'Pour l\'arbre de valeur **maximale** : même méthode, en ordre **décroissant**.',
+        ] } ],
+      [ { t: 'list', h: 'algorithme de Prim', items: [
+          '1. Partir de n\'importe quel sommet.',
+          '2. Parmi les arêtes qui relient un sommet déjà choisi à un sommet pas encore choisi, prendre la plus légère.',
+          '3. Recommencer jusqu\'à ce que tous les sommets soient reliés.',
+          'Les deux méthodes donnent la même valeur minimale.',
+        ] } ],
+    ] },
+    { t: 'fig', figs: [
+      { kind: 'graphe', w: 330, h: 165, sommets: { A: [25, 85], B: [130, 22], C: [130, 145], D: [235, 50], E: [305, 130] },
+        aretes: [['A', 'B', 6], ['A', 'C', 3], ['B', 'C', 4, [10, 0]], ['B', 'D', 2], ['C', 'D', 5], ['C', 'E', 7], ['D', 'E', 8]],
+        gras: ['B-D', 'A-C', 'B-C', 'C-E'], pale: ['C-D', 'A-B', 'D-E'],
+        alt: 'arbre de valeur minimale en rose', cap: 'graphe pondéré de l\'exemple : l\'arbre de valeur minimale est en rose' },
+    ] },
+  ],
+  verso: [
+    { t: 'tab', h: 'Exemple 1 — arbre de valeur minimale (Kruskal)', full: true, lcol: true,
+      head: ['Arête (ordre croissant)', 'Poids', 'Décision'],
+      rows: [
+        ['B–D', '2', 'on garde ✓'],
+        ['A–C', '3', 'on garde ✓'],
+        ['B–C', '4', 'on garde ✓ (relie {B, D} et {A, C})'],
+        ['C–D', '5', 'rejetée ✗ : cycle B–C–D'],
+        ['A–B', '6', 'rejetée ✗ : cycle A–B–C'],
+        ['C–E', '7', 'on garde ✓ → 4 arêtes = 5 − 1 : on arrête'],
+      ] },
+    { t: 'ex', h: 'Valeur :', q: '', s: [ '2 + 3 + 4 + 7 = 16' ], r: 'arbre B–D, A–C, B–C, C–E, de valeur minimale 16' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Vérifier avec Prim, en partant de A.',
+      s: [
+        '{A} : A–C (3) plutôt que A–B (6) // on ajoute C',
+        '{A, C} : B–C (4) est la plus légère // on ajoute B',
+        '{A, B, C} : B–D (2) // on ajoute D',
+        '{A, B, C, D} : C–E (7) plutôt que D–E (8) // on ajoute E',
+      ],
+      r: 'même arbre, valeur 16 ✓' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Arbre de valeur maximale (ordre décroissant).',
+      s: [ 'D–E (8) ✓ · C–E (7) ✓ · A–B (6) ✓', 'C–D (5) ✗ // cycle C–D–E', 'B–C (4) ✓ // 4 arêtes : on arrête', '8 + 7 + 6 + 4 = 25' ],
+      r: 'valeur maximale 25' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Garder une arête qui ferme un cycle.',
+          'Continuer après avoir obtenu n − 1 arêtes.',
+          'Avec Prim : choisir une arête qui relie deux sommets déjà choisis.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Arbre = connexe + sans cycle = n − 1 arêtes.',
+          'Kruskal : du plus léger au plus lourd, sans cycle.',
+          'Maximale : même chose en ordre décroissant.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 10. Chemin critique ============ */
+'chemin-critique': {
+  bulle: 'chemin critique',
+  sous: 'Chemin critique d\'un projet',
+  recto: [
+    { t: 'txt', p: [
+      'Pour planifier un projet, on le découpe en **tâches**. Chaque tâche a une **durée** et parfois des **tâches préalables** : des tâches qui doivent être finies avant qu\'elle puisse commencer. On représente le projet par un **graphe orienté** (les sommets sont les tâches, les flèches suivent l\'ordre).',
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'vocabulaire', items: [
+          '**Chemin** : suite de tâches du début à la fin du projet, en suivant les flèches.',
+          '**Durée d\'un chemin** : la somme des durées de ses tâches.',
+          '**Chemin critique** : le chemin le **plus long**. Sa durée est la **durée minimale** du projet.',
+          '**Tâche critique** : tâche sur le chemin critique. Le moindre retard retarde tout le projet.',
+          '**Marge** d\'une tâche : le retard qu\'elle peut prendre sans retarder le projet.',
+        ] } ],
+      [ { t: 'list', h: 'démarche', items: [
+          '1. Faire le tableau des tâches : durée et tâches préalables.',
+          '2. Dessiner le graphe orienté : « Début », les tâches, « Fin ».',
+          '3. Énumérer **tous** les chemins de Début à Fin.',
+          '4. Calculer la durée de chaque chemin.',
+          '5. Le plus long = chemin critique = durée minimale du projet.',
+        ] },
+        { t: 'box', f: 'marge = durée du projet − durée du plus long chemin qui passe par la tâche' } ],
+    ] },
+    { t: 'txt', h: 'pourquoi le PLUS LONG chemin ?', p: [
+      'Plusieurs tâches se font en même temps. Le projet ne peut pas finir avant que la plus longue suite de tâches obligatoires soit terminée. C\'est pour ça qu\'on cherche le chemin le plus long, et non le plus court.',
+    ] },
+    { t: 'fig', figs: [
+      { kind: 'graphe', oriente: true, w: 470, h: 175,
+        sommets: { Début: [38, 88], A: [135, 35], B: [135, 140], C: [255, 20], D: [255, 88], E: [255, 155], F: [360, 88], Fin: [440, 88] },
+        labels: { A: 'A · 3 j', B: 'B · 2 j', C: 'C · 4 j', D: 'D · 5 j', E: 'E · 7 j', F: 'F · 2 j' },
+        aretes: [['Début', 'A'], ['Début', 'B'], ['A', 'C'], ['A', 'D'], ['B', 'D'], ['B', 'E'], ['C', 'F'], ['D', 'F'], ['E', 'F'], ['F', 'Fin']],
+        gras: ['Début-B', 'B-E', 'E-F', 'F-Fin'],
+        alt: 'graphe du projet avec le chemin critique en rose', cap: 'graphe du projet de bal (verso) ; chemin critique en rose' },
+    ] },
+  ],
+  verso: [
+    { t: 'tab', h: 'Exemple — organiser le bal des finissants', full: true, lcol: true,
+      head: ['Tâche', 'Durée', 'Tâches préalables'],
+      rows: [
+        ['A : réserver la salle', '3 jours', 'aucune'],
+        ['B : choisir le thème', '2 jours', 'aucune'],
+        ['C : engager le DJ', '4 jours', 'A'],
+        ['D : préparer les décorations', '5 jours', 'A et B'],
+        ['E : vendre les billets', '7 jours', 'B'],
+        ['F : monter la salle', '2 jours', 'C, D et E'],
+      ] },
+    { t: 'ex', h: 'Les chemins :', q: '(graphe au recto)',
+      s: [
+        'Début–A–C–F–Fin : 3 + 4 + 2 = 9 jours',
+        'Début–A–D–F–Fin : 3 + 5 + 2 = 10 jours',
+        'Début–B–D–F–Fin : 2 + 5 + 2 = 9 jours',
+        'Début–B–E–F–Fin : 2 + 7 + 2 = 11 jours // le plus long',
+      ],
+      r: 'chemin critique B–E–F : le bal demande au minimum 11 jours' },
+    { t: 'tab', h: 'les marges', full: true,
+      head: ['Tâche', 'A', 'B', 'C', 'D', 'E', 'F'],
+      rows: [
+        ['plus long chemin qui passe par la tâche', '10', '11', '9', '10', '11', '11'],
+        ['marge (11 − …)', '1 j', '<b>0</b>', '2 j', '1 j', '<b>0</b>', '<b>0</b>'],
+      ],
+      note: 'Les tâches critiques (marge 0) sont B, E et F. Le DJ (C) peut être engagé jusqu\'à 2 jours en retard sans retarder le bal.' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Chercher le chemin le plus **court** : c\'est le plus **long** qui est critique.',
+          'Oublier un chemin : énumère-les tous, de façon organisée.',
+          'Additionner les durées de toutes les tâches (ça donne 23 jours, mais plusieurs se font en même temps).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Chemin critique = chemin le plus long = durée minimale du projet.',
+          'Tâche critique : marge de 0.',
+          'Pour raccourcir le projet, il faut raccourcir une tâche **critique**.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 11. Coloration ============ */
+coloration: {
+  bulle: 'coloration de graphes',
+  sous: 'Coloration de graphes et nombre chromatique',
+  recto: [
+    { t: 'cols', w: '1.35fr 1fr', c: [
+      [ { t: 'txt', p: [
+          '**Colorer un graphe**, c\'est donner une couleur à chaque sommet de sorte que deux sommets **adjacents** n\'aient **jamais** la même couleur.',
+          'Le **nombre chromatique** d\'un graphe, noté **χ(G)** (« khi de G »), est le **plus petit** nombre de couleurs nécessaire.',
+        ] },
+        { t: 'list', h: 'applications', items: [
+          '**Horaire d\'examens** : sommets = cours, arête = un élève suit les deux cours ; couleur = plage horaire.',
+          '**Carte géographique** : deux régions voisines de couleurs différentes.',
+          '**Aquarium** : des poissons incompatibles dans des bassins différents.',
+          '**Feux de circulation**, fréquences radio, tables d\'invités…',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'graphe', w: 200, h: 170, sommets: { A: [100, 18], B: [180, 75], C: [150, 152], D: [50, 152], E: [20, 75] },
+            aretes: [['A', 'B'], ['B', 'C'], ['C', 'D'], ['D', 'E'], ['E', 'A']],
+            couleurs: { A: 1, B: 2, C: 1, D: 2, E: 3 },
+            alt: 'cycle de 5 sommets colorié avec 3 couleurs', cap: 'un cycle de 5 sommets demande 3 couleurs : χ = 3' },
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'box', h: 'encadrer χ(G)', f: 'ordre du plus grand sous-graphe complet ≤ χ(G) ≤ degré maximal + 1' },
+        { t: 'list', items: [
+          'Un triangle (3 sommets tous reliés) oblige au moins **3** couleurs.',
+          'Un graphe complet à n sommets : χ = n.',
+          'Un cycle : χ = 2 s\'il a un nombre pair de sommets, 3 s\'il est impair.',
+          'Un arbre (2 sommets ou plus) : χ = 2.',
+        ] } ],
+      [ { t: 'list', h: 'algorithme de Welsh-Powell', items: [
+          '1. Classer les sommets par degré **décroissant**.',
+          '2. Donner la couleur 1 au premier sommet, puis, dans l\'ordre, à chaque sommet **non adjacent** à ceux déjà colorés en 1.',
+          '3. Recommencer avec la couleur 2 pour les sommets pas encore colorés, et ainsi de suite.',
+          'Le nombre de couleurs obtenu est une bonne réponse ; on confirme avec la borne inférieure.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'txt', h: 'Exemple — horaire d\'examens', p: [
+      'Six examens (A à F). Une arête relie deux examens qui ont au moins un élève en commun (ils ne peuvent pas avoir lieu en même temps). Arêtes : A–B, A–C, A–D, B–C, B–E, C–F, D–E, E–F. Combien de plages horaires faut-il au minimum ?',
+    ] },
+    { t: 'cols', w: '1.1fr 1fr', c: [
+      [ { t: 'ex', h: 'Degrés :', q: 'A = 3, B = 3, C = 3, E = 3, D = 2, F = 2',
+          s: [
+            'ordre : A, B, C, E, D, F',
+            'couleur 1 : A, puis E // E n\'est pas voisin de A',
+            'couleur 2 : B, puis D et F // ni D ni F ne touchent B, et D–F n\'est pas une arête',
+            'couleur 3 : C',
+          ] },
+        { t: 'ex', h: 'Vérification :', q: 'Les 8 arêtes relient des couleurs différentes : A–B (1-2), A–C (1-3), A–D (1-2), B–C (2-3), B–E (2-1), C–F (3-2), D–E (2-1), E–F (1-2) ✓' } ],
+      [ { t: 'fig', figs: [
+          { kind: 'graphe', w: 290, h: 220, sommets: { D: [160, 18], A: [50, 90], B: [160, 62], E: [272, 110], F: [210, 200], C: [90, 190] },
+            aretes: [['A', 'B'], ['A', 'C'], ['A', 'D'], ['B', 'C'], ['B', 'E'], ['C', 'F'], ['D', 'E'], ['E', 'F']],
+            couleurs: { A: 1, E: 1, B: 2, D: 2, F: 2, C: 3 },
+            alt: 'graphe des examens colorié avec 3 couleurs', cap: 'rose = plage 1 · bleu = plage 2 · vert = plage 3' },
+        ] } ],
+    ] },
+    { t: 'ex', h: 'Conclusion :', q: 'A, B et C forment un triangle, donc χ ≥ 3. On a réussi avec 3 couleurs, donc χ = 3.',
+      r: '3 plages horaires : {A, E}, {B, D, F} et {C}' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Donner la même couleur à deux sommets **reliés**.',
+          'Oublier de vérifier la borne inférieure : trouver 3 couleurs ne prouve pas qu\'on ne peut pas faire mieux.',
+          'Mal modéliser : dans un horaire, l\'arête veut dire « ne peuvent PAS être en même temps ».',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Sommets adjacents → couleurs différentes.',
+          'χ(G) = nombre minimal de couleurs.',
+          'Triangle → au moins 3 ; χ ≤ degré max + 1.',
+          'Welsh-Powell : degrés décroissants.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+})();
+
+/* ---- 13-math-cst-probabilites-vote.js ---- */
+/* Mathématique CST — Probabilités et choix social */
+(function () {
+  // profil de vote réutilisé dans les feuilles 16 et 17
+  const PROFIL = {
+    t: 'tab', full: true, lcol: true,
+    head: ['Nombre d\'électeurs', '8', '6', '5', '2'],
+    rows: [
+      ['1<sup>er</sup> choix', 'A', 'B', 'C', 'C'],
+      ['2<sup>e</sup> choix', 'B', 'C', 'B', 'A'],
+      ['3<sup>e</sup> choix', 'C', 'A', 'A', 'B'],
+    ],
+  };
+
+Object.assign(DATA.feuilles['math-cst'], {
+
+/* ============ 12. Rappels de probabilité ============ */
+'proba-rappels': {
+  bulle: 'probabilités : rappels',
+  sous: 'Rappels : événements, calcul de probabilités et dénombrement',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'vocabulaire', items: [
+          '**Expérience aléatoire** : on connaît les résultats possibles, mais on ne peut pas prévoir lequel sortira.',
+          '**Univers des possibles (Ω)** : l\'ensemble de tous les résultats possibles.',
+          '**Événement** : un sous-ensemble de résultats (ex. « obtenir un nombre pair »).',
+          '**Événement certain** : P = 1 · **impossible** : P = 0.',
+        ] } ],
+      [ { t: 'list', h: 'types d\'événements', items: [
+          '**Mutuellement exclusifs** (incompatibles) : ne peuvent pas se produire en même temps.',
+          '**Compatibles** : peuvent se produire en même temps.',
+          '**Complémentaires** (A et A\') : exclusifs, et l\'un des deux se produit toujours.',
+          '**Dépendants / indépendants** : voir la feuille « probabilité conditionnelle ».',
+        ] } ],
+    ] },
+    { t: 'form', h: 'formules', items: [
+      ['Résultats équiprobables', 'P(A) = {{nombre de cas favorables|nombre de cas possibles}}'],
+      ['Toujours', '0 ≤ P(A) ≤ 1'],
+      ['Complémentaire', 'P(A\') = 1 − P(A)'],
+      ['« A ou B »', 'P(A ∪ B) = P(A) + P(B) − P(A ∩ B)'],
+      ['A et B exclusifs', 'P(A ∪ B) = P(A) + P(B)   (car P(A ∩ B) = 0)'],
+      ['Probabilité géométrique', 'P = {{mesure de la région favorable|mesure de la région totale}}   (longueur, aire, volume)'],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'trois types de probabilité', items: [
+          '**Théorique** : calculée par raisonnement (ex. un dé équilibré).',
+          '**Fréquentielle** (expérimentale) : {{nombre de fois observé|nombre d\'essais}}.',
+          '**Subjective** : basée sur un jugement ou une opinion (ex. la météo selon un expert).',
+        ] } ],
+      [ { t: 'list', h: 'outils pour compter', items: [
+          '**Arbre**, **tableau à double entrée**, **diagramme de Venn**.',
+          '**Principe de multiplication** : n<sub>1</sub> × n<sub>2</sub> × … façons.',
+          '**Avec remise** : on remet l\'objet (mêmes probabilités à chaque tirage). **Sans remise** : les probabilités changent.',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'dénombrement : choisir r objets parmi n', full: true, lcol: true,
+      head: ['', 'L\'ordre compte ?', 'Formule', 'Exemple'],
+      rows: [
+        ['**Arrangement**', 'oui', '{{n!|(n − r)!}}', 'président, vice, trésorier'],
+        ['**Permutation**', 'oui, tous les objets', 'n!', 'placer 5 livres en rangée : 120'],
+        ['**Combinaison**', 'non', '{{n!|r! (n − r)!}}', 'un comité de 3 élèves'],
+      ],
+      note: 'n! = n × (n − 1) × … × 2 × 1  (ex. 5! = 120 ; par convention, 0! = 1)' },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'On lance deux dés.',
+          s: [ '36 résultats possibles // 6 × 6', 'P(somme = 7) = {{6|36}} = {{1|6}} // (1,6) (2,5) (3,4) (4,3) (5,2) (6,1)', 'P(aucun 6) = {{5|6}} × {{5|6}} = {{25|36}}', 'P(au moins un 6) = 1 − {{25|36}} = {{11|36}}' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Choisir 3 élèves parmi 8.',
+          s: [ 'comité (ordre sans importance) :', '{{8!|3! × 5!}} = {{8 × 7 × 6|3 × 2 × 1}} = 56', 'président, vice, trésorier :', '8 × 7 × 6 = 336 // l\'ordre compte' ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'Un sac contient 5 billes rouges et 3 bleues. On en tire 2 sans remise. P(2 rouges) ?',
+          s: [ 'P = {{5|8}} × {{4|7}} // il reste 4 rouges sur 7', 'P = {{20|56}} = {{5|14}} ≈ 0,357' ] } ],
+      [ { t: 'ex', h: 'Exemple 4 —', q: 'On tire une carte d\'un jeu de 52. P(cœur ou figure) ?',
+          s: [ 'P(cœur) = {{13|52}} · P(figure) = {{12|52}} // valet, dame, roi', 'P(cœur et figure) = {{3|52}}', 'P = {{13 + 12 − 3|52}} = {{22|52}} = {{11|26}}' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 5 —', q: 'Une cible est un disque de rayon 10 cm. Le centre est un disque de rayon 2 cm. Une fléchette lancée au hasard touche la cible. P(centre) ?',
+      s: [ 'P = {{π(2)²|π(10)²}} = {{4π|100π}} = 0,04' ], r: '4 %' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Additionner P(A) et P(B) sans soustraire P(A ∩ B) quand les événements sont compatibles.',
+          'Oublier que, sans remise, le nombre total diminue au 2<sup>e</sup> tirage.',
+          'Utiliser un arrangement quand l\'ordre ne compte pas (ou l\'inverse).',
+          '« Au moins un » : plus rapide avec le complémentaire (1 − P(aucun)).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'P = favorables ÷ possibles.',
+          'P(A ou B) = P(A) + P(B) − P(A et B).',
+          'Ordre compte → arrangement ; sinon → combinaison.',
+          '« Au moins un » → 1 − P(aucun).',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 13. Probabilité conditionnelle ============ */
+'proba-conditionnelle': {
+  bulle: 'probabilité conditionnelle',
+  sous: 'Probabilité conditionnelle, événements dépendants et indépendants',
+  recto: [
+    { t: 'cols', w: '1.2fr 1fr', c: [
+      [ { t: 'txt', p: [
+          'La **probabilité conditionnelle** est la probabilité qu\'un événement A se produise **sachant que** l\'événement B s\'est déjà produit.',
+          'On la note **P(A | B)** et on lit « probabilité de A sachant B ».',
+          'L\'information « B s\'est produit » **réduit l\'univers** : on ne regarde plus que les cas où B est vrai.',
+        ] } ],
+      [ { t: 'box', h: 'la formule', f: 'P(A | B) = {{P(A ∩ B)|P(B)}}', note: 'donc  P(A ∩ B) = P(B) × P(A | B)' } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'événements indépendants', p: [
+          'Le fait que B se produise ne change **pas** la probabilité de A.',
+          'P(A | B) = P(A)  ⇔  **P(A ∩ B) = P(A) × P(B)**',
+          'ex. lancer un dé, puis une pièce ; des tirages **avec remise**.',
+        ] } ],
+      [ { t: 'txt', h: 'événements dépendants', p: [
+          'Le fait que B se produise **change** la probabilité de A.',
+          'P(A | B) ≠ P(A)',
+          'ex. des tirages **sans remise** ; « être en sec 5 » et « avoir son permis ».',
+        ] } ],
+    ] },
+    { t: 'box', f: 'Exclusifs ≠ indépendants ! Deux événements exclusifs (de probabilités non nulles) sont toujours <b>dépendants</b> : si l\'un arrive, l\'autre devient impossible.' },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'avec un tableau à double entrée', items: [
+          'P(A | B) = {{nombre dans la case « A et B »|total de la ligne (ou colonne) B}}',
+          'On lit seulement la ligne ou la colonne de la condition.',
+        ] } ],
+      [ { t: 'list', h: 'avec un arbre', items: [
+          'Les probabilités sur les branches du 2<sup>e</sup> niveau sont **conditionnelles**.',
+          'On **multiplie** le long d\'un chemin ; on **additionne** les chemins qui mènent au même événement.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'tab', h: 'Exemple 1 — sondage auprès de 200 élèves', full: true, lcol: true,
+      head: ['', 'Fait du sport', 'Pas de sport', 'Total'],
+      rows: [ ['Sec 4', '60', '40', '100'], ['Sec 5', '45', '55', '100'], ['Total', '105', '95', '200'] ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: '', q: '',
+          s: [ 'P(sport | sec 5) = {{45|100}} = 0,45 // ligne « sec 5 » seulement', 'P(sec 5 | sport) = {{45|105}} = {{3|7}} ≈ 0,43 // colonne « sport »', 'P(sport) = {{105|200}} = 0,525' ] } ],
+      [ { t: 'ex', h: 'Indépendants ?', q: '', p: [ 'P(sport | sec 5) = 0,45 ≠ P(sport) = 0,525. Les événements sont **dépendants** : le niveau change la probabilité de faire du sport.' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une urne contient 4 billes vertes (V) et 6 jaunes (J). On tire 2 billes sans remise.',
+      fig: { kind: 'graphe', w: 250, h: 175,
+        sommets: { O: [14, 88], V: [115, 42], J: [115, 134], VV: [225, 16], VJ: [225, 64], JV: [225, 112], JJ: [225, 160] },
+        labels: { O: '•', VV: 'V', VJ: 'J', JV: 'V', JJ: 'J' },
+        aretes: [['O', 'V', '4/10', [-8, -8]], ['O', 'J', '6/10', [-8, 8]], ['V', 'VV', '3/9', [0, -8]], ['V', 'VJ', '6/9', [0, 8]], ['J', 'JV', '4/9', [0, -8]], ['J', 'JJ', '5/9', [0, 8]]],
+        alt: 'arbre des probabilités de deux tirages sans remise', cap: '1<sup>er</sup> tirage → 2<sup>e</sup> tirage' },
+      s: [
+        'P(2<sup>e</sup> V | 1<sup>re</sup> V) = {{3|9}} = {{1|3}} // il reste 3 V sur 9',
+        'P(V puis V) = {{4|10}} × {{3|9}} = {{12|90}}',
+        'P(J puis V) = {{6|10}} × {{4|9}} = {{24|90}}',
+        'P(2<sup>e</sup> V) = {{12|90}} + {{24|90}} = {{36|90}} = 0,4',
+        'P(1<sup>re</sup> V | 2<sup>e</sup> V) = {{12/90|36/90}} = {{1|3}}',
+      ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'On lance un dé, puis une pièce. P(6 et face) ?',
+      s: [ 'indépendants : P = {{1|6}} × {{1|2}} = {{1|12}}' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre P(A | B) et P(B | A) : ce n\'est pas la même division (45/100 ≠ 45/105).',
+          'Diviser par le grand total au lieu du total de la condition.',
+          'Croire que « exclusifs » veut dire « indépendants ».',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'P(A | B) = P(A et B) ÷ P(B).',
+          'Indépendants : P(A et B) = P(A) × P(B).',
+          'Arbre : × sur un chemin, + entre les chemins.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 14. Chances ============ */
+chances: {
+  bulle: 'chances pour et contre',
+  sous: 'Chances pour et chances contre',
+  recto: [
+    { t: 'txt', p: [
+      'Les **chances** comparent les cas favorables aux cas **défavorables** (et non au total, comme la probabilité). On les écrit sous forme de **rapport** a : b.',
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'box', h: 'chances pour', f: 'nombre de cas favorables : nombre de cas défavorables' } ],
+      [ { t: 'box', h: 'chances contre', f: 'nombre de cas défavorables : nombre de cas favorables' } ],
+    ] },
+    { t: 'tab', h: 'passer de l\'un à l\'autre', full: true, lcol: true,
+      head: ['On connaît…', 'On trouve…', 'Comment'],
+      rows: [
+        ['les chances pour a : b', 'la probabilité', 'P = {{a|a + b}}'],
+        ['les chances contre a : b', 'la probabilité de gagner', 'P = {{b|a + b}}'],
+        ['la probabilité {{m|n}}', 'les chances pour', 'm : (n − m)'],
+        ['les chances pour a : b', 'les chances contre', 'b : a (on inverse)'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'à savoir', items: [
+          'On **simplifie** le rapport comme une fraction : 6 : 4 = 3 : 2.',
+          'Chances pour 1 : 1 → une chance sur deux (P = {{1|2}}).',
+          'Des chances pour de 3 : 2 **ne veulent pas dire** P = {{3|2}} ! Une probabilité ne dépasse jamais 1. Ici, P = {{3|5}}.',
+          'Somme des deux termes = nombre total de cas.',
+        ] } ],
+      [ { t: 'list', h: 'dans les paris', items: [
+          'Les chances contre servent souvent à fixer un **gain** : pour des chances contre de 4 : 1, un pari équitable rapporte 4 $ de gain net pour 1 $ misé.',
+          'On le vérifie avec l\'espérance mathématique (feuille suivante).',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'On lance un dé. Chances d\'obtenir un nombre premier ?',
+          s: [ 'favorables : 2, 3, 5 → 3', 'défavorables : 1, 4, 6 → 3', 'chances pour = 3 : 3 = 1 : 1', 'P = {{3|6}} = {{1|2}}' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'La probabilité de gagner est {{2|7}}. Chances pour et contre ?',
+          s: [ 'favorables : 2 · défavorables : 7 − 2 = 5', 'chances pour = 2 : 5', 'chances contre = 5 : 2' ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'Les chances contre qu\'une équipe gagne sont de 7 : 3. Probabilité qu\'elle gagne ?',
+          s: [ 'défavorables : 7 · favorables : 3 · total : 10', 'P(gagner) = {{3|10}} = 0,3', 'P(perdre) = {{7|10}} = 0,7' ] } ],
+      [ { t: 'ex', h: 'Exemple 4 —', q: 'Une roue a 8 secteurs égaux, dont 3 rouges. Chances pour « rouge » ?',
+          s: [ 'favorables : 3 · défavorables : 5', 'chances pour = 3 : 5', 'P(rouge) = {{3|8}}' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 5 —', q: 'Dans une classe de 30 élèves, les chances pour qu\'un élève pris au hasard ait un emploi sont de 2 : 3. Combien d\'élèves ont un emploi ?',
+      s: [ 'P(emploi) = {{2|2 + 3}} = {{2|5}}', '{{2|5}} × 30 = 12' ], r: '12 élèves' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Écrire les chances comme une fraction favorables ÷ total : ça, c\'est la **probabilité**.',
+          'Inverser pour et contre.',
+          'Oublier de simplifier le rapport.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Pour = favorables : défavorables.',
+          'Contre = défavorables : favorables.',
+          'Chances pour a : b → P = a ÷ (a + b).',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 15. Espérance mathématique ============ */
+esperance: {
+  bulle: 'espérance mathématique',
+  sous: 'Espérance mathématique et jeu équitable',
+  recto: [
+    { t: 'cols', w: '1.2fr 1fr', c: [
+      [ { t: 'txt', p: [
+          'L\'**espérance mathématique** E est le **gain moyen** (ou la perte moyenne) par partie si on jouait un très grand nombre de fois.',
+          'On multiplie chaque résultat possible par sa probabilité, puis on additionne.',
+        ] } ],
+      [ { t: 'box', h: 'formule', f: 'E = Σ (gain net × probabilité)', note: 'gain net = montant reçu − mise' } ],
+    ] },
+    { t: 'form', h: 'deux façons équivalentes', items: [
+      ['Avec les gains nets', 'E = g<sub>1</sub> · p<sub>1</sub> + g<sub>2</sub> · p<sub>2</sub> + … (une perte est un gain négatif)'],
+      ['Avec les montants reçus', 'E = (montant reçu<sub>1</sub> · p<sub>1</sub> + montant reçu<sub>2</sub> · p<sub>2</sub> + …) − mise'],
+    ], note: 'La somme des probabilités de tous les résultats doit donner 1.' },
+    { t: 'tab', h: 'interpréter E (du point de vue du joueur)', full: true, lcol: true,
+      head: ['Valeur', 'Le jeu est…', 'À long terme'],
+      rows: [
+        ['E = 0', '**équitable**', 'le joueur ne gagne ni ne perd en moyenne'],
+        ['E > 0', '**favorable** au joueur', 'le joueur gagne en moyenne E $ par partie'],
+        ['E < 0', '**défavorable** au joueur', 'le joueur perd en moyenne ; l\'organisateur gagne'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'rendre un jeu équitable', items: [
+          'On pose **E = 0** et on résout pour trouver la mise ou le gain manquant.',
+          'On peut changer la mise, un prix ou une probabilité.',
+        ] } ],
+      [ { t: 'list', h: 'l\'espérance ailleurs', items: [
+          'Pas seulement de l\'argent : points à un jeu, nombre moyen de clients, etc.',
+          'Loteries et casinos : E est toujours négative pour le joueur.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'On mise 5 $ et on lance un dé. Un 6 : on reçoit 20 $. Un 5 : on reçoit 10 $. Sinon, rien. Le jeu est-il équitable ?',
+      s: [
+        'gains nets : 6 → 20 − 5 = +15 · 5 → 10 − 5 = +5 · autre → −5',
+        'E = 15 × {{1|6}} + 5 × {{1|6}} + (−5) × {{4|6}}',
+        'E = {{15 + 5 − 20|6}} = 0',
+      ],
+      r: 'E = 0 : le jeu est équitable' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une loterie vend 1000 billets à 2 $. Il y a 1 prix de 500 $ et 5 prix de 50 $.',
+      s: [
+        'montant reçu moyen = 500 × {{1|1000}} + 50 × {{5|1000}} = 0,50 + 0,25 = 0,75',
+        'E = 0,75 − 2 = −1,25',
+      ],
+      r: 'E = −1,25 $ : défavorable, on perd en moyenne 1,25 $ par billet' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'On mise 3 $ et on tire une carte d\'un jeu de 52. Si c\'est un as, on reçoit x $. Quel montant x rend le jeu équitable ?',
+      s: [ 'P(as) = {{4|52}} = {{1|13}}', 'E = x × {{1|13}} − 3 = 0', 'x = 39' ],
+      r: 'il faut remettre 39 $ au joueur (gain net de 36 $)' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier de soustraire la mise (confondre montant reçu et gain net).',
+          'Soustraire la mise deux fois : une fois dans chaque gain net ET à la fin.',
+          'Oublier le cas « on ne gagne rien » (gain net = −mise).',
+          'Vérifier : la somme des probabilités doit être 1.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'E = Σ gain net × probabilité.',
+          'E = 0 → équitable.',
+          'E < 0 → défavorable au joueur.',
+          'Rendre équitable : poser E = 0.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 16. Procédures de vote ============ */
+vote: {
+  bulle: 'procédures de vote',
+  sous: 'Les procédures de vote (théorie du choix social)',
+  recto: [
+    { t: 'txt', p: [
+      'Une **procédure de vote** est une règle qui permet de choisir un gagnant à partir des préférences des électeurs. Avec le même bulletin, des procédures différentes peuvent donner des **gagnants différents** !',
+      'Un **bulletin préférentiel** classe tous les candidats : 1<sup>er</sup> choix, 2<sup>e</sup> choix, etc.',
+    ] },
+    { t: 'tab', full: true, lcol: true,
+      head: ['Procédure', 'Comment on trouve le gagnant'],
+      rows: [
+        ['**Majorité** (absolue)', 'le candidat qui a **plus de 50 %** des 1<sup>ers</sup> choix. Il peut ne pas y en avoir.'],
+        ['**Pluralité** (majorité relative)', 'le candidat qui a le **plus** de 1<sup>ers</sup> choix, même sans 50 %.'],
+        ['**Borda**', 'on donne des points selon le rang : avec n candidats, n − 1 points pour un 1<sup>er</sup> choix, …, 0 pour le dernier. Le plus de points gagne.'],
+        ['**Condorcet**', 'on compare les candidats **deux à deux** (duels). Le gagnant bat **tous** les autres en duel. Il peut ne pas exister.'],
+        ['**Élimination** (vote alternatif)', 'on élimine le candidat qui a le moins de 1<sup>ers</sup> choix et on transfère ses votes au choix suivant. On recommence jusqu\'à ce qu\'un candidat ait la majorité.'],
+        ['**Second tour** (deux tours)', 'si personne n\'a la majorité, les 2 premiers s\'affrontent dans un second vote.'],
+        ['**Assentiment** (approbation)', 'chaque électeur vote pour **tous** les candidats qu\'il accepte. Le plus de votes gagne.'],
+        ['**Vote pondéré**', 'certains votes comptent plus que d\'autres (ex. un vote vaut 2 points).'],
+      ],
+      note: 'Pour Borda, certains manuels donnent n points au 1<sup>er</sup> choix, …, 1 point au dernier : le classement final est le même.' },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'le seuil de majorité', items: [
+          'Majorité = plus de la moitié : avec 21 électeurs, il faut **11** votes ; avec 20, il en faut **11** aussi.',
+        ] } ],
+      [ { t: 'list', h: 'le vocabulaire québécois', items: [
+          'Aux élections provinciales, on utilise le **scrutin uninominal à un tour** : c\'est la **pluralité** dans chaque circonscription.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    Object.assign({}, PROFIL, { h: 'Exemple — 21 électeurs, 3 candidats (A, B, C)' }),
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Majorité :', q: 'il faut 11 votes. A : 8, B : 6, C : 7 → **personne**.' },
+        { t: 'ex', h: 'Pluralité :', q: 'A a le plus de 1<sup>ers</sup> choix (8) → **A gagne**.' },
+        { t: 'ex', h: 'Borda', q: '(2 pts, 1 pt, 0 pt) :',
+          s: [ 'A : 8 × 2 + 2 × 1 = 18', 'B : 6 × 2 + (8 + 5) × 1 = 25', 'C : (5 + 2) × 2 + 6 × 1 = 20', 'total : 18 + 25 + 20 = 63 = 3 × 21 ✓' ],
+          r: 'B gagne' } ],
+      [ { t: 'ex', h: 'Condorcet', q: '(duels) :',
+          s: [ 'A contre B : 8 + 2 = 10 · 6 + 5 = 11 → B', 'A contre C : 8 · 6 + 5 + 2 = 13 → C', 'B contre C : 8 + 6 = 14 · 5 + 2 = 7 → B' ],
+          r: 'B bat tout le monde : B gagne' },
+        { t: 'ex', h: 'Élimination :', q: 'B a le moins de 1<sup>ers</sup> choix (6) → éliminé. Ses 6 électeurs vont à leur 2<sup>e</sup> choix, C.',
+          s: [ 'C : 7 + 6 = 13 · A : 8' ], r: 'C gagne (13 &gt; 11)' },
+        { t: 'ex', h: 'Assentiment', q: '(si chacun approuve ses 2 premiers choix) : A : 8 + 2 = 10 · B : 8 + 6 + 5 = 19 · C : 6 + 5 + 2 = 13 → **B gagne**.' } ],
+    ] },
+    { t: 'txt', h: 'bilan', p: [ 'Même bulletin, trois gagnants possibles : **A** (pluralité), **B** (Borda, Condorcet, assentiment) et **C** (élimination). Le choix de la procédure est donc une décision importante.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre majorité (plus de 50 %) et pluralité (le plus de votes).',
+          'Dans Borda, oublier de multiplier les points par le nombre d\'électeurs.',
+          'À l\'élimination, transférer les votes au mauvais candidat : on prend le choix suivant **encore en course**.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Vérifie Borda : total des points = points par bulletin × électeurs.',
+          'Condorcet : duels deux à deux.',
+          'Une procédure différente peut changer le gagnant.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 17. Analyser un vote ============ */
+'vote-analyse': {
+  bulle: 'analyser un vote',
+  sous: 'Critères d\'équité et paradoxes des procédures de vote',
+  recto: [
+    { t: 'txt', p: [
+      'Pour juger si une procédure est « juste », on vérifie si elle respecte des **critères d\'équité**. Aucune procédure ne les respecte tous.',
+    ] },
+    { t: 'list', h: 'les critères', items: [
+      '**Critère de la majorité** : si un candidat a la majorité des 1<sup>ers</sup> choix, il doit gagner.',
+      '**Critère de Condorcet** : si un candidat bat tous les autres en duel, il doit gagner.',
+      '**Critère de monotonie** : si un gagnant monte dans le classement de certains électeurs, il doit rester gagnant.',
+      '**Critère d\'indépendance** (des options non pertinentes) : si un candidat perdant se retire, le gagnant ne doit pas changer.',
+    ] },
+    { t: 'tab', h: 'qui respecte quoi ?', full: true, lcol: true,
+      head: ['Procédure', 'Majorité', 'Condorcet', 'Monotonie', 'Indépendance'],
+      rows: [
+        ['Pluralité', '✓', '✗ peut échouer', '✓', '✗ peut échouer'],
+        ['Borda', '✗ peut échouer', '✗ peut échouer', '✓', '✗ peut échouer'],
+        ['Élimination', '✓', '✗ peut échouer', '✗ peut échouer', '✗ peut échouer'],
+        ['Condorcet', '✓', '✓', '✓', '✓ *'],
+      ],
+      note: '* La méthode de Condorcet ne désigne pas toujours de gagnant (paradoxe de Condorcet).' },
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'paradoxe de Condorcet', p: [
+          'Les préférences du groupe peuvent **tourner en rond** : A bat B, B bat C, mais C bat A. Il n\'y a alors aucun gagnant de Condorcet.',
+        ] } ],
+      [ { t: 'txt', h: 'théorème d\'Arrow', p: [
+          'Avec 3 candidats ou plus, **aucune** procédure de vote ne peut respecter tous les critères d\'équité en même temps.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'aussi à connaître', items: [
+      '**Vote stratégique** : un électeur ne vote pas selon ses vraies préférences pour nuire à un candidat ou éviter de « perdre son vote ».',
+      'Choisir une procédure selon le contexte : Borda favorise un candidat de **compromis** ; la pluralité est simple et rapide.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 — Borda ne respecte pas la majorité', q: '6 électeurs : A > B > C · 5 électeurs : B > C > A',
+      s: [ 'A a 6 votes sur 11 : la majorité', 'Borda A = 6 × 2 + 5 × 0 = 12', 'Borda B = 6 × 1 + 5 × 2 = 16', 'Borda C = 6 × 0 + 5 × 1 = 5' ],
+      p: [ 'B gagne avec Borda même si A a la majorité : le critère de la majorité **n\'est pas respecté**.' ] },
+    { t: 'ex', h: 'Exemple 2 — paradoxe de Condorcet', q: '3 électeurs : A > B > C · B > C > A · C > A > B',
+      s: [ 'A contre B : 2 contre 1 → A', 'B contre C : 2 contre 1 → B', 'C contre A : 2 contre 1 → C' ],
+      p: [ 'Chaque candidat perd un duel : **pas de gagnant** de Condorcet.' ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 3 — pluralité et indépendance', q: 'Avec le bulletin de la feuille « procédures de vote », A gagne à la pluralité (8 votes). Si B (perdant) se retire, ses 6 électeurs votent C.',
+          s: [ 'C : 7 + 6 = 13 · A : 8' ],
+          p: [ 'C gagne : le retrait d\'un perdant a changé le gagnant → critère d\'indépendance **non respecté**.' ] } ],
+      [ { t: 'ex', h: 'Exemple 4 — pluralité et Condorcet', q: 'Même bulletin : B est le gagnant de Condorcet, mais la pluralité élit A.',
+          p: [ 'Pire : A perd tous ses duels (10 à 11 contre B, 8 à 13 contre C). La pluralité peut élire un **perdant de Condorcet**.' ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Dire qu\'une procédure « respecte » un critère à partir d\'un seul exemple : un exemple ne peut que montrer qu\'elle **échoue**.',
+          'Confondre le paradoxe de Condorcet avec une égalité.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '4 critères : majorité, Condorcet, monotonie, indépendance.',
+          'Arrow : aucune procédure parfaite.',
+          'Un contre-exemple suffit pour montrer qu\'un critère n\'est pas respecté.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+})();
+
+/* ---- 14-math-cst-geometrie.js ---- */
+/* Mathématique CST — Géométrie (figures et solides équivalents) */
+Object.assign(DATA.feuilles['math-cst'], {
+
+/* ============ 18. Figures planes équivalentes ============ */
+'figures-equivalentes': {
+  bulle: 'figures équivalentes',
+  sous: 'Figures planes équivalentes',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'Deux figures planes sont **équivalentes** si elles ont la **même aire**, peu importe leur forme.',
+          'ex. un rectangle de 9 cm × 4 cm et un carré de 6 cm de côté (36 cm² chacun).',
+        ] } ],
+      [ { t: 'tab', full: true, lcol: true,
+          head: ['Figures…', 'ont…'],
+          rows: [
+            ['**isométriques**', 'même forme ET mêmes mesures'],
+            ['**semblables**', 'même forme, mesures proportionnelles'],
+            ['**équivalentes**', 'même aire (forme libre)'],
+          ],
+          note: 'Isométriques ⇒ équivalentes, mais pas l\'inverse.' } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'formules d\'aire', items: [
+          ['carré', 'A = c²'],
+          ['rectangle', 'A = b × h'],
+          ['parallélogramme', 'A = b × h'],
+          ['triangle', 'A = {{b × h|2}}'],
+          ['losange', 'A = {{D × d|2}}'],
+          ['trapèze', 'A = {{(B + b) × h|2}}'],
+          ['polygone régulier', 'A = {{n × c × a|2}} = {{périmètre × apothème|2}}'],
+          ['disque', 'A = πr²  ·  circonférence C = 2πr'],
+        ] } ],
+      [ { t: 'list', h: 'propriétés à connaître', items: [
+          'Parmi les **rectangles** équivalents, le **carré** a le plus petit périmètre.',
+          'Parmi les **polygones à n côtés** équivalents, le polygone **régulier** a le plus petit périmètre.',
+          'Plus un polygone régulier a de côtés, plus son périmètre est petit (pour une même aire).',
+          'Parmi **toutes** les figures planes équivalentes, le **disque** a le plus petit périmètre.',
+        ] },
+        { t: 'list', h: 'outils utiles', items: [
+          '**Pythagore** : a² + b² = c² (triangle rectangle, c = hypoténuse).',
+          'Trouver une mesure manquante : on écrit « aire de la figure 1 = aire de la figure 2 » et on isole l\'inconnue.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'démarche', items: [
+      '1. Calculer l\'aire de la figure connue.',
+      '2. Écrire la formule d\'aire de l\'autre figure et l\'égaler à cette aire.',
+      '3. Isoler la mesure cherchée (racine carrée si elle est au carré).',
+      '4. Répondre avec les bonnes unités (cm pour une longueur, cm² pour une aire).',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un rectangle de 18 cm sur 8 cm est équivalent à un carré. Trouver le côté du carré et comparer les périmètres.',
+      s: [ 'A = 18 × 8 = 144 cm²', 'c² = 144 → c = √144 = 12 cm', 'P rectangle = 2(18 + 8) = 52 cm', 'P carré = 4 × 12 = 48 cm // plus petit ✓' ],
+      r: 'côté de 12 cm ; le carré a le plus petit périmètre' },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Un triangle de base 16 cm est équivalent à un trapèze de bases 10 cm et 6 cm, et de hauteur 5 cm. Hauteur du triangle ?',
+          s: [ 'A trapèze = {{(10 + 6) × 5|2}} = 40 cm²', '{{16 × h|2}} = 40', '8h = 40 → h = 5 cm' ] } ],
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'Un disque est équivalent à un carré de 10 cm de côté. Rayon du disque ?',
+          s: [ 'πr² = 100', 'r² = {{100|π}} ≈ 31,83', 'r ≈ 5,64 cm', 'C = 2πr ≈ 35,45 cm // < 40 cm ✓' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Un hexagone régulier de 4 cm de côté a une apothème d\'environ 3,46 cm. Il est équivalent à un rectangle de 6 cm de base. Hauteur du rectangle ?',
+      s: [ 'A hexagone = {{6 × 4 × 3,46|2}} = 41,52 cm²', '6 × h = 41,52', 'h = 6,92 cm' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre équivalentes (même aire) et semblables (même forme).',
+          'Oublier de diviser par 2 (triangle, losange, trapèze, polygone régulier).',
+          'Oublier la racine carrée quand on cherche un côté ou un rayon.',
+          'Arrondir trop tôt : garde les décimales jusqu\'à la fin.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Équivalentes = **même aire**.',
+          'Aire fixe → le carré, le polygone régulier et le disque minimisent le périmètre.',
+          'Égaler les deux aires, puis isoler.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 19. Solides équivalents ============ */
+'solides-equivalents': {
+  bulle: 'solides équivalents',
+  sous: 'Solides équivalents',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'Deux solides sont **équivalents** s\'ils ont le **même volume**, peu importe leur forme.',
+          'ex. un cube de 6 cm d\'arête et un prisme de 4 cm × 4 cm × 13,5 cm (216 cm³ chacun).',
+        ] } ],
+      [ { t: 'form', h: 'unités de capacité', items: [
+          ['1 cm³', '= 1 mL'],
+          ['1 dm³', '= 1 L = 1000 cm³'],
+          ['1 m³', '= 1000 L'],
+        ] } ],
+    ] },
+    { t: 'tab', h: 'formules (A<sub>b</sub> = aire de la base, P<sub>b</sub> = périmètre de la base, a = apothème)', full: true, lcol: true,
+      head: ['Solide', 'Aire latérale', 'Aire totale', 'Volume'],
+      rows: [
+        ['cube (arête c)', '4c²', '6c²', 'c³'],
+        ['prisme droit', 'P<sub>b</sub> × h', 'A<sub>L</sub> + 2A<sub>b</sub>', 'A<sub>b</sub> × h'],
+        ['cylindre', '2πrh', '2πr² + 2πrh', 'πr²h'],
+        ['pyramide droite régulière', '{{P<sub>b</sub> × a|2}}', 'A<sub>L</sub> + A<sub>b</sub>', '{{A<sub>b</sub> × h|3}}'],
+        ['cône droit', 'πra', 'πr² + πra', '{{πr²h|3}}'],
+        ['boule (sphère)', '—', '4πr²', '{{4|3}}πr³'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'propriétés à connaître', items: [
+          'Parmi les **prismes rectangulaires** équivalents, le **cube** a la plus petite aire totale.',
+          'Parmi les **cylindres** équivalents, celui dont la **hauteur = diamètre** (h = 2r) a la plus petite aire totale.',
+          'Parmi **tous** les solides équivalents, la **boule** a la plus petite aire.',
+        ] } ],
+      [ { t: 'list', h: 'bon à savoir', items: [
+          'Une pyramide (ou un cône) a le **tiers** du volume du prisme (ou du cylindre) de même base et de même hauteur.',
+          'Dans une pyramide ou un cône : h, a et le rayon (ou l\'apothème de la base) forment un triangle rectangle → **Pythagore**.',
+          'Trouver une mesure manquante : « volume du solide 1 = volume du solide 2 », puis isoler.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Un cube de 6 cm d\'arête est équivalent à un prisme à base carrée de 13,5 cm de hauteur. Côté de la base du prisme ? Quel solide a la plus petite aire ?',
+      s: [ 'V cube = 6³ = 216 cm³', 'A<sub>b</sub> × 13,5 = 216 → A<sub>b</sub> = 16 cm²', 'côté = √16 = 4 cm', 'A<sub>T</sub> cube = 6 × 6² = 216 cm²', 'A<sub>T</sub> prisme = 2 × 16 + 4 × (4 × 13,5) = 32 + 216 = 248 cm² // le cube gagne ✓' ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Un cylindre a un rayon de 3 cm et une hauteur de 8 cm. Un cône équivalent a le même rayon. Sa hauteur ?',
+          s: [ 'V cylindre = π(3)²(8) = 72π ≈ 226,19 cm³', '{{π(3)² × h|3}} = 72π', '3πh = 72π → h = 24 cm' ],
+          r: '24 cm (3 fois plus haut)' } ],
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'Rayon d\'une boule équivalente à ce cylindre ?',
+          s: [ '{{4|3}}πr³ = 72π', 'r³ = 72 × {{3|4}} = 54', 'r = ∛54 ≈ 3,78 cm' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Comparer les aires du cylindre et de la boule de l\'exemple 3.',
+      s: [ 'A<sub>T</sub> cylindre = 2π(3)² + 2π(3)(8) = 18π + 48π = 66π ≈ 207,35 cm²', 'A boule = 4π(3,78)² ≈ 179,5 cm² // plus petite, comme prévu ✓' ],
+      p: [ 'Capacité : 226,19 cm³ = 226,19 mL ≈ 0,23 L.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier de diviser par 3 pour une pyramide ou un cône.',
+          'Confondre la hauteur h et l\'apothème a d\'une pyramide ou d\'un cône.',
+          'Utiliser le diamètre au lieu du rayon.',
+          'Oublier la racine cubique quand on cherche une arête ou un rayon à partir d\'un volume.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Équivalents = **même volume**.',
+          'Volume fixe : cube, cylindre h = 2r, boule → aire minimale.',
+          '1 cm³ = 1 mL ; 1 dm³ = 1 L.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 20. Optimisation en géométrie ============ */
+'optimisation-geometrie': {
+  bulle: 'optimiser une figure',
+  sous: 'Optimisation en géométrie : aire, périmètre et volume',
+  recto: [
+    { t: 'txt', p: [
+      'On cherche la figure ou le solide qui donne la **meilleure** mesure (aire maximale, périmètre minimal, moins de matériel…) quand une autre mesure est **fixée**.',
+    ] },
+    { t: 'tab', h: 'les résultats à connaître', full: true, lcol: true,
+      head: ['Famille', 'Mesure fixée', 'Meilleure forme'],
+      rows: [
+        ['rectangles', 'périmètre', '**carré** (aire maximale)'],
+        ['rectangles', 'aire', '**carré** (périmètre minimal)'],
+        ['polygones à n côtés', 'périmètre', '**polygone régulier** (aire maximale)'],
+        ['toutes les figures planes', 'périmètre', '**disque** (aire maximale)'],
+        ['enclos rectangulaire contre un mur (3 côtés à clôturer)', 'longueur de clôture', 'côté parallèle au mur = **2 ×** l\'autre côté'],
+        ['prismes rectangulaires', 'volume', '**cube** (aire totale minimale)'],
+        ['prismes rectangulaires', 'aire totale', '**cube** (volume maximal)'],
+        ['cylindres fermés', 'volume', '**hauteur = diamètre** (h = 2r)'],
+        ['tous les solides', 'volume', '**boule** (aire minimale)'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'démarche', items: [
+          '1. Identifier ce qui est **fixé** et ce qu\'on veut **optimiser**.',
+          '2. Utiliser la propriété du tableau pour choisir la forme.',
+          '3. Trouver les dimensions à partir de la mesure fixée.',
+          '4. Calculer la mesure optimale et répondre avec les unités.',
+        ] } ],
+      [ { t: 'list', h: 'l\'idée derrière', items: [
+          'Plus une forme est « ronde » ou « régulière », moins elle a de bord pour ce qu\'elle contient.',
+          'C\'est pour ça que les bulles de savon sont sphériques et que beaucoup de conserves ont une hauteur proche de leur diamètre.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'Avec 60 m de clôture, quel enclos rectangulaire a la plus grande aire ?',
+          s: [ 'carré : côté = 60 ÷ 4 = 15 m', 'A = 15 × 15 = 225 m²', 'comparaison : 20 × 10 = 200 m² // plus petit' ],
+          r: 'un carré de 15 m, 225 m²' } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Cube de 64 cm³ : arête et aire totale ?',
+          s: [ 'c = ∛64 = 4 cm', 'A<sub>T</sub> = 6 × 4² = 96 cm²' ],
+          p: [ 'Aucun autre prisme rectangulaire de 64 cm³ n\'utilise moins de matériel.' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Un enclos rectangulaire est appuyé contre un mur. On a 60 m de clôture pour les 3 autres côtés. Dimensions pour une aire maximale ?',
+      s: [ 'x : côtés perpendiculaires au mur · y : côté parallèle au mur', '2x + y = 60 → y = 60 − 2x', 'propriété : y = 2x → 2x + 2x = 60 → x = 15 m, y = 30 m', 'A = 15 × 30 = 450 m²' ] },
+    { t: 'tab', h: 'vérification avec une table de valeurs', full: true,
+      head: ['x (m)', '10', '12', '15', '18', '20'],
+      rows: [ ['y = 60 − 2x (m)', '40', '36', '30', '24', '20'], ['A = x × y (m²)', '400', '432', '<b>450</b>', '432', '400'] ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Une canette cylindrique doit contenir 1 L (1000 cm³) avec le moins de métal possible. Dimensions ?',
+      s: [
+        'aire minimale quand h = 2r',
+        'πr² × 2r = 1000 → 2πr³ = 1000',
+        'r³ = {{500|π}} ≈ 159,15 → r ≈ 5,42 cm',
+        'h = 2r ≈ 10,84 cm',
+        'A<sub>T</sub> = 2πr² + 2πrh = 6πr² ≈ 553,6 cm² // car h = 2r',
+      ],
+      p: [ 'Comparaison : avec r = 4 cm, h = 1000 ÷ (16π) ≈ 19,89 cm et A<sub>T</sub> ≈ 600,5 cm² : plus de métal.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Pour l\'enclos contre un mur, prendre un carré : ce n\'est pas l\'optimum (225 m² &lt; 450 m²).',
+          'Confondre « volume fixe » (on minimise l\'aire) et « aire fixe » (on maximise le volume).',
+          'Oublier de convertir les litres en cm³.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Carré, cube, polygone régulier, disque, boule : les formes optimales.',
+          'Cylindre optimal : h = 2r.',
+          'Contre un mur : le côté parallèle au mur = 2 × l\'autre.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ GÉNÉRAL ============ */
+general: {
+  bulle: 'math CST : tout en 1',
+  sous: 'Résumé de l\'année — Mathématique CST, secondaire 5',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'optimisation', items: [
+          'Inéquation à 2 variables → **demi-plan** ; ≤ ≥ trait plein, < > pointillé ; ÷ par un négatif → on inverse.',
+          '**Polygone de contraintes** = région qui respecte toutes les contraintes (+ x ≥ 0, y ≥ 0).',
+          '**Sommet** = intersection de 2 droites (comparaison, substitution, réduction) qui respecte les autres contraintes.',
+          '**Fonction à optimiser** Z = ax + by + c ; l\'optimum est à un **sommet**.',
+          '**Droite baladeuse** : pente −{{a|b}}. Deux sommets égaux → tout le côté est optimal.',
+          'Polygone ouvert → souvent pas de maximum.',
+          'Scénario : un sommet reste optimal si la pente de Z est entre les pentes des 2 droites du sommet.',
+        ] } ],
+      [ { t: 'list', h: 'graphes', items: [
+          '**Ordre** = nb de sommets ; **degré** = nb d\'arêtes au sommet ; Σ degrés = 2 × arêtes.',
+          'Complet : {{n(n − 1)|2}} arêtes. Distance, diamètre, connexe.',
+          '**Euler** (arêtes) : 0 sommet impair → cycle ; 2 → chaîne ; plus → aucune.',
+          '**Hamilton** (sommets) : par essais.',
+          '**Chaîne la plus courte** : Dijkstra (plus petit poids).',
+          '**Arbre** : connexe, sans cycle, n − 1 arêtes. Valeur minimale : Kruskal ou Prim.',
+          '**Chemin critique** = chemin le plus **long** = durée minimale du projet.',
+          '**Nombre chromatique** χ : couleurs minimales ; triangle → χ ≥ 3 ; χ ≤ degré max + 1.',
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'probabilités', items: [
+          ['P(A)', '= {{favorables|possibles}}  ·  P(A\') = 1 − P(A)'],
+          ['A ou B', 'P(A) + P(B) − P(A ∩ B)'],
+          ['A sachant B', 'P(A | B) = {{P(A ∩ B)|P(B)}}'],
+          ['indépendants', 'P(A ∩ B) = P(A) × P(B)'],
+          ['chances pour', 'favorables : défavorables → P = {{a|a + b}}'],
+          ['espérance', 'E = Σ gain net × p ; E = 0 → équitable'],
+          ['combinaison', '{{n!|r!(n − r)!}} (ordre sans importance)'],
+        ] } ],
+      [ { t: 'list', h: 'choix social', items: [
+          '**Majorité** : plus de 50 %. **Pluralité** : le plus de votes.',
+          '**Borda** : points selon le rang. **Condorcet** : gagne tous ses duels.',
+          '**Élimination** : on retire le dernier et on transfère.',
+          '**Assentiment** : on vote pour tous les candidats acceptables.',
+          'Critères : majorité, Condorcet, monotonie, indépendance. **Arrow** : aucune procédure parfaite.',
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'figures et solides équivalents', items: [
+          'Figures équivalentes : **même aire** ; solides équivalents : **même volume**.',
+          'Aire fixe : carré, polygone régulier, disque → plus petit périmètre.',
+          'Volume fixe : cube, cylindre h = 2r, boule → plus petite aire.',
+          'Contre un mur : côté parallèle au mur = 2 × l\'autre.',
+        ] } ],
+      [ { t: 'form', h: 'formules clés', items: [
+          ['disque', 'A = πr² ; C = 2πr'],
+          ['polygone régulier', 'A = {{P × a|2}}'],
+          ['prisme, cylindre', 'V = A<sub>b</sub> × h'],
+          ['pyramide, cône', 'V = {{A<sub>b</sub> × h|3}}'],
+          ['boule', 'V = {{4|3}}πr³ ; A = 4πr²'],
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Optimisation —', q: 'sommets (0, 0), (10, 0), (6, 4), (0, 7) ; max. Z = 3x + 5y',
+          s: [ 'Z = 0 · 30 · 38 · 35' ], r: 'max. 38 en (6, 4)' },
+        { t: 'ex', h: 'Graphes —', q: 'degrés 2, 3, 3, 3, 1',
+          s: [ '4 sommets impairs → aucune chaîne eulérienne', 'Σ = 12 → 6 arêtes' ] },
+        { t: 'ex', h: 'Chemin critique —', q: 'chemins de 9, 10, 9 et 11 jours', r: 'durée minimale : 11 jours' } ],
+      [ { t: 'ex', h: 'Probabilités —', q: 'urne : 4 V, 6 J, 2 tirages sans remise',
+          s: [ 'P(V puis V) = {{4|10}} × {{3|9}} = {{2|15}}', 'chances pour V (1<sup>er</sup> tirage) = 4 : 6 = 2 : 3' ] },
+        { t: 'ex', h: 'Espérance —', q: 'mise 5 $ ; 6 → reçoit 20 $ ; 5 → reçoit 10 $',
+          s: [ 'E = {{15 + 5 − 4 × 5|6}} = 0' ], r: 'équitable' },
+        { t: 'ex', h: 'Équivalence —', q: 'carré équivalent à un rectangle 18 × 8',
+          s: [ 'c = √144 = 12 cm' ] } ],
+    ] },
+    { t: 'pieges', items: [
+      'Oublier d\'**inverser** le symbole en divisant par un négatif.',
+      'Prendre une intersection hors du polygone pour un sommet.',
+      'Chemin critique : c\'est le chemin le plus **long**, pas le plus court.',
+      'Confondre P(A | B) et P(B | A) ; confondre chances (favorables : défavorables) et probabilité (favorables ÷ total).',
+      'Espérance : soustraire la mise une seule fois.',
+      'Borda : multiplier les points par le nombre d\'électeurs ; vérifier le total.',
+      'Pyramide et cône : diviser par 3. Racine carrée (aire) ou cubique (volume) pour revenir à une longueur.',
+    ] },
+    { t: 'retenir', items: [
+      'Optimisation : variables → contraintes → polygone → sommets → réponse en phrase.',
+      'Graphes : compte les degrés impairs (Euler), cherche le plus court (Dijkstra), le plus long (chemin critique).',
+      'Probabilités : dessine un arbre ou un tableau avant de calculer.',
+      'Vote : la procédure choisie peut changer le gagnant.',
+      'Géométrie : la forme la plus « régulière » est toujours la plus efficace.',
+    ] },
+  ],
+},
+
+});
+
+</script>
+<script>
+/* =========================================================
+   AFFICHAGE
+   ========================================================= */
+(function () {
+  const app = document.getElementById('app');
+  const btnRetour = document.getElementById('btn-retour');
+  const btnImprimer = document.getElementById('btn-imprimer');
+  const crumb = document.getElementById('crumb');
+  const brand = document.getElementById('brand');
+
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  /* mini-balisage :  **mot-clé**   {{numérateur|dénominateur}}   !!texte rose!! */
+  function md(s) {
+    return String(s == null ? '' : s)
+      .replace(/\*\*(.+?)\*\*/g, '<b class="kw">$1</b>')
+      .replace(/!!(.+?)!!/g, '<span class="pk">$1</span>')
+      .replace(/\{\{(.+?)\|(.+?)\}\}/g, '<span class="fr"><span>$1</span><span>$2</span></span>');
+  }
+
+  const matiere = id => DATA.matieres.find(m => m.id === id);
+  const feuilles = id => (DATA.feuilles && DATA.feuilles[id]) || {};
+  const tousConcepts = m => m.sections.flatMap(s => s.concepts);
+  function progres(m) {
+    const f = feuilles(m.id);
+    const liste = tousConcepts(m);
+    const faits = liste.filter(c => f[c.id]).length + (f.general ? 1 : 0);
+    return { faits, total: liste.length + 1 };
+  }
+
+  /* ---------- crayon (coin du titre) ---------- */
+  const CRAYON = '<svg viewBox="0 0 120 34" aria-hidden="true">' +
+    '<path d="M4 17 22 9v16z" fill="#f3d2a6" stroke="#3a3440" stroke-width="1.6" stroke-linejoin="round"/>' +
+    '<path d="M4 17 10 14.4v5.2z" fill="#3a3440"/>' +
+    '<rect x="22" y="9" width="62" height="16" fill="#f7cf3c" stroke="#3a3440" stroke-width="1.6"/>' +
+    '<path d="M22 14.3h62M22 19.7h62" stroke="#e1a91f" stroke-width="1.4"/>' +
+    '<rect x="84" y="8" width="12" height="18" fill="#c9ccd3" stroke="#3a3440" stroke-width="1.6"/>' +
+    '<path d="M88 8v18M92 8v18" stroke="#8f929b" stroke-width="1.1"/>' +
+    '<path d="M96 8h14a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H96z" fill="#f4a3b8" stroke="#3a3440" stroke-width="1.6"/>' +
+    '</svg>';
+
+  /* ---------- figures ---------- */
+  let clipN = 0;
+  function figPlan(f) {
+    const W = f.w || 250, H = f.h || 210, P = 20;
+    const sx = x => P + (x - f.xmin) / (f.xmax - f.xmin) * (W - 2 * P);
+    const sy = y => H - P - (y - f.ymin) / (f.ymax - f.ymin) * (H - 2 * P);
+    const id = 'cl' + (++clipN);
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(f.alt || 'graphique')}">`;
+    s += `<defs><clipPath id="${id}"><rect x="${P}" y="${P}" width="${W - 2 * P}" height="${H - 2 * P}"/></clipPath></defs>`;
+    const g = f.grille || 1;
+    for (let x = Math.ceil(f.xmin / g) * g; x <= f.xmax; x += g) s += `<line class="gd" x1="${sx(x)}" y1="${sy(f.ymin)}" x2="${sx(x)}" y2="${sy(f.ymax)}"/>`;
+    for (let y = Math.ceil(f.ymin / g) * g; y <= f.ymax; y += g) s += `<line class="gd" x1="${sx(f.xmin)}" y1="${sy(y)}" x2="${sx(f.xmax)}" y2="${sy(y)}"/>`;
+    (f.zones || []).forEach(z => {
+      s += `<polygon clip-path="url(#${id})" class="${z.cls || 'zone'}" points="${z.pts.map(p => sx(p[0]) + ',' + sy(p[1])).join(' ')}"/>`;
+    });
+    const x0 = Math.min(Math.max(0, f.xmin), f.xmax), y0 = Math.min(Math.max(0, f.ymin), f.ymax);
+    s += `<line class="ax" x1="${sx(f.xmin)}" y1="${sy(y0)}" x2="${sx(f.xmax) + 6}" y2="${sy(y0)}"/>`;
+    s += `<line class="ax" x1="${sx(x0)}" y1="${sy(f.ymin)}" x2="${sx(x0)}" y2="${sy(f.ymax) - 6}"/>`;
+    s += `<text class="tk" x="${sx(f.xmax) + 8}" y="${sy(y0) + 4}">${esc(f.nx || 'x')}</text>`;
+    s += `<text class="tk" x="${sx(x0) - 4}" y="${sy(f.ymax) - 9}" text-anchor="middle">${esc(f.ny || 'y')}</text>`;
+    const tx = f.tick || 1, ty = f.ticky || tx;
+    for (let x = Math.ceil(f.xmin / tx) * tx; x <= f.xmax + 1e-9; x += tx) if (Math.abs(x) > 1e-9)
+      s += `<text class="tk" x="${sx(x)}" y="${sy(y0) + 12}" text-anchor="middle">${x}</text>`;
+    for (let y = Math.ceil(f.ymin / ty) * ty; y <= f.ymax + 1e-9; y += ty) if (Math.abs(y) > 1e-9)
+      s += `<text class="tk" x="${sx(x0) - 4}" y="${sy(y) + 3.5}" text-anchor="end">${y}</text>`;
+    (f.droites || []).forEach(d => {
+      const [a, b] = [d.a, d.b];
+      const dx = b[0] - a[0], dy = b[1] - a[1], k = 1000;
+      s += `<line clip-path="url(#${id})" class="${d.cls || 'ln'}${d.dash ? ' dash' : ''}" x1="${sx(a[0] - k * dx)}" y1="${sy(a[1] - k * dy)}" x2="${sx(a[0] + k * dx)}" y2="${sy(a[1] + k * dy)}"/>`;
+      if (d.lbl) s += `<text class="lb${d.pk ? ' pk' : ''}" x="${sx(d.at[0])}" y="${sy(d.at[1])}" text-anchor="${d.anchor || 'start'}">${esc(d.lbl)}</text>`;
+    });
+    (f.segs || []).forEach(d => {
+      s += `<line class="${d.cls || 'ln2'}" x1="${sx(d.a[0])}" y1="${sy(d.a[1])}" x2="${sx(d.b[0])}" y2="${sy(d.b[1])}"/>`;
+    });
+    (f.pts || []).forEach(p => {
+      s += `<circle class="pt${p.open ? ' open' : ''}" cx="${sx(p.x)}" cy="${sy(p.y)}" r="3.2"/>`;
+      if (p.lbl) s += `<text class="lb${p.pk ? ' pk' : ''}" x="${sx(p.x) + (p.dx == null ? 5 : p.dx)}" y="${sy(p.y) + (p.dy == null ? -5 : p.dy)}" text-anchor="${p.anchor || 'start'}">${esc(p.lbl)}</text>`;
+    });
+    return s + '</svg>';
+  }
+
+  function figGraphe(f) {
+    const W = f.w || 260, H = f.h || 160;
+    const S = f.sommets, lab = f.labels || {};
+    const pal = ['#fff', '#fbd3dd', '#cfe6fb', '#d6f0d9', '#fff0a8'];
+    const size = k => { const t = lab[k] || k; const w = Math.max(26, t.length * 7.5 + 12); return { t, w, h: 26 }; };
+    const id = 'ar' + (++clipN);
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(f.alt || 'graphe')}">`;
+    s += `<defs><marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#3e3c47"/></marker>` +
+      `<marker id="${id}h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#cc3f64"/></marker></defs>`;
+    const hot = new Set((f.gras || []).map(e => e.split('-').sort().join('-')));
+    const cold = new Set((f.pale || []).map(e => e.split('-').sort().join('-')));
+    const labels = [];
+    (f.aretes || []).forEach(e => {
+      const [u, v, w] = e;
+      const A = S[u], B = S[v];
+      const key = [u, v].sort().join('-');
+      const cls = 'edge' + (hot.has(key) ? ' hot' : '') + (cold.has(key) ? ' cold' : '');
+      let x1 = A[0], y1 = A[1], x2 = B[0], y2 = B[1];
+      if (f.oriente) {
+        const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L;
+        const sb = size(v), cut = Math.min(Math.abs(sb.w / 2 / (ux || 1e-9)), Math.abs(sb.h / 2 / (uy || 1e-9))) + 2;
+        x2 -= ux * cut; y2 -= uy * cut;
+      }
+      const mk = f.oriente ? ` marker-end="url(#${id}${hot.has(key) ? 'h' : ''})"` : '';
+      s += `<line class="${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"${mk}/>`;
+      if (w != null && w !== '') {
+        const mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2;
+        const off = e[3] || [0, 0];
+        const bw = Math.max(18, String(w).length * 6.6 + 6);
+        labels.push(`<rect class="wbg" x="${mx + off[0] - bw / 2}" y="${my + off[1] - 8}" width="${bw}" height="16" rx="4"/><text class="w" x="${mx + off[0]}" y="${my + off[1]}">${esc(w)}</text>`);
+      }
+    });
+    s += labels.join('');
+    Object.keys(S).forEach(k => {
+      const [x, y] = S[k];
+      const z = size(k);
+      const fill = f.couleurs && f.couleurs[k] ? pal[f.couleurs[k]] : '#fff';
+      if (z.t.length <= 2) s += `<circle class="node" cx="${x}" cy="${y}" r="13" style="fill:${fill}"/>`;
+      else s += `<rect class="node" x="${x - z.w / 2}" y="${y - 13}" width="${z.w}" height="26" rx="13" style="fill:${fill}"/>`;
+      s += `<text class="nlab" x="${x}" y="${y}">${esc(z.t)}</text>`;
+    });
+    return s + '</svg>';
+  }
+
+  function figure(f) {
+    if (!f) return '';
+    let svg = f.kind === 'graphe' ? figGraphe(f) : f.kind === 'plan' ? figPlan(f) : (f.svg || '');
+    return `<div class="fig">${svg}${f.cap ? `<div class="cap">${md(f.cap)}</div>` : ''}</div>`;
+  }
+
+  /* ---------- étapes de calcul alignées ---------- */
+  function steps(arr) {
+    return '<div class="steps">' + arr.map(line => {
+      const parts = String(line).split(' // ');
+      const main = parts[0], com = parts[1];
+      const m = main.match(/^(.*?) (=|≤|≥|<|>|≈|⇒|→|⇔) (.*)$/);
+      const row = m
+        ? `<span class="l">${md(m[1])}</span><span class="o">${m[2]}</span><span class="r">${md(m[3])}</span>`
+        : `<span class="full">${md(main)}</span>`;
+      return row + `<span class="c">${com ? md(com) : ''}</span>`;
+    }).join('') + '</div>';
+  }
+
+  /* ---------- blocs ---------- */
+  const H = h => h ? `<h3><span>${md(h)}</span></h3>` : '';
+  function bloc(b) {
+    switch (b.t) {
+      case 'txt':
+        return `<div class="blk">${H(b.h)}${[].concat(b.p).map(p => `<p>${md(p)}</p>`).join('')}${b.fig ? figure(b.fig) : ''}</div>`;
+      case 'list':
+        return `<div class="blk">${H(b.h)}${b.intro ? `<p>${md(b.intro)}</p>` : ''}<ul class="hl">${b.items.map(i => `<li>${md(i)}</li>`).join('')}</ul></div>`;
+      case 'form':
+        return `<div class="blk">${H(b.h)}${b.intro ? `<p>${md(b.intro)}</p>` : ''}<div class="form">${b.items.map(r => `<span class="fl">${md(r[0])}</span><span class="fv">${md(r[1])}</span>`).join('')}</div>${b.note ? `<p class="note">${md(b.note)}</p>` : ''}</div>`;
+      case 'box':
+        return `<div class="blk center">${H(b.h)}${b.intro ? `<p>${md(b.intro)}</p>` : ''}<span class="box">${md(b.f)}</span>${b.note ? `<p class="note">${md(b.note)}</p>` : ''}</div>`;
+      case 'tab':
+        return `<div class="blk">${H(b.h)}${b.intro ? `<p>${md(b.intro)}</p>` : ''}<div class="tabwrap"><table class="tab"${b.full ? ' style="width:100%"' : ''}>` +
+          (b.head ? `<tr>${b.head.map((c, i) => `<th${i === 0 && b.lcol ? ' class="l"' : ''}>${md(c)}</th>`).join('')}</tr>` : '') +
+          b.rows.map(r => `<tr>${r.map((c, i) => `<td${i === 0 && b.lcol ? ' class="l"' : ''}>${md(c)}</td>`).join('')}</tr>`).join('') +
+          `</table></div>${b.note ? `<p class="note">${md(b.note)}</p>` : ''}</div>`;
+      case 'ex':
+        return `<div class="blk ex${b.fig ? ' has-fig' : ''}">` +
+          (b.h || b.q ? `<p>${b.h ? `<span class="ex-h">${md(b.h)}</span>` : ''}${md(b.q || '')}</p>` : '') +
+          (b.fig ? figure(b.fig) : '') +
+          (b.s ? steps(b.s) : '') +
+          (b.p ? [].concat(b.p).map(p => `<p>${md(p)}</p>`).join('') : '') +
+          (b.r ? `<p class="rep">Réponse : <b>${md(b.r)}</b></p>` : '') + `</div>`;
+      case 'fig':
+        return `<div class="blk">${H(b.h)}<div class="figs">${[].concat(b.figs || b.fig).map(figure).join('')}</div>${b.note ? `<p class="note">${md(b.note)}</p>` : ''}</div>`;
+      case 'cols':
+        return `<div class="blk cols" style="grid-template-columns:${b.w || '1fr 1fr'}">${b.c.map(col => `<div class="col">${col.map(bloc).join('')}</div>`).join('')}</div>`;
+      case 'pieges':
+        return `<div class="blk pieges">${H(b.h || 'pièges fréquents')}<ul>${b.items.map(i => `<li>${md(i)}</li>`).join('')}</ul></div>`;
+      case 'retenir':
+        return `<div class="blk retenir">${H(b.h || 'à retenir')}<ul>${b.items.map(i => `<li>${md(i)}</li>`).join('')}</ul></div>`;
+      default:
+        return '';
+    }
+  }
+
+  function page(m, c, f, cote) {
+    const titre = f.bulle || c.titre;
+    const taille = Math.max(28, Math.min(46, Math.round(1150 / Math.max(titre.length, 12))));
+    const blocs = (cote === 'recto' ? f.recto : f.verso) || [];
+    const pied = cote === 'recto'
+      ? `<span>${esc(m.nom)} · ${esc(c.titre)}</span><span>recto · 1/2</span>`
+      : `<span>Pour aller plus loin : <a href="https://www.alloprof.qc.ca" target="_blank" rel="noopener">Alloprof</a></span><span>verso · 2/2</span>`;
+    return `<article class="page${cote === 'verso' ? ' last' : ''}" data-cote="${cote}">` +
+      `<header class="p-head"><div class="corner"><span class="tag">${esc(m.court)}</span>${CRAYON}<span class="tag b">${cote === 'recto' ? 'notions + formules' : 'exemples + pièges'}</span></div>` +
+      `<h1 class="bubble" style="font-size:${taille}px">${esc(titre)}</h1></header>` +
+      `<p class="p-sub">${md(f.sous || c.titre)}</p>` +
+      `<div class="p-body">${blocs.map(bloc).join('')}</div>` +
+      `<footer class="p-foot">${pied}</footer></article>`;
+  }
+
+  /* ---------- écrans ---------- */
+  function ecranAccueil() {
+    brand.hidden = false; crumb.textContent = '';
+    btnRetour.hidden = true; btnImprimer.hidden = true;
+    app.innerHTML =
+      `<h1 class="app-title">mes notes de sec 5</h1>` +
+      `<p class="lede">Une feuille recto verso par concept, pour étudier avant l'examen. Choisis une matière.</p>` +
+      `<div class="grid">` + DATA.matieres.map(m => {
+        const p = progres(m);
+        const pct = Math.round(p.faits / p.total * 100);
+        const chip = m.plusTard ? '<span class="chip wait">plus tard</span>'
+          : p.faits === p.total ? '<span class="chip ok">complet</span>'
+          : p.faits ? `<span class="chip wait">${p.faits}/${p.total}</span>` : '<span class="chip wait">bientôt</span>';
+        return `<button class="tile" type="button" data-go="m-${m.id}" style="--tab:${m.couleur}">` +
+          `<span class="tab"></span><span class="name">${esc(m.nom)}</span>` +
+          `<span class="meta"><span>${p.total} feuilles</span>${chip}</span>` +
+          `<span class="bar" aria-hidden="true"><i style="width:${pct}%"></i></span></button>`;
+      }).join('') + `</div>`;
+  }
+
+  function ecranListe(m) {
+    const f = feuilles(m.id);
+    brand.hidden = true; crumb.textContent = m.nom;
+    btnRetour.hidden = false; btnImprimer.hidden = true;
+    btnRetour.dataset.go = '';
+    let n = 0;
+    app.innerHTML =
+      `<h1 class="app-title">${esc(m.nom.toLowerCase())}</h1>` +
+      `<p class="lede">${tousConcepts(m).length} concepts${m.plusTard ? ' · cette matière sera ajoutée plus tard' : ''}</p>` +
+      `<button class="general-card" type="button" data-go="s-${m.id}~general">` +
+      `<span class="gtext"><span class="gname">Général</span><br><span class="gsub">Résumé de tous les concepts de l'année sur une feuille recto verso</span></span>` +
+      (f.general ? '<span class="chip ok">prêt</span>' : '<span class="chip wait">bientôt disponible</span>') + `</button>` +
+      m.sections.map(s =>
+        `<h2 class="sec-name">${esc(s.nom)}</h2><ul class="clist">` + s.concepts.map(c => {
+          n++;
+          const ok = !!f[c.id];
+          return `<li><button class="crow ${ok ? 'done' : 'todo'}" type="button" data-go="s-${m.id}~${c.id}">` +
+            `<span class="num">${n}</span><span class="ctitle">${esc(c.titre)}</span>` +
+            (ok ? '<span class="chip ok">prêt</span>' : '<span class="chip wait">bientôt disponible</span>') + `</button></li>`;
+        }).join('') + `</ul>`).join('');
+  }
+
+  function ecranFeuille(m, cid) {
+    const f = feuilles(m.id)[cid];
+    const c = cid === 'general' ? { id: 'general', titre: 'Général — résumé de l\'année' } : tousConcepts(m).find(x => x.id === cid);
+    if (!c) return ecranListe(m);
+    brand.hidden = true; crumb.textContent = m.nom + ' › ' + (cid === 'general' ? 'Général' : c.titre);
+    btnRetour.hidden = false; btnRetour.dataset.go = 'm-' + m.id;
+    if (!f) {
+      btnImprimer.hidden = true;
+      app.innerHTML = `<div class="soon"><h1 class="app-title">bientôt disponible</h1><p class="lede" style="margin:8px auto 0">${esc(c.titre)}<br>Cette feuille n'est pas encore écrite.</p></div>`;
+      return;
+    }
+    btnImprimer.hidden = false;
+    app.innerHTML =
+      `<p class="print-hint no-print">Pour imprimer : format Lettre, marges « Aucune », « Graphiques d'arrière-plan » coché. Ça sort sur 2 pages.</p>` +
+      `<div id="print-note" class="print-note no-print" hidden>Rien ne s'est ouvert ? L'aperçu de Claude bloque l'impression. Ouvre plutôt le fichier <b>school-note.html</b> (dossier <b>dist</b> du projet) dans ton navigateur, puis clique sur Imprimer.</div>` +
+      `<div class="side-label">Recto</div>` + page(m, c, f, 'recto') +
+      `<div class="side-label">Verso</div>` + page(m, c, f, 'verso');
+    ajuster();
+  }
+
+  /* Grossit un peu le texte des pages peu remplies, sans jamais déborder (format lettre seulement). */
+  const reflow = window.matchMedia('screen and (max-width: 880px)');
+  function ajuster() {
+    document.querySelectorAll('.page').forEach(p => {
+      p.style.fontSize = '';
+      if (reflow.matches) return;
+      const b = p.querySelector('.p-body');
+      if (b.scrollHeight > b.clientHeight) return;
+      let f = 15.6;
+      while (f < 17.4) {
+        p.style.fontSize = (f + 0.2).toFixed(1) + 'px';
+        if (b.scrollHeight > b.clientHeight) { p.style.fontSize = f.toFixed(1) + 'px'; break; }
+        f += 0.2;
+      }
+    });
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
+  if (reflow.addEventListener) reflow.addEventListener('change', ajuster);
+  window.addEventListener('beforeprint', () => { if (reflow.matches) document.querySelectorAll('.page').forEach(p => { p.style.fontSize = ''; }); });
+
+  function route() {
+    let h = '';
+    try { h = decodeURIComponent((location.hash || '').slice(1)); } catch (e) { h = ''; }
+    const mm = h.match(/^m-(.+)$/), ms = h.match(/^s-(.+?)~(.+)$/);
+    const m = mm ? matiere(mm[1]) : ms ? matiere(ms[1]) : null;
+    if (ms && m) ecranFeuille(m, ms[2]);
+    else if (mm && m) ecranListe(m);
+    else ecranAccueil();
+    window.scrollTo(0, 0);
+  }
+  function go(h) {
+    const cible = h ? '#' + h : '#';
+    if (location.hash === cible || (!h && !location.hash)) route();
+    else location.hash = cible;
+  }
+
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-go]');
+    if (t) { e.preventDefault(); go(t.dataset.go); }
+  });
+  btnImprimer.addEventListener('click', () => {
+    const t0 = Date.now();
+    try { window.print(); } catch (e) { /* bloqué */ }
+    if (Date.now() - t0 < 400) {
+      const n = document.getElementById('print-note');
+      if (n) n.hidden = false;
+    }
+  });
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+
+</body>
+</html>

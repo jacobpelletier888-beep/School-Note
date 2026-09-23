@@ -1,6 +1,6 @@
 // Assemble src/template.html + src/data/*.js en une seule page HTML autonome.
 //   dist/school-note.html  → source publiée comme artifact (sans <html>/<head>, ajoutés à la publication)
-//   dist/school-note-imprimable.html → même page avec en-tête complet, à ouvrir dans un navigateur pour imprimer
+//   dist/school-note-imprimable.html et index.html → même page avec en-tête complet (navigateur, GitHub Pages)
 import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -18,8 +18,8 @@ const page = template.replace('/*@@DATA@@*/', () => data);
 
 mkdirSync(join(root, 'dist'), { recursive: true });
 writeFileSync(join(root, 'dist', 'school-note.html'), page);
-writeFileSync(
-  join(root, 'dist', 'school-note-imprimable.html'),
-  '<!doctype html>\n<html lang="fr-CA">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n</head>\n<body>\n' + page + '\n</body>\n</html>\n'
-);
+const complet = '<!doctype html>\n<html lang="fr-CA">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n</head>\n<body>\n' + page + '\n</body>\n</html>\n';
+writeFileSync(join(root, 'dist', 'school-note-imprimable.html'), complet);
+// index.html à la racine : page servie par GitHub Pages
+writeFileSync(join(root, 'index.html'), complet);
 console.log(`OK : dist/school-note.html (${(page.length / 1024).toFixed(0)} Ko)`);
