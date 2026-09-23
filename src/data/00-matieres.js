@@ -302,6 +302,41 @@ const DATA = {
       ],
     },
     {
+      id: 'histoire', nom: 'Histoire du 20e siècle', court: 'histoire', couleur: '#e3a6d8',
+      sections: [
+        { nom: 'De 1900 à 1945', concepts: [
+          { id: 'monde-1900', titre: 'Le monde vers 1900 : impérialisme et rivalités' },
+          { id: 'premiere-guerre', titre: 'La Première Guerre mondiale (1914-1918)' },
+          { id: 'traites-paix', titre: 'Les traités de paix et la Société des Nations' },
+          { id: 'revolution-russe', titre: "La révolution russe et la naissance de l'URSS" },
+          { id: 'crise-1929', titre: 'La crise de 1929 et la Grande Dépression' },
+          { id: 'totalitarismes', titre: 'Les régimes totalitaires' },
+          { id: 'seconde-guerre', titre: 'La Seconde Guerre mondiale (1939-1945)' },
+          { id: 'shoah', titre: 'La Shoah et les crimes contre l\'humanité' },
+        ] },
+        { nom: 'De 1945 à 2000', concepts: [
+          { id: 'onu-droits', titre: "L'ONU et la Déclaration universelle des droits de l'homme" },
+          { id: 'guerre-froide', titre: 'La guerre froide : origines et blocs' },
+          { id: 'crises-guerre-froide', titre: 'Crises et conflits de la guerre froide' },
+          { id: 'decolonisation', titre: 'La décolonisation' },
+          { id: 'chine', titre: 'La Chine communiste' },
+          { id: 'moyen-orient', titre: 'Le Moyen-Orient et le conflit israélo-arabe' },
+          { id: 'construction-europeenne', titre: 'La construction européenne' },
+          { id: 'droits-civiques', titre: 'Luttes pour les droits : droits civiques, apartheid, femmes' },
+          { id: 'fin-guerre-froide', titre: "La fin de la guerre froide et la chute de l'URSS" },
+          { id: 'apres-1991', titre: 'Le monde après la guerre froide (1991-2001)' },
+        ] },
+        { nom: 'Repères et méthode', concepts: [
+          { id: 'ideologies', titre: 'Les grandes idéologies du 20e siècle' },
+          { id: 'canada-quebec', titre: 'Le Canada et le Québec dans les conflits du siècle' },
+          { id: 'chronologie', titre: 'Ligne du temps du 20e siècle' },
+          { id: 'caracteriser', titre: 'Caractériser un temps fort' },
+          { id: 'interpreter', titre: 'Interpréter une réalité sociale (méthode historique)' },
+          { id: 'documents', titre: 'Analyser des documents historiques' },
+        ] },
+      ],
+    },
+    {
       id: 'education-financiere', nom: 'Éducation financière', court: 'éduc. financière', couleur: '#b5dc8f',
       sections: [
         { nom: 'Consommer des biens et des services', concepts: [

@@ -43,4 +43,5 @@ Pour tout imprimer d'un coup : les PDF prêts à imprimer sont dans `dist/pdf/` 
 - [x] Chimie (Général + 28 concepts)
 - [x] Physique (Général + 31 concepts)
 - [x] Monde contemporain (Général + 14 feuilles)
+- [x] Histoire du 20e siècle (Général + 24 concepts ; cours à option)
 - [x] Éducation financière (Général + 20 concepts)
