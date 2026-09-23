@@ -8,6 +8,7 @@ App web d'aide aux études pour le secondaire 5 au Québec : une feuille de note
 - `src/data/00-matieres.js` : liste des matières et de leurs concepts.
 - `src/data/1x-*.js` : contenu des feuilles, un fichier par section. Chaque feuille = `{ bulle, sous, recto: [blocs], verso: [blocs] }`.
 - `build.mjs` : assemble tout en une seule page HTML autonome dans `dist/`.
+- `icons/` + `manifest.webmanifest` : icône de l'app (onglet, écran d'accueil du téléphone). Pour la changer : remplacer `icons/source.jpg`, puis `node tools/icones.mjs && node build.mjs`.
 - `tools/pdf.mjs` : génère `dist/pdf/<matière>.pdf`, toutes les feuilles d'une matière à la suite (2 pages par feuille).
 - `tests/verif-pages.mjs` : vérifie avec Chromium que chaque feuille entre dans exactement 2 pages lettre.
 
