@@ -582,7 +582,8 @@ svg .wbg { fill: #fff; }
     const sy = y => H - P - (y - f.ymin) / (f.ymax - f.ymin) * (H - 2 * P);
     const id = 'cl' + (++clipN);
     let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(f.alt || 'graphique')}">`;
-    s += `<defs><clipPath id="${id}"><rect x="${P}" y="${P}" width="${W - 2 * P}" height="${H - 2 * P}"/></clipPath></defs>`;
+    const mk = (k, c) => `<marker id="${id}${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="${c}"/></marker>`;
+    s += `<defs><clipPath id="${id}"><rect x="${P}" y="${P}" width="${W - 2 * P}" height="${H - 2 * P}"/></clipPath>${mk('b', '#2d6fa8')}${mk('p', '#cc3f64')}${mk('v', '#2f8a5b')}</defs>`;
     const g = f.grille || 1;
     for (let x = Math.ceil(f.xmin / g) * g; x <= f.xmax; x += g) s += `<line class="gd" x1="${sx(x)}" y1="${sy(f.ymin)}" x2="${sx(x)}" y2="${sy(f.ymax)}"/>`;
     for (let y = Math.ceil(f.ymin / g) * g; y <= f.ymax; y += g) s += `<line class="gd" x1="${sx(f.xmin)}" y1="${sy(y)}" x2="${sx(f.xmax)}" y2="${sy(y)}"/>`;
@@ -595,18 +596,54 @@ svg .wbg { fill: #fff; }
     s += `<text class="tk" x="${sx(f.xmax) + 8}" y="${sy(y0) + 4}">${esc(f.nx || 'x')}</text>`;
     s += `<text class="tk" x="${sx(x0) - 4}" y="${sy(f.ymax) - 9}" text-anchor="middle">${esc(f.ny || 'y')}</text>`;
     const tx = f.tick || 1, ty = f.ticky || tx;
-    for (let x = Math.ceil(f.xmin / tx) * tx; x <= f.xmax + 1e-9; x += tx) if (Math.abs(x) > 1e-9)
-      s += `<text class="tk" x="${sx(x)}" y="${sy(y0) + 12}" text-anchor="middle">${x}</text>`;
-    for (let y = Math.ceil(f.ymin / ty) * ty; y <= f.ymax + 1e-9; y += ty) if (Math.abs(y) > 1e-9)
-      s += `<text class="tk" x="${sx(x0) - 4}" y="${sy(y) + 3.5}" text-anchor="end">${y}</text>`;
+    const nb = v => String(+v.toFixed(6)).replace('.', ',').replace('-', '−');
+    const xl = f.xlabels || [];
+    for (let x = Math.ceil(f.xmin / tx) * tx; !f.xlabels && x <= f.xmax + 1e-9; x += tx) if (Math.abs(x) > 1e-9) xl.push([x, nb(x)]);
+    xl.forEach(([x, t]) => {
+      s += `<line class="ax" x1="${sx(x)}" y1="${sy(y0) - 2.5}" x2="${sx(x)}" y2="${sy(y0) + 2.5}"/>`;
+      s += `<text class="tk" x="${sx(x)}" y="${sy(y0) + 12}" text-anchor="middle">${esc(t)}</text>`;
+    });
+    const yl = f.ylabels || [];
+    for (let y = Math.ceil(f.ymin / ty) * ty; !f.ylabels && y <= f.ymax + 1e-9; y += ty) if (Math.abs(y) > 1e-9) yl.push([y, nb(y)]);
+    yl.forEach(([y, t]) => {
+      s += `<text class="tk" x="${sx(x0) - 4}" y="${sy(y) + 3.5}" text-anchor="end">${esc(t)}</text>`;
+    });
     (f.droites || []).forEach(d => {
       const [a, b] = [d.a, d.b];
       const dx = b[0] - a[0], dy = b[1] - a[1], k = 1000;
       s += `<line clip-path="url(#${id})" class="${d.cls || 'ln'}${d.dash ? ' dash' : ''}" x1="${sx(a[0] - k * dx)}" y1="${sy(a[1] - k * dy)}" x2="${sx(a[0] + k * dx)}" y2="${sy(a[1] + k * dy)}"/>`;
       if (d.lbl) s += `<text class="lb${d.pk ? ' pk' : ''}" x="${sx(d.at[0])}" y="${sy(d.at[1])}" text-anchor="${d.anchor || 'start'}">${esc(d.lbl)}</text>`;
     });
+    const span = (f.ymax - f.ymin);
+    const trace = (pts, cls, dash) => {
+      let d = '', pen = false, prev = 0;
+      pts.forEach(([x, y]) => {
+        if (!Number.isFinite(y) || !Number.isFinite(x) || Math.abs(y) > 1e5) { pen = false; return; }
+        if (pen && Math.abs(y - prev) > span * 1.2) pen = false;
+        d += (pen ? 'L' : 'M') + sx(x).toFixed(1) + ',' + sy(y).toFixed(1);
+        pen = true; prev = y;
+      });
+      return `<path clip-path="url(#${id})" class="${cls || 'ln'}${dash ? ' dash' : ''}" d="${d}"/>`;
+    };
+    (f.courbes || []).forEach(c => {
+      const a = c.x0 == null ? f.xmin : c.x0, b = c.x1 == null ? f.xmax : c.x1, n = c.n || 500, pts = [];
+      for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; pts.push([x, c.fn(x)]); }
+      s += trace(pts, c.cls, c.dash);
+      if (c.lbl) s += `<text class="lb${c.pk ? ' pk' : ''}" x="${sx(c.at[0])}" y="${sy(c.at[1])}" text-anchor="${c.anchor || 'start'}">${esc(c.lbl)}</text>`;
+    });
+    (f.param || []).forEach(c => {
+      const n = c.n || 360, pts = [];
+      for (let i = 0; i <= n; i++) { const t = c.t0 + (c.t1 - c.t0) * i / n; pts.push([c.px(t), c.py(t)]); }
+      s += trace(pts, c.cls, c.dash);
+      if (c.lbl) s += `<text class="lb${c.pk ? ' pk' : ''}" x="${sx(c.at[0])}" y="${sy(c.at[1])}" text-anchor="${c.anchor || 'start'}">${esc(c.lbl)}</text>`;
+    });
+    (f.fleches || []).forEach(v => {
+      const col = v.pk ? '#cc3f64' : v.vert ? '#2f8a5b' : '#2d6fa8';
+      s += `<line x1="${sx(v.a[0])}" y1="${sy(v.a[1])}" x2="${sx(v.b[0])}" y2="${sy(v.b[1])}" stroke="${col}" stroke-width="2.2" marker-end="url(#${id}${v.pk ? 'p' : v.vert ? 'v' : 'b'})"${v.dash ? ' stroke-dasharray="5 4"' : ''}/>`;
+      if (v.lbl) s += `<text class="lb${v.pk ? ' pk' : ''}" x="${sx(v.at[0])}" y="${sy(v.at[1])}" text-anchor="${v.anchor || 'start'}">${esc(v.lbl)}</text>`;
+    });
     (f.segs || []).forEach(d => {
-      s += `<line class="${d.cls || 'ln2'}" x1="${sx(d.a[0])}" y1="${sy(d.a[1])}" x2="${sx(d.b[0])}" y2="${sy(d.b[1])}"/>`;
+      s += `<line class="${d.cls || 'ln2'}${d.dash ? ' dash' : ''}" x1="${sx(d.a[0])}" y1="${sy(d.a[1])}" x2="${sx(d.b[0])}" y2="${sy(d.b[1])}"/>`;
     });
     (f.pts || []).forEach(p => {
       s += `<circle class="pt${p.open ? ' open' : ''}" cx="${sx(p.x)}" cy="${sy(p.y)}" r="3.2"/>`;
@@ -801,7 +838,7 @@ svg .wbg { fill: #fff; }
       const b = p.querySelector('.p-body');
       if (b.scrollHeight > b.clientHeight) return;
       let f = 15.6;
-      while (f < 17.4) {
+      while (f < 18.6) {
         p.style.fontSize = (f + 0.2).toFixed(1) + 'px';
         if (b.scrollHeight > b.clientHeight) { p.style.fontSize = f.toFixed(1) + 'px'; break; }
         f += 0.2;

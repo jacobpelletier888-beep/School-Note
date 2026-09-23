@@ -2552,6 +2552,1567 @@ general: {
 
 });
 
+/* ---- 20-math-ts-exp-log.js ---- */
+/* Mathématique TS — Exposants, exponentielles et logarithmes */
+DATA.feuilles['math-ts'] = DATA.feuilles['math-ts'] || {};
+Object.assign(DATA.feuilles['math-ts'], {
+
+/* ============ 1. Lois des exposants ============ */
+exposants: {
+  bulle: 'exposants et radicaux',
+  sous: 'Lois des exposants et des radicaux (rappel)',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'lois des exposants (a, b ≠ 0)', items: [
+          ['exposant 0', 'a<sup>0</sup> = 1'],
+          ['exposant négatif', 'a<sup>−n</sup> = {{1|a<sup>n</sup>}}'],
+          ['produit, même base', 'a<sup>m</sup> × a<sup>n</sup> = a<sup>m + n</sup>'],
+          ['quotient, même base', '{{a<sup>m</sup>|a<sup>n</sup>}} = a<sup>m − n</sup>'],
+          ['puissance d\'une puissance', '(a<sup>m</sup>)<sup>n</sup> = a<sup>mn</sup>'],
+          ['puissance d\'un produit', '(ab)<sup>n</sup> = a<sup>n</sup>b<sup>n</sup>'],
+          ['puissance d\'un quotient', '({{a|b}})<sup>n</sup> = {{a<sup>n</sup>|b<sup>n</sup>}}'],
+        ] } ],
+      [ { t: 'form', h: 'exposants fractionnaires et radicaux', items: [
+          ['exposant fractionnaire', 'a<sup>m/n</sup> = <sup>n</sup>√(a<sup>m</sup>) = (<sup>n</sup>√a)<sup>m</sup>'],
+          ['racine d\'un produit', '√(ab) = √a × √b'],
+          ['racine d\'un quotient', '√({{a|b}}) = {{√a|√b}}'],
+          ['rationaliser', '{{1|√a}} = {{√a|a}}'],
+        ], note: 'Valable pour a, b ≥ 0 quand l\'indice de la racine est pair.' },
+        { t: 'box', f: 'le nombre <b>e</b> ≈ 2,718 28… (base naturelle)' } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'simplifier une expression', items: [
+          'Traiter chaque base séparément (les nombres, puis chaque variable).',
+          'Appliquer d\'abord les puissances de parenthèses, puis les produits et quotients.',
+          'Réponse finale : **exposants positifs** et radicaux simplifiés.',
+        ] } ],
+      [ { t: 'list', h: 'simplifier un radical', items: [
+          'Sortir les carrés parfaits : √50 = √(25 × 2) = 5√2.',
+          'On additionne seulement des radicaux **semblables** : 5√2 + 3√2 = 8√2.',
+        ] } ],
+    ] },
+    { t: 'box', h: 'l\'outil clé pour les équations', f: 'c<sup>m</sup> = c<sup>n</sup>  ⇔  m = n    (c > 0, c ≠ 1)', note: 'On écrit les deux membres avec la même base, puis on égale les exposants.' },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Simplifier (2x<sup>3</sup>y<sup>−2</sup>)<sup>2</sup> × 3x<sup>−4</sup>y<sup>5</sup>.',
+      s: [ '(2x<sup>3</sup>y<sup>−2</sup>)<sup>2</sup> = 4x<sup>6</sup>y<sup>−4</sup> // chaque facteur à la puissance 2', '4x<sup>6</sup>y<sup>−4</sup> × 3x<sup>−4</sup>y<sup>5</sup> = 12x<sup>6 − 4</sup>y<sup>−4 + 5</sup> // on additionne les exposants', '= 12x<sup>2</sup>y' ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Évaluer sans calculatrice.',
+          s: [ '27<sup>2/3</sup> = (∛27)<sup>2</sup> = 3<sup>2</sup> = 9', '16<sup>−3/4</sup> = {{1|(<sup>4</sup>√16)<sup>3</sup>}} = {{1|2<sup>3</sup>}} = {{1|8}}' ] } ],
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'Radicaux.',
+          s: [ '√50 + √18 = 5√2 + 3√2 = 8√2', '{{6|√3}} = {{6√3|3}} = 2√3 // on rationalise' ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 4 —', q: 'Résoudre 4<sup>x + 1</sup> = 8<sup>x</sup>.',
+          s: [ '(2<sup>2</sup>)<sup>x + 1</sup> = (2<sup>3</sup>)<sup>x</sup> // même base : 2', '2<sup>2x + 2</sup> = 2<sup>3x</sup>', '2x + 2 = 3x', 'x = 2' ],
+          p: [ 'Vérif. : 4<sup>3</sup> = 64 et 8<sup>2</sup> = 64 ✓' ] } ],
+      [ { t: 'ex', h: 'Exemple 5 —', q: 'Résoudre 9<sup>x</sup> = {{1|27}}.',
+          s: [ '3<sup>2x</sup> = 3<sup>−3</sup>', '2x = −3', 'x = −{{3|2}}' ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          '(a + b)<sup>2</sup> ≠ a<sup>2</sup> + b<sup>2</sup> : les lois s\'appliquent aux produits, pas aux sommes.',
+          '√(a + b) ≠ √a + √b.',
+          'a<sup>m</sup> × a<sup>n</sup> : on **additionne** les exposants, on ne les multiplie pas.',
+          '−3<sup>2</sup> = −9, mais (−3)<sup>2</sup> = 9.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Même base → on additionne ou soustrait les exposants.',
+          'a<sup>−n</sup> = 1 ÷ a<sup>n</sup> ; a<sup>m/n</sup> = racine n-ième de a<sup>m</sup>.',
+          'Équation : même base des deux côtés, puis on égale les exposants.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 2. Fonction exponentielle ============ */
+exponentielle: {
+  bulle: 'fonction exponentielle',
+  sous: 'La fonction exponentielle',
+  recto: [
+    { t: 'cols', w: '1.15fr 1fr', c: [
+      [ { t: 'txt', h: 'fonction de base : f(x) = c<sup>x</sup>', p: [
+          'La base c est positive et différente de 1. La variable est dans l\'**exposant**.',
+        ] },
+        { t: 'list', items: [
+          'c > 1 : **croissante** (croissance exponentielle).',
+          '0 < c < 1 : **décroissante** (décroissance exponentielle).',
+          'Passe par (0, 1) et (1, c).',
+          '**Asymptote horizontale** : y = 0.',
+          'Domaine : ℝ · Image : ]0, +∞[ · aucun zéro.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 240, h: 205, xmin: -3, xmax: 3, ymin: -1, ymax: 8, tick: 1, ticky: 2,
+            courbes: [
+              { fn: x => Math.pow(2, x), lbl: 'y = 2^x', at: [1.6, 6.5] },
+              { fn: x => Math.pow(0.5, x), cls: 'ln2', lbl: 'y = (1/2)^x', at: [-2.9, 6.5], pk: true },
+            ],
+            pts: [ { x: 0, y: 1, lbl: '(0, 1)', dx: 5, dy: 14 } ],
+            alt: 'courbes de 2 exposant x et un demi exposant x', cap: 'croissante (c > 1) et décroissante (0 < c < 1)' },
+        ] } ],
+    ] },
+    { t: 'form', h: 'forme transformée', items: [
+      ['règle', 'f(x) = a(c)<sup>b(x − h)</sup> + k'],
+      ['asymptote', 'y = k'],
+      ['image', ']k, +∞[ si a > 0 · ]−∞, k[ si a < 0'],
+      ['forme simplifiée', 'f(x) = a(c)<sup>x</sup> + k  (on y arrive avec les lois des exposants)'],
+    ], note: 'Croissante ou décroissante ? Regarde le signe de a et si c<sup>b</sup> est plus grand ou plus petit que 1.' },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'modèles de la vie courante', items: [
+          ['croissance de i %', 'Q(t) = Q<sub>0</sub>(1 + i)<sup>t</sup>'],
+          ['décroissance de i %', 'Q(t) = Q<sub>0</sub>(1 − i)<sup>t</sup>'],
+          ['demi-vie T', 'Q(t) = Q<sub>0</sub>({{1|2}})<sup>t/T</sup>'],
+          ['intérêts composés', 'C = C<sub>0</sub>(1 + {{i|n}})<sup>nt</sup>'],
+        ], note: 'i en décimal (4 % → 0,04) ; n = nombre de périodes par an.' } ],
+      [ { t: 'list', h: 'trouver la règle f(x) = a(c)<sup>x</sup> + k', items: [
+          '1. L\'asymptote donne **k**.',
+          '2. Remplacer un point pour trouver **a** (souvent celui où x = 0 : f(0) = a + k).',
+          '3. Remplacer un 2<sup>e</sup> point pour trouver **c**.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Asymptote y = 3 ; la courbe passe par (0, 5) et (2, 21). Trouver la règle f(x) = a(c)<sup>x</sup> + k.',
+      s: [ 'k = 3', 'f(0) = a(c)<sup>0</sup> + 3 = 5 → a = 2', 'f(2) = 2c<sup>2</sup> + 3 = 21 → c<sup>2</sup> = 9 → c = 3 // c > 0' ],
+      r: 'f(x) = 2(3)<sup>x</sup> + 3' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Analyser f(x) = −2(0,5)<sup>x − 1</sup> + 4.',
+      fig: { kind: 'plan', w: 220, h: 170, xmin: -3, xmax: 4, ymin: -6, ymax: 6, tick: 1, ticky: 2,
+        courbes: [ { fn: x => -2 * Math.pow(0.5, x - 1) + 4 } ],
+        droites: [ { a: [0, 4], b: [1, 4], cls: 'ln2', dash: true, lbl: 'y = 4', at: [2.2, 4.6], pk: true } ],
+        pts: [ { x: 0, y: 0, lbl: '(0, 0)', dx: 5, dy: 13 } ], alt: 'courbe croissante sous l’asymptote y = 4' },
+      s: [
+        'asymptote : y = 4 · a < 0 → la courbe est **sous** l\'asymptote',
+        'image : ]−∞, 4[',
+        'f(0) = −2(0,5)<sup>−1</sup> + 4 = −2(2) + 4 = 0 // ordonnée à l\'origine',
+        'zéro : (0,5)<sup>x − 1</sup> = 2 = (0,5)<sup>−1</sup> → x − 1 = −1 → x = 0',
+        'variation : 0,5<sup>x</sup> décroît, × (−2) → f est **croissante**',
+        'signe : f(x) ≥ 0 sur [0, +∞[',
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'Une ville de 2500 habitants croît de 4 % par année. Population dans 10 ans ?',
+          s: [ 'P(t) = 2500(1,04)<sup>t</sup>', 'P(10) = 2500(1,04)<sup>10</sup> ≈ 3700,6' ], r: 'environ 3701 habitants' } ],
+      [ { t: 'ex', h: 'Exemple 4 —', q: 'Un médicament de 80 mg a une demi-vie de 6 h. Quantité après 18 h ?',
+          s: [ 'Q(t) = 80({{1|2}})<sup>t/6</sup>', 'Q(18) = 80({{1|2}})<sup>3</sup> = {{80|8}} = 10' ], r: '10 mg' } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Écrire 1,4 au lieu de 1,04 pour une hausse de 4 %.',
+          'Oublier que la courbe ne touche jamais son asymptote.',
+          'Conclure « croissante » seulement parce que c > 1 : a peut être négatif.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Asymptote y = k ; image selon le signe de a.',
+          'Hausse : × (1 + i) ; baisse : × (1 − i).',
+          'k d\'abord, puis a, puis c.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 3. Logarithme : définition ============ */
+'log-definition': {
+  bulle: 'logarithmes',
+  sous: 'Le logarithme : définition et changement de base',
+  recto: [
+    { t: 'cols', w: '1.2fr 1fr', c: [
+      [ { t: 'txt', p: [
+          'Le **logarithme** en base c d\'un nombre x est l\'**exposant** qu\'il faut donner à c pour obtenir x.',
+          'Autrement dit, le log répond à la question : « c à quelle puissance donne x ? »',
+        ] } ],
+      [ { t: 'box', f: 'log<sub>c</sub> x = y  ⇔  c<sup>y</sup> = x', note: 'avec c > 0, c ≠ 1 et x > 0' } ],
+    ] },
+    { t: 'tab', h: 'passer d\'une forme à l\'autre', full: true,
+      head: ['Forme exponentielle', 'Forme logarithmique', 'Se lit'],
+      rows: [
+        ['2<sup>5</sup> = 32', 'log<sub>2</sub> 32 = 5', 'log en base 2 de 32 égale 5'],
+        ['10<sup>−3</sup> = 0,001', 'log 0,001 = −3', 'log en base 10 (on n\'écrit pas le 10)'],
+        ['e<sup>2</sup> ≈ 7,389', 'ln 7,389 ≈ 2', 'logarithme naturel (base e)'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'valeurs à connaître', items: [
+          ['', 'log<sub>c</sub> 1 = 0  (car c<sup>0</sup> = 1)'],
+          ['', 'log<sub>c</sub> c = 1'],
+          ['', 'log<sub>c</sub> c<sup>n</sup> = n'],
+          ['', 'c<sup>log<sub>c</sub> x</sup> = x'],
+        ], note: 'On ne peut pas calculer le log d\'un nombre négatif ou de 0.' } ],
+      [ { t: 'box', h: 'changement de base', f: 'log<sub>c</sub> x = {{log x|log c}} = {{ln x|ln c}}', note: 'Sert à calculer n\'importe quelle base avec la calculatrice.' } ],
+    ] },
+    { t: 'list', h: 'deux logs spéciaux', items: [
+      '**log x** = log<sub>10</sub> x : le logarithme **décimal** (touche LOG).',
+      '**ln x** = log<sub>e</sub> x : le logarithme **naturel** (touche LN), avec e ≈ 2,718.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Évaluer sans calculatrice.',
+      s: [
+        'log<sub>2</sub> 32 = 5 // 2<sup>5</sup> = 32',
+        'log<sub>3</sub> {{1|9}} = −2 // 3<sup>−2</sup> = 1/9',
+        'log 0,001 = −3 // 10<sup>−3</sup> = 0,001',
+        'log<sub>1/2</sub> 8 = −3 // (1/2)<sup>−3</sup> = 8',
+        'ln e<sup>4</sup> = 4',
+        'log<sub>4</sub> 8 = {{3|2}} // 4<sup>3/2</sup> = (√4)<sup>3</sup> = 8',
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Changer de forme.',
+          s: [ '5<sup>3</sup> = 125 ⇔ log<sub>5</sub> 125 = 3', 'log<sub>2</sub> x = 6 ⇔ x = 2<sup>6</sup> = 64', 'log<sub>x</sub> 49 = 2 ⇔ x<sup>2</sup> = 49 → x = 7 // la base est positive' ] } ],
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'Calculer log<sub>3</sub> 20.',
+          s: [ 'log<sub>3</sub> 20 = {{log 20|log 3}}', '≈ {{1,3010|0,4771}} ≈ 2,727' ],
+          p: [ 'Vérif. : 3<sup>2,727</sup> ≈ 20 ✓' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Résoudre 5<sup>x</sup> = 40.',
+      s: [ 'x = log<sub>5</sub> 40 // forme logarithmique', 'x = {{log 40|log 5}} ≈ {{1,6021|0,6990}} ≈ 2,29' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre la base et l\'argument : log<sub>2</sub> 8 = 3, mais log<sub>8</sub> 2 = {{1|3}}.',
+          'Calculer log<sub>3</sub> 20 avec {{log 3|log 20}} (c\'est l\'inverse !).',
+          'Chercher le log d\'un nombre négatif.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Un log est un **exposant**.',
+          'log<sub>c</sub> x = y ⇔ c<sup>y</sup> = x.',
+          'Changement de base : log de l\'argument ÷ log de la base.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 4. Lois des logarithmes ============ */
+'log-lois': {
+  bulle: 'lois des logarithmes',
+  sous: 'Les lois des logarithmes',
+  recto: [
+    { t: 'txt', p: [ 'Les lois des logarithmes viennent directement des lois des exposants. Elles sont vraies pour m > 0, n > 0, c > 0 et c ≠ 1.' ] },
+    { t: 'tab', full: true, lcol: true,
+      head: ['Loi', 'Formule', 'Vient de…'],
+      rows: [
+        ['**log d\'un produit**', 'log<sub>c</sub>(mn) = log<sub>c</sub> m + log<sub>c</sub> n', 'c<sup>a</sup> × c<sup>b</sup> = c<sup>a + b</sup>'],
+        ['**log d\'un quotient**', 'log<sub>c</sub>({{m|n}}) = log<sub>c</sub> m − log<sub>c</sub> n', '{{c<sup>a</sup>|c<sup>b</sup>}} = c<sup>a − b</sup>'],
+        ['**log d\'une puissance**', 'log<sub>c</sub>(m<sup>n</sup>) = n log<sub>c</sub> m', '(c<sup>a</sup>)<sup>n</sup> = c<sup>an</sup>'],
+        ['**changement de base**', 'log<sub>c</sub> m = {{log<sub>d</sub> m|log<sub>d</sub> c}}', 'n\'importe quelle base d'],
+        ['**égalité**', 'log<sub>c</sub> m = log<sub>c</sub> n ⇔ m = n', 'la fonction log est bijective'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'valeurs utiles', items: [
+          ['', 'log<sub>c</sub> 1 = 0'],
+          ['', 'log<sub>c</sub> c = 1'],
+          ['', 'log<sub>c</sub> {{1|m}} = −log<sub>c</sub> m'],
+          ['', 'log<sub>c</sub> √m = {{1|2}} log<sub>c</sub> m'],
+        ] } ],
+      [ { t: 'list', h: 'deux sens d\'utilisation', items: [
+          '**Développer** : un seul log → une somme de logs (pratique pour dériver ou simplifier).',
+          '**Réduire** : une somme de logs → un seul log (indispensable pour résoudre une équation).',
+        ] } ],
+    ] },
+    { t: 'box', h: 'attention : ces « lois » n\'existent PAS', f: 'log(m + n) ≠ log m + log n    ·    {{log m|log n}} ≠ log({{m|n}})    ·    (log m)<sup>2</sup> ≠ 2 log m' },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'Réduire et évaluer.',
+          s: [ 'log 5 + log 20 = log 100 = 2', 'log<sub>2</sub> 48 − log<sub>2</sub> 3 = log<sub>2</sub> 16 = 4', '3 log<sub>2</sub> 4 − {{1|2}} log<sub>2</sub> 16 = 6 − 2 = 4' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Écrire en un seul log.',
+          s: [ '2 log a + log b − 3 log c', '= log a<sup>2</sup> + log b − log c<sup>3</sup>', '= log {{a<sup>2</sup>b|c<sup>3</sup>}}' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Développer log<sub>3</sub>({{9x<sup>2</sup>|y}}) (x, y > 0).',
+      s: [ '= log<sub>3</sub> 9 + log<sub>3</sub> x<sup>2</sup> − log<sub>3</sub> y // produit et quotient', '= 2 + 2 log<sub>3</sub> x − log<sub>3</sub> y // log<sub>3</sub> 9 = 2 et loi de la puissance' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Sachant que log 2 ≈ 0,301 et log 3 ≈ 0,477, évaluer log 12 et log 1,5.',
+      s: [ 'log 12 = log(2<sup>2</sup> × 3) = 2 log 2 + log 3 ≈ 0,602 + 0,477 = 1,079', 'log 1,5 = log {{3|2}} = log 3 − log 2 ≈ 0,176' ] },
+    { t: 'ex', h: 'Exemple 5 —', q: 'Exprimer log<sub>8</sub> x en base 2.',
+      s: [ 'log<sub>8</sub> x = {{log<sub>2</sub> x|log<sub>2</sub> 8}} = {{log<sub>2</sub> x|3}}' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Séparer log(m + n) en deux logs.',
+          'Appliquer la loi de la puissance à (log m)<sup>2</sup>.',
+          'Oublier de sortir l\'exposant **de tout** le produit : log(3x)<sup>2</sup> = 2 log 3x, pas log 3 + 2 log x.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Produit → +, quotient → −, puissance → devant.',
+          'Pour résoudre : réduire à UN seul log.',
+          'Seulement des arguments positifs.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 5. Fonction logarithmique ============ */
+logarithmique: {
+  bulle: 'fonction logarithmique',
+  sous: 'La fonction logarithmique',
+  recto: [
+    { t: 'cols', w: '1.1fr 1fr', c: [
+      [ { t: 'txt', h: 'fonction de base : f(x) = log<sub>c</sub> x', p: [
+          'C\'est la **réciproque** de la fonction exponentielle c<sup>x</sup> : leurs courbes sont symétriques par rapport à la droite y = x.',
+        ] },
+        { t: 'list', items: [
+          'c > 1 : croissante · 0 < c < 1 : décroissante.',
+          'Passe par (1, 0) et (c, 1).',
+          '**Asymptote verticale** : x = 0.',
+          'Domaine : ]0, +∞[ · Image : ℝ · zéro : x = 1.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 235, h: 225, xmin: -3, xmax: 6, ymin: -3, ymax: 6, tick: 1, ticky: 1,
+            courbes: [
+              { fn: x => Math.pow(2, x), cls: 'ln2', lbl: 'y = 2^x', at: [1.6, 5.3], pk: true },
+              { fn: x => Math.log2(x), x0: 0.001, lbl: 'y = log₂ x', at: [3.6, 1.3] },
+              { fn: x => x, cls: 'ln3', dash: true, lbl: 'y = x', at: [4.6, 3.9] },
+            ],
+            pts: [ { x: 1, y: 0, lbl: '(1, 0)', dx: 3, dy: 13 }, { x: 0, y: 1, lbl: '(0, 1)', dx: -34, dy: -2 } ],
+            alt: 'symétrie entre 2 exposant x et log en base 2 de x', cap: 'log₂ x et 2^x sont symétriques par rapport à y = x' },
+        ] } ],
+    ] },
+    { t: 'form', h: 'forme transformée', items: [
+      ['règle', 'f(x) = a log<sub>c</sub>(b(x − h)) + k'],
+      ['asymptote', 'x = h'],
+      ['domaine', 'b(x − h) > 0 : ]h, +∞[ si b > 0 · ]−∞, h[ si b < 0'],
+      ['image', 'ℝ'],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'analyser une fonction log', items: [
+          '**Domaine** et **asymptote** (à partir de h et du signe de b).',
+          '**Zéro** : f(x) = 0 → isoler le log → forme exponentielle.',
+          '**Ordonnée à l\'origine** : f(0), seulement si 0 est dans le domaine.',
+          '**Variation** et **signe** à l\'aide d\'une esquisse.',
+        ] } ],
+      [ { t: 'list', h: 'trouver la règle', items: [
+          'L\'asymptote donne **h**.',
+          'Remplacer un ou deux points pour trouver a et k (ou c).',
+          'On transforme souvent log<sub>c</sub> en log ou ln avec le changement de base.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Analyser f(x) = 2 log<sub>3</sub>(x − 1) − 4.',
+      fig: { kind: 'plan', w: 215, h: 165, xmin: -1, xmax: 14, ymin: -7, ymax: 3, tick: 2, ticky: 2,
+        courbes: [ { fn: x => 2 * Math.log(x - 1) / Math.log(3) - 4, x0: 1.0005 } ],
+        droites: [ { a: [1, 0], b: [1, 1], cls: 'ln2', dash: true } ],
+        pts: [ { x: 10, y: 0, lbl: '(10, 0)', dx: -18, dy: -7 }, { x: 4, y: -2, lbl: '(4, −2)', dx: 5, dy: 12 } ], alt: 'courbe logarithmique croissante' },
+      s: [
+        'asymptote : x = 1 · domaine : ]1, +∞[',
+        'zéro : 2 log<sub>3</sub>(x − 1) = 4 → log<sub>3</sub>(x − 1) = 2',
+        'x − 1 = 3<sup>2</sup> = 9 → x = 10',
+        'point : f(4) = 2 log<sub>3</sub> 3 − 4 = −2',
+        'croissante ; f(x) ≥ 0 sur [10, +∞[ ; pas d\'ordonnée à l\'origine',
+      ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Trouver la règle f(x) = a log<sub>2</sub>(x − h) : asymptote x = −3 et point (1, 6).',
+      s: [ 'h = −3 → f(x) = a log<sub>2</sub>(x + 3)', '6 = a log<sub>2</sub>(1 + 3) = a log<sub>2</sub> 4 = 2a', 'a = 3' ],
+      r: 'f(x) = 3 log<sub>2</sub>(x + 3)' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'f(x) = −log(−(x − 2)) + 1 : domaine et zéro.',
+      s: [ '−(x − 2) > 0 → x < 2 // domaine ]−∞, 2[, asymptote x = 2', 'log(2 − x) = 1 → 2 − x = 10 → x = −8 // zéro' ],
+      p: [ 'Vérif. : f(−8) = −log 10 + 1 = 0 ✓' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Donner une ordonnée à l\'origine quand 0 n\'est pas dans le domaine.',
+          'Oublier que le domaine dépend du signe de b.',
+          'Confondre asymptote verticale (log) et horizontale (exponentielle).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Log = réciproque de l\'exponentielle.',
+          'Asymptote x = h ; argument toujours > 0.',
+          'Zéro : forme exponentielle.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 6. Équations exponentielles et logarithmiques ============ */
+'equations-exp-log': {
+  bulle: 'équations exp et log',
+  sous: 'Équations et inéquations exponentielles et logarithmiques',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'équation exponentielle', items: [
+          '1. **Isoler** la puissance : c<sup>…</sup> = nombre.',
+          '2a. Si on peut, écrire les deux côtés avec la **même base** et égaler les exposants.',
+          '2b. Sinon, passer à la **forme logarithmique** (ou prendre le log des deux côtés).',
+          '3. Isoler x.',
+        ] } ],
+      [ { t: 'list', h: 'équation logarithmique', items: [
+          '1. **Réduire** à un seul log de chaque côté (lois des logs).',
+          '2. Passer à la **forme exponentielle** : log<sub>c</sub> A = y → A = c<sup>y</sup>.',
+          '   ou égaler les arguments : log<sub>c</sub> A = log<sub>c</sub> B → A = B.',
+          '3. Résoudre, puis **vérifier** : rejeter toute solution qui rend un argument ≤ 0.',
+        ] } ],
+    ] },
+    { t: 'box', h: 'l\'outil universel', f: 'c<sup>x</sup> = N  ⇔  x = log<sub>c</sub> N = {{log N|log c}}' },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'inéquations exponentielles', items: [
+          'Même base c > 1 : on **garde** le sens de l\'inégalité.',
+          'Même base 0 < c < 1 : on **inverse** le sens.',
+          'Si on divise par un log négatif (ex. log 0,5), on inverse aussi.',
+        ] } ],
+      [ { t: 'list', h: 'inéquations logarithmiques', items: [
+          'Trouver d\'abord le **domaine** (arguments > 0).',
+          'Résoudre comme une équation, en respectant la règle du sens (base > 1 ou < 1).',
+          'Réponse = intersection avec le domaine.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'problèmes d\'application', items: [
+      '« Après combien de temps… ? » : l\'inconnue est dans l\'exposant → on utilise le log.',
+      'Arrondir selon le contexte : on attend souvent la première année **complète** où le seuil est atteint.',
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: '3(2)<sup>x + 1</sup> − 5 = 43',
+          s: [ '3(2)<sup>x + 1</sup> = 48', '2<sup>x + 1</sup> = 16 = 2<sup>4</sup>', 'x + 1 = 4 → x = 3' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Un placement de 5000 $ rapporte 8 % par année. Quand vaudra-t-il 12 000 $ ?',
+          s: [ '5000(1,08)<sup>t</sup> = 12 000', '1,08<sup>t</sup> = 2,4', 't = {{log 2,4|log 1,08}} ≈ 11,38' ], r: 'au cours de la 12<sup>e</sup> année' } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'log<sub>2</sub> x + log<sub>2</sub>(x − 2) = 3',
+      s: [ 'log<sub>2</sub>(x(x − 2)) = 3 // un seul log', 'x<sup>2</sup> − 2x = 2<sup>3</sup> = 8', 'x<sup>2</sup> − 2x − 8 = 0 → (x − 4)(x + 2) = 0', 'x = 4 ou x = −2' ],
+      p: [ 'x = −2 est **rejeté** (log<sub>2</sub>(−2) n\'existe pas). Solution : x = 4. Vérif. : log<sub>2</sub> 4 + log<sub>2</sub> 2 = 2 + 1 = 3 ✓' ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 4 —', q: '2(0,5)<sup>x</sup> ≥ {{1|8}}',
+          s: [ '(0,5)<sup>x</sup> ≥ {{1|16}} = (0,5)<sup>4</sup>', 'x ≤ 4 // base < 1 : on inverse' ] } ],
+      [ { t: 'ex', h: 'Exemple 5 —', q: 'log<sub>3</sub>(2x − 1) < 2',
+          s: [ 'domaine : 2x − 1 > 0 → x > {{1|2}}', '2x − 1 < 3<sup>2</sup> = 9 → x < 5', 'solution : ]{{1|2}}, 5[' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 6 —', q: 'e<sup>2x</sup> = 7', s: [ '2x = ln 7', 'x = {{ln 7|2}} ≈ 0,973' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Prendre le log avant d\'avoir isolé la puissance : log(3 · 2<sup>x</sup> − 5) ne se simplifie pas.',
+          'Oublier de vérifier les solutions d\'une équation log.',
+          'Oublier d\'inverser le sens quand la base est entre 0 et 1.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Exponentielle : isoler, puis même base ou log.',
+          'Log : réduire, forme exponentielle, vérifier.',
+          'Inéquation : base < 1 → on inverse.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+
+/* ---- 21-math-ts-fonctions-trigo.js ---- */
+/* Mathématique TS — Fonctions (réciproque, opérations) et trigonométrie */
+(function () {
+  const PI = Math.PI;
+  const XPI = [[-PI / 2, '−π/2'], [PI / 2, 'π/2'], [PI, 'π'], [3 * PI / 2, '3π/2'], [2 * PI, '2π']];
+
+Object.assign(DATA.feuilles['math-ts'], {
+
+/* ============ 7. Fonction réciproque ============ */
+reciproque: {
+  bulle: 'fonction réciproque',
+  sous: 'La réciproque d\'une fonction',
+  recto: [
+    { t: 'cols', w: '1.15fr 1fr', c: [
+      [ { t: 'txt', p: [
+          'La **réciproque** d\'une fonction f, notée **f<sup>−1</sup>**, « défait » ce que f fait : elle **échange x et y**.',
+          'Si f(a) = b, alors f<sup>−1</sup>(b) = a. Chaque point (a, b) de f devient (b, a).',
+          'Les deux courbes sont **symétriques par rapport à la droite y = x**.',
+        ] },
+        { t: 'list', h: 'propriétés', items: [
+          'dom f<sup>−1</sup> = ima f  et  ima f<sup>−1</sup> = dom f.',
+          'f<sup>−1</sup> est une fonction seulement si f est **bijective** (chaque y vient d\'un seul x).',
+          'Sinon, on **restreint le domaine** de f (ex. x ≥ 0 pour x<sup>2</sup>).',
+          'f(f<sup>−1</sup>(x)) = x : pratique pour vérifier.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 230, h: 225, xmin: -7, xmax: 5, ymin: -7, ymax: 5, tick: 2, ticky: 2,
+            courbes: [
+              { fn: x => 3 * x - 6, lbl: 'f(x) = 3x − 6', at: [2.9, 4.1] },
+              { fn: x => x / 3 + 2, cls: 'ln2', lbl: 'f⁻¹(x) = x/3 + 2', at: [-6.8, 0.2], pk: true },
+              { fn: x => x, cls: 'ln3', dash: true, lbl: 'y = x', at: [3.1, 2] },
+            ],
+            pts: [ { x: 0, y: -6, lbl: '(0, −6)', dx: 5, dy: 4 }, { x: -6, y: 0, lbl: '(−6, 0)', dx: -8, dy: 14 } ],
+            alt: 'une fonction et sa réciproque symétriques par rapport à y = x', cap: '(0, −6) sur f ↔ (−6, 0) sur f⁻¹' },
+        ] } ],
+    ] },
+    { t: 'list', h: 'trouver la règle de la réciproque', items: [
+      '1. Remplacer f(x) par y.',
+      '2. **Échanger** x et y.',
+      '3. **Isoler** y (en « défaisant » les opérations dans l\'ordre inverse).',
+      '4. Remplacer y par f<sup>−1</sup>(x) et donner son domaine.',
+    ] },
+    { t: 'tab', h: 'paires de fonctions réciproques', full: true, lcol: true,
+      head: ['Fonction', 'Réciproque'],
+      rows: [
+        ['1<sup>er</sup> degré y = ax + b (a ≠ 0)', '1<sup>er</sup> degré y = {{x − b|a}}'],
+        ['exponentielle y = c<sup>x</sup>', 'logarithmique y = log<sub>c</sub> x'],
+        ['2<sup>e</sup> degré (domaine restreint)', 'racine carrée'],
+        ['valeur absolue', 'pas une fonction (sauf en restreignant le domaine)'],
+      ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'f(x) = 3x − 6',
+          s: [ 'x = 3y − 6 // on échange', 'x + 6 = 3y', 'y = {{x + 6|3}}', 'f<sup>−1</sup>(x) = {{x|3}} + 2' ],
+          p: [ 'Vérif. : f(f<sup>−1</sup>(x)) = 3({{x|3}} + 2) − 6 = x ✓' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'f(x) = 5 log<sub>2</sub>(x + 1) − 3',
+          s: [ 'x = 5 log<sub>2</sub>(y + 1) − 3', '{{x + 3|5}} = log<sub>2</sub>(y + 1)', 'y + 1 = 2<sup>(x + 3)/5</sup>', 'f<sup>−1</sup>(x) = 2<sup>(x + 3)/5</sup> − 1' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'f(x) = 2(3)<sup>x − 1</sup> + 4',
+      s: [ 'x = 2(3)<sup>y − 1</sup> + 4', '{{x − 4|2}} = 3<sup>y − 1</sup>', 'y − 1 = log<sub>3</sub>({{x − 4|2}}) // forme logarithmique', 'f<sup>−1</sup>(x) = log<sub>3</sub>({{x − 4|2}}) + 1' ],
+      p: [ 'Domaine de f<sup>−1</sup> : x > 4, c\'est bien l\'image de f (asymptote y = 4, a > 0).' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'f(x) = (x − 2)<sup>2</sup> + 1 n\'est pas bijective. On restreint à x ≥ 2.',
+      s: [ 'x = (y − 2)<sup>2</sup> + 1', 'x − 1 = (y − 2)<sup>2</sup>', 'y − 2 = √(x − 1) // on garde + car y ≥ 2', 'f<sup>−1</sup>(x) = √(x − 1) + 2, pour x ≥ 1' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre f<sup>−1</sup>(x) et {{1|f(x)}} : ce n\'est **pas** la même chose.',
+          'Oublier de donner le domaine de la réciproque.',
+          'Isoler y dans le mauvais ordre : on défait d\'abord ce qui a été fait en dernier.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'On échange x et y, puis on isole y.',
+          'Symétrie par rapport à y = x.',
+          'Domaine ↔ image.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 8. Opérations et composition ============ */
+'operations-fonctions': {
+  bulle: 'opérations sur les fonctions',
+  sous: 'Opérations sur les fonctions et composition',
+  recto: [
+    { t: 'tab', h: 'les quatre opérations', full: true, lcol: true,
+      head: ['Opération', 'Règle', 'Domaine'],
+      rows: [
+        ['somme', '(f + g)(x) = f(x) + g(x)', 'dom f ∩ dom g'],
+        ['différence', '(f − g)(x) = f(x) − g(x)', 'dom f ∩ dom g'],
+        ['produit', '(f · g)(x) = f(x) × g(x)', 'dom f ∩ dom g'],
+        ['quotient', '({{f|g}})(x) = {{f(x)|g(x)}}', 'dom f ∩ dom g, **sauf** les x où g(x) = 0'],
+      ] },
+    { t: 'cols', w: '1.1fr 1fr', c: [
+      [ { t: 'txt', h: 'la composition', p: [
+          'Composer, c\'est **enchaîner** deux fonctions : le résultat de la première devient l\'entrée de la seconde.',
+          '**(g ∘ f)(x) = g(f(x))** se lit « g rond f de x ». On applique **f d\'abord**, puis g.',
+        ] },
+        { t: 'list', items: [
+          'Domaine : les x du domaine de f **dont l\'image f(x) est dans le domaine de g**.',
+          'En général, g ∘ f ≠ f ∘ g (l\'ordre compte).',
+          'f ∘ f<sup>−1</sup> et f<sup>−1</sup> ∘ f donnent x.',
+        ] } ],
+      [ { t: 'box', h: 'schéma', f: 'x  →  <b>f</b>  →  f(x)  →  <b>g</b>  →  g(f(x))' },
+        { t: 'list', h: 'décomposer une fonction', items: [
+          'On cherche une fonction « intérieure » et une fonction « extérieure ».',
+          'ex. h(x) = √(x<sup>2</sup> + 9) = g(f(x)) avec f(x) = x<sup>2</sup> + 9 et g(x) = √x.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'démarche pour une composition', items: [
+      '1. Écrire la fonction extérieure avec des parenthèses vides : g( ).',
+      '2. Mettre **toute** la règle de la fonction intérieure dans les parenthèses.',
+      '3. Développer et réduire.',
+      '4. Pour une valeur : calculer f(a) d\'abord, puis g(f(a)). C\'est un bon moyen de vérifier la règle.',
+    ] },
+  ],
+  verso: [
+    { t: 'txt', p: [ 'Soit **f(x) = 2x − 3** et **g(x) = x<sup>2</sup> + 1**.' ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'Opérations.',
+          s: [ '(f + g)(x) = x<sup>2</sup> + 2x − 2', '(f · g)(x) = (2x − 3)(x<sup>2</sup> + 1)', '= 2x<sup>3</sup> − 3x<sup>2</sup> + 2x − 3', '({{f|g}})(x) = {{2x − 3|x<sup>2</sup> + 1}} // domaine ℝ : x<sup>2</sup> + 1 ≠ 0' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Compositions.',
+          s: [ '(g ∘ f)(x) = (2x − 3)<sup>2</sup> + 1', '= 4x<sup>2</sup> − 12x + 10', '(f ∘ g)(x) = 2(x<sup>2</sup> + 1) − 3', '= 2x<sup>2</sup> − 1' ] } ],
+    ] },
+    { t: 'ex', h: 'Vérification avec x = 2 :', q: '',
+      s: [ '(g ∘ f)(2) = g(f(2)) = g(1) = 2 // et 4(4) − 24 + 10 = 2 ✓', '(f ∘ g)(2) = f(g(2)) = f(5) = 7 // et 2(4) − 1 = 7 ✓' ],
+      p: [ 'Les deux compositions sont différentes : l\'ordre compte.' ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'f(x) = √x et g(x) = x − 4. Domaine de f ∘ g ?',
+          s: [ '(f ∘ g)(x) = √(x − 4)', 'x − 4 ≥ 0 → x ≥ 4' ], r: '[4, +∞[' } ],
+      [ { t: 'ex', h: 'Exemple 4 —', q: 'f(x) = √(x + 2) et g(x) = x − 1. Domaine de {{f|g}} ?',
+          s: [ 'dom f = [−2, +∞[', 'g(x) = 0 si x = 1' ], r: '[−2, 1[ ∪ ]1, +∞[' } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Appliquer g d\'abord dans g ∘ f (c\'est f qu\'on applique en premier).',
+          'Oublier les parenthèses : (2x − 3)<sup>2</sup> ≠ 2x<sup>2</sup> − 3.',
+          'Oublier d\'exclure les zéros du dénominateur dans f/g.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '(g ∘ f)(x) = g(f(x)) : f d\'abord.',
+          'Domaine d\'une opération : l\'intersection.',
+          'Vérifie une composition avec une valeur.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 9. Cercle trigonométrique ============ */
+'cercle-trigo': {
+  bulle: 'cercle trigonométrique',
+  sous: 'Le radian et le cercle trigonométrique',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'le radian', p: [
+          'Un **radian** est l\'angle au centre qui intercepte un arc de même longueur que le rayon.',
+        ] },
+        { t: 'form', items: [
+          ['conversion', '2π rad = 360°   ·   π rad = 180°'],
+          ['degrés → radians', '× {{π|180°}}'],
+          ['radians → degrés', '× {{180°|π}}'],
+          ['longueur d\'arc', 'L = rθ  (θ en radians)'],
+        ] },
+        { t: 'txt', h: 'le cercle trigonométrique', p: [
+          'Cercle de **rayon 1** centré à l\'origine. On mesure θ à partir de (1, 0), dans le sens **antihoraire** (positif).',
+        ] },
+        { t: 'box', f: 'P(θ) = (cos θ, sin θ)    ·    tan θ = {{sin θ|cos θ}}' } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 255, h: 255, xmin: -1.35, xmax: 1.35, ymin: -1.35, ymax: 1.35, tick: 1, ticky: 1, grille: 0.5,
+            param: [ { px: t => Math.cos(t), py: t => Math.sin(t), t0: 0, t1: 2 * PI } ],
+            segs: [ { a: [0, 0], b: [Math.cos(PI / 6), Math.sin(PI / 6)], dash: true }, { a: [0, 0], b: [Math.cos(PI / 4), Math.sin(PI / 4)], dash: true }, { a: [0, 0], b: [Math.cos(PI / 3), Math.sin(PI / 3)], dash: true } ],
+            pts: [
+              { x: Math.cos(PI / 6), y: Math.sin(PI / 6), lbl: 'π/6', dx: 5, dy: 3 },
+              { x: Math.cos(PI / 4), y: Math.sin(PI / 4), lbl: 'π/4', dx: 5, dy: -2 },
+              { x: Math.cos(PI / 3), y: Math.sin(PI / 3), lbl: 'π/3', dx: 4, dy: -5 },
+              { x: 0, y: 1, lbl: 'π/2', dx: 5, dy: -5 }, { x: -1, y: 0, lbl: 'π', dx: -14, dy: -5 },
+              { x: 0, y: -1, lbl: '3π/2', dx: 5, dy: 13 }, { x: 1, y: 0, lbl: '0', dx: 5, dy: -5 },
+              { x: Math.cos(5 * PI / 6), y: Math.sin(5 * PI / 6), lbl: '5π/6', dx: -30, dy: -4 },
+            ],
+            alt: 'cercle trigonométrique avec les angles remarquables', cap: 'Q1 : cos et sin positifs' },
+        ] } ],
+    ] },
+    { t: 'tab', h: 'points remarquables (1<sup>er</sup> quadrant et axes)', full: true,
+      head: ['θ', '0', 'π/6 (30°)', 'π/4 (45°)', 'π/3 (60°)', 'π/2 (90°)', 'π (180°)', '3π/2 (270°)'],
+      rows: [
+        ['cos θ', '1', '{{√3|2}}', '{{√2|2}}', '{{1|2}}', '0', '−1', '0'],
+        ['sin θ', '0', '{{1|2}}', '{{√2|2}}', '{{√3|2}}', '1', '0', '−1'],
+        ['tan θ', '0', '{{√3|3}}', '1', '√3', 'non définie', '0', 'non définie'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'symétries (on part de θ dans Q1)', items: [
+          ['Q2 : π − θ', '(−cos θ, sin θ)'],
+          ['Q3 : π + θ', '(−cos θ, −sin θ)'],
+          ['Q4 : 2π − θ ou −θ', '(cos θ, −sin θ)'],
+          ['un tour de plus', 'P(θ + 2πn) = P(θ)'],
+        ] } ],
+      [ { t: 'list', h: 'autres rapports', items: [
+          'sécante : sec θ = {{1|cos θ}}',
+          'cosécante : csc θ = {{1|sin θ}}',
+          'cotangente : cot θ = {{cos θ|sin θ}}',
+          'Signes : Q1 tout +, Q2 sin +, Q3 tan +, Q4 cos +.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'Convertir.',
+          s: [ '150° = 150 × {{π|180}} = {{5π|6}}', '{{7π|4}} = {{7π|4}} × {{180°|π}} = 315°' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Longueur d\'un arc de 72° sur un cercle de 5 cm de rayon.',
+          s: [ '72° = {{2π|5}} rad', 'L = 5 × {{2π|5}} = 2π ≈ 6,28 cm' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Trouver les coordonnées des points trigonométriques.',
+      s: [
+        'P({{5π|6}}) = (−{{√3|2}}, {{1|2}}) // Q2 : π − π/6',
+        'P(−{{π|3}}) = ({{1|2}}, −{{√3|2}}) // Q4',
+        'P({{7π|4}}) = ({{√2|2}}, −{{√2|2}}) // Q4 : 2π − π/4',
+        'P({{17π|6}}) = P({{5π|6}}) = (−{{√3|2}}, {{1|2}}) // 17π/6 − 2π = 5π/6',
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 4 —', q: 'tan {{2π|3}} ?',
+          s: [ 'P({{2π|3}}) = (−{{1|2}}, {{√3|2}})', 'tan = {{√3/2|−1/2}} = −√3' ] } ],
+      [ { t: 'ex', h: 'Exemple 5 —', q: 'sin θ = {{3|5}} et θ dans Q2. cos θ et tan θ ?',
+          s: [ 'cos<sup>2</sup> θ = 1 − {{9|25}} = {{16|25}}', 'cos θ = −{{4|5}} // Q2 : cos < 0', 'tan θ = −{{3|4}}' ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Calculatrice en mode degrés alors qu\'on travaille en radians.',
+          'Oublier le signe selon le quadrant.',
+          'Inverser cos (abscisse x) et sin (ordonnée y).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'π rad = 180°.',
+          'P(θ) = (cos θ, sin θ).',
+          'Connaître π/6, π/4, π/3, puis utiliser les symétries.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 10. Sinus et cosinus ============ */
+'sinus-cosinus': {
+  bulle: 'sinus et cosinus',
+  sous: 'Les fonctions sinus et cosinus',
+  recto: [
+    { t: 'fig', figs: [
+      { kind: 'plan', w: 640, h: 170, xmin: -PI / 2 - 0.3, xmax: 2 * PI + 0.3, ymin: -1.5, ymax: 1.5, ticky: 1, grille: 0.5, xlabels: XPI,
+        courbes: [
+          { fn: Math.sin, lbl: 'y = sin x', at: [PI / 2 - 0.4, 1.2] },
+          { fn: Math.cos, cls: 'ln2', lbl: 'y = cos x', at: [-1.9, 1.2], pk: true },
+        ],
+        alt: 'courbes de sinus et cosinus', cap: 'sin et cos : période 2π, amplitude 1 ; cos x = sin(x + π/2)' },
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'forme transformée', items: [
+          ['sinus', 'f(x) = a sin(b(x − h)) + k'],
+          ['cosinus', 'f(x) = a cos(b(x − h)) + k'],
+          ['amplitude', '|a| = {{max − min|2}}'],
+          ['période', 'p = {{2π||b|}}'],
+          ['déphasage', 'h (décalage horizontal)'],
+          ['axe d\'oscillation', 'y = k = {{max + min|2}}'],
+          ['image', '[k − |a|, k + |a|]'],
+        ] } ],
+      [ { t: 'list', h: 'esquisser en 5 points (a > 0, b > 0)', items: [
+          'Diviser une période en **4 quarts** à partir de x = h.',
+          '**Sinus** : axe (en montant) → max → axe → min → axe.',
+          '**Cosinus** : max → axe → min → axe → max.',
+          'Si a < 0, on inverse max et min.',
+        ] },
+        { t: 'list', h: 'trouver la règle d\'un graphique', items: [
+          'a et k avec le max et le min.',
+          'p : distance entre deux max consécutifs → b = {{2π|p}}.',
+          'h : un point sur l\'axe en montant (sinus) ou un max (cosinus).',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Analyser f(x) = 3 sin(2(x − {{π|4}})) + 1.',
+      fig: { kind: 'plan', w: 260, h: 170, xmin: -0.2, xmax: 3 * PI / 2 + 0.2, ymin: -3, ymax: 5, ticky: 2,
+        xlabels: [[PI / 4, 'π/4'], [PI / 2, 'π/2'], [3 * PI / 4, '3π/4'], [PI, 'π'], [5 * PI / 4, '5π/4']],
+        courbes: [ { fn: x => 3 * Math.sin(2 * (x - PI / 4)) + 1 } ],
+        droites: [ { a: [0, 1], b: [1, 1], cls: 'ln2', dash: true } ],
+        pts: [ { x: PI / 2, y: 4, lbl: 'max', dx: 4, dy: -3 }, { x: PI, y: -2, lbl: 'min', dx: 4, dy: 12 } ], alt: 'sinusoïde transformée' },
+      s: [ 'amplitude : 3 · période : {{2π|2}} = π', 'déphasage : {{π|4}} · axe : y = 1', 'max = 1 + 3 = 4 · min = 1 − 3 = −2', 'image : [−2, 4]', '5 points : ({{π|4}}, 1) ({{π|2}}, 4) ({{3π|4}}, 1) (π, −2) ({{5π|4}}, 1)' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Une sinusoïde a un maximum de 7 en x = 2, puis un minimum de −1 en x = 5. Règle en cosinus ?',
+      s: [ 'a = {{7 − (−1)|2}} = 4 · k = {{7 + (−1)|2}} = 3', 'demi-période : 5 − 2 = 3 → p = 6 → b = {{2π|6}} = {{π|3}}', 'h = 2 // position d\'un max pour le cosinus' ],
+      r: 'f(x) = 4 cos({{π|3}}(x − 2)) + 3',
+      p: [ 'Vérif. : f(5) = 4 cos(π) + 3 = −1 ✓' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Une grande roue de 10 m de rayon a son centre à 12 m du sol et fait un tour en 40 s. On part du point le plus bas.',
+      s: [ 'h(t) = −10 cos({{2π|40}} t) + 12 = −10 cos({{π|20}} t) + 12', 'h(0) = −10 + 12 = 2 m // point le plus bas ✓', 'h(20) = −10 cos π + 12 = 22 m // point le plus haut ✓' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Période = {{2π|b}}, pas 2πb.',
+          'Oublier de mettre b en évidence : sin(2x − π) = sin(2(x − {{π|2}})), donc h = {{π|2}}.',
+          'Calculatrice en degrés.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'a = amplitude, b → période, h = déphasage, k = axe.',
+          'Sinus part de l\'axe, cosinus part d\'un max.',
+          'max et min → a et k.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 11. Tangente ============ */
+tangente: {
+  bulle: 'fonction tangente',
+  sous: 'La fonction tangente',
+  recto: [
+    { t: 'cols', w: '1fr 1.1fr', c: [
+      [ { t: 'txt', p: [ '**tan x = {{sin x|cos x}}** : elle n\'existe pas quand cos x = 0.' ] },
+        { t: 'list', h: 'fonction de base f(x) = tan x', items: [
+          'Période : **π**.',
+          '**Asymptotes verticales** : x = {{π|2}} + nπ (n entier).',
+          'Zéros : x = nπ.',
+          'Domaine : ℝ \\ { {{π|2}} + nπ } · Image : ℝ.',
+          'Toujours **croissante** entre deux asymptotes.',
+          'Pas d\'amplitude (ni max ni min).',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 290, h: 220, xmin: -3 * PI / 2 - 0.2, xmax: 3 * PI / 2 + 0.2, ymin: -4, ymax: 4, ticky: 2,
+            xlabels: [[-PI, '−π'], [-PI / 2, '−π/2'], [PI / 2, 'π/2'], [PI, 'π']],
+            courbes: [ { fn: Math.tan, n: 1200 } ],
+            droites: [ { a: [-PI / 2, 0], b: [-PI / 2, 1], cls: 'ln2', dash: true }, { a: [PI / 2, 0], b: [PI / 2, 1], cls: 'ln2', dash: true } ],
+            alt: 'courbe de la fonction tangente', cap: 'asymptotes (roses) à x = ±π/2' },
+        ] } ],
+    ] },
+    { t: 'form', h: 'forme transformée : f(x) = a tan(b(x − h)) + k', items: [
+      ['période', 'p = {{π||b|}}'],
+      ['point d\'inflexion (« centre »)', '(h, k), puis tous les (h + np, k)'],
+      ['asymptotes', 'x = h + {{p|2}} + np'],
+      ['variation', 'croissante si ab > 0 · décroissante si ab < 0'],
+    ] },
+    { t: 'list', h: 'trouver la règle', items: [
+      'Deux asymptotes consécutives donnent la **période** p, donc |b| = {{π|p}}.',
+      'Le point au **milieu** de deux asymptotes donne (h, k).',
+      'Un autre point donne **a**.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Analyser f(x) = 2 tan({{1|2}}(x − π)) + 1.',
+      s: [ 'période : {{π|1/2}} = 2π', 'centre : (π, 1)', 'asymptotes : x = π + π + 2πn = 2π + 2πn, donc x = 2πn', 'croissante (a = 2 > 0, b > 0)', 'zéro : tan({{1|2}}(x − π)) = −{{1|2}}', '{{1|2}}(x − π) ≈ −0,464 + πn → x ≈ 2,21 + 2πn' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Asymptotes consécutives x = −1 et x = 3 ; la courbe croissante passe par (1, 2) et (2, 5). Règle ?',
+      s: [ 'p = 3 − (−1) = 4 → b = {{π|4}}', 'centre au milieu : (1, 2) → h = 1, k = 2', '5 = a tan({{π|4}}(2 − 1)) + 2 = a(1) + 2 → a = 3' ],
+      r: 'f(x) = 3 tan({{π|4}}(x − 1)) + 2' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser 2π comme période (c\'est π pour la tangente).',
+          'Chercher une amplitude : la tangente n\'en a pas.',
+          'Oublier les asymptotes dans le domaine.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Période {{π||b|}} ; asymptotes à mi-chemin entre deux centres.',
+          'tan = sin ÷ cos.',
+          'ab > 0 → croissante.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 12. Équations trigonométriques ============ */
+'equations-trigo': {
+  bulle: 'équations trigo',
+  sous: 'Équations et inéquations trigonométriques',
+  recto: [
+    { t: 'list', h: 'démarche', items: [
+      '1. **Isoler** le sinus, le cosinus ou la tangente.',
+      '2. Trouver les **angles de base** sur le cercle trigonométrique (ou avec sin<sup>−1</sup>, cos<sup>−1</sup>, tan<sup>−1</sup>).',
+      '3. Ajouter la **période** pour avoir toutes les solutions.',
+      '4. Si l\'argument est b(x − h), résoudre b(x − h) = angle, puis isoler x.',
+      '5. Garder seulement les solutions dans l\'intervalle demandé.',
+    ] },
+    { t: 'tab', h: 'les deux solutions d\'un tour', full: true, lcol: true,
+      head: ['Équation', 'Solutions de base', 'Toutes les solutions'],
+      rows: [
+        ['sin θ = v', 'θ<sub>1</sub> et π − θ<sub>1</sub>', 'θ<sub>1</sub> + 2πn et π − θ<sub>1</sub> + 2πn'],
+        ['cos θ = v', 'θ<sub>1</sub> et −θ<sub>1</sub> (ou 2π − θ<sub>1</sub>)', '±θ<sub>1</sub> + 2πn'],
+        ['tan θ = v', 'θ<sub>1</sub>', 'θ<sub>1</sub> + πn'],
+      ],
+      note: 'Si l\'argument est b(x − h), la période devient {{2π||b|}} (ou {{π||b|}} pour tan) : on divise tout par b.' },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'cas particuliers', items: [
+          'sin θ = 1 → θ = {{π|2}} + 2πn (une seule solution par tour).',
+          'sin θ = 2 → **aucune** solution (−1 ≤ sin ≤ 1).',
+          'Équation du 2<sup>e</sup> degré : poser u = sin x, factoriser, puis résoudre chaque équation.',
+        ] } ],
+      [ { t: 'list', h: 'inéquations', items: [
+          'Résoudre l\'équation correspondante.',
+          'Utiliser le graphique ou le cercle pour savoir où la fonction est au-dessus ou au-dessous.',
+          'Écrire la réponse en intervalles.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: '2 sin x − 1 = 0 sur [0, 2π].',
+          s: [ 'sin x = {{1|2}}', 'x = {{π|6}} ou x = π − {{π|6}} = {{5π|6}}' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'tan x = −1 (toutes les solutions).',
+          s: [ 'angle de base : {{3π|4}}', 'x = {{3π|4}} + πn' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: '4 cos(2(x − {{π|3}})) + 2 = 0',
+      s: [ 'cos(2(x − {{π|3}})) = −{{1|2}}', '2(x − {{π|3}}) = {{2π|3}} + 2πn  ou  {{4π|3}} + 2πn', 'x − {{π|3}} = {{π|3}} + πn  ou  {{2π|3}} + πn // ÷ 2', 'x = {{2π|3}} + πn  ou  x = π + πn' ],
+      p: [ 'Vérif. avec x = π : 2({{2π|3}}) = {{4π|3}} et cos {{4π|3}} = −{{1|2}} ✓' ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 4 —', q: '2 sin<sup>2</sup> x − sin x − 1 = 0 sur [0, 2π[.',
+          s: [ '(2 sin x + 1)(sin x − 1) = 0', 'sin x = −{{1|2}} → x = {{7π|6}} ou {{11π|6}}', 'sin x = 1 → x = {{π|2}}' ] } ],
+      [ { t: 'ex', h: 'Exemple 5 —', q: 'sin x ≥ {{1|2}} sur [0, 2π].',
+          s: [ 'égalité en {{π|6}} et {{5π|6}}', 'entre les deux, sin x est plus grand' ], r: '[{{π|6}}, {{5π|6}}]' } ],
+    ] },
+    { t: 'ex', h: 'Exemple 6 —', q: 'Grande roue : h(t) = −10 cos({{π|20}} t) + 12. Quand est-on à 17 m pendant le 1<sup>er</sup> tour ?',
+      s: [ 'cos({{π|20}} t) = −{{1|2}}', '{{π|20}} t = {{2π|3}} ou {{4π|3}}', 't = {{40|3}} ≈ 13,3 s  ou  t = {{80|3}} ≈ 26,7 s' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier la 2<sup>e</sup> solution de base (π − θ pour le sinus).',
+          'Ajouter 2πn **après** avoir divisé par b : il faut l\'ajouter **avant**.',
+          'Diviser par sin x dans une équation : on perd des solutions. On factorise plutôt.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Isoler, angles de base, + période.',
+          'sin : θ et π − θ ; cos : ±θ ; tan : θ + πn.',
+          'Vérifier dans l\'intervalle demandé.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 13. Identités ============ */
+'identites-trigo': {
+  bulle: 'identités trigo',
+  sous: 'Les identités trigonométriques',
+  recto: [
+    { t: 'txt', p: [ 'Une **identité** est une égalité vraie pour **toutes** les valeurs de la variable (là où les expressions existent). On s\'en sert pour simplifier des expressions et pour prouver d\'autres identités.' ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'définitions', items: [
+          ['', 'tan x = {{sin x|cos x}}   ·   cot x = {{cos x|sin x}}'],
+          ['', 'sec x = {{1|cos x}}   ·   csc x = {{1|sin x}}'],
+        ] },
+        { t: 'form', h: 'identités de Pythagore', items: [
+          ['', '<b>sin<sup>2</sup> x + cos<sup>2</sup> x = 1</b>'],
+          ['', '1 + tan<sup>2</sup> x = sec<sup>2</sup> x'],
+          ['', '1 + cot<sup>2</sup> x = csc<sup>2</sup> x'],
+        ], note: 'Les deux dernières viennent de la 1<sup>re</sup>, divisée par cos<sup>2</sup> x ou par sin<sup>2</sup> x.' },
+        { t: 'form', h: 'parité', items: [
+          ['', 'sin(−x) = −sin x · cos(−x) = cos x · tan(−x) = −tan x'],
+        ] } ],
+      [ { t: 'form', h: 'somme et différence d\'angles', items: [
+          ['', 'sin(a ± b) = sin a cos b ± cos a sin b'],
+          ['', 'cos(a ± b) = cos a cos b ∓ sin a sin b'],
+          ['', 'tan(a ± b) = {{tan a ± tan b|1 ∓ tan a tan b}}'],
+        ] },
+        { t: 'form', h: 'angle double', items: [
+          ['', 'sin 2a = 2 sin a cos a'],
+          ['', 'cos 2a = cos<sup>2</sup> a − sin<sup>2</sup> a = 2cos<sup>2</sup> a − 1 = 1 − 2sin<sup>2</sup> a'],
+        ], note: 'Vérifie avec ton enseignant si les formules de somme et d\'angle double sont évaluées dans ta classe.' } ],
+    ] },
+    { t: 'list', h: 'démontrer une identité', items: [
+      'Travailler **un seul membre** (souvent le plus compliqué) jusqu\'à obtenir l\'autre.',
+      'Tout écrire en **sin et cos**.',
+      'Mettre au **même dénominateur**, **factoriser**, utiliser sin<sup>2</sup> + cos<sup>2</sup> = 1.',
+      'Ne jamais « passer de l\'autre côté » : ce n\'est pas une équation à résoudre.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Démontrer : sec x − cos x = sin x tan x.',
+      s: [ 'sec x − cos x = {{1|cos x}} − cos x // en sin et cos', '= {{1 − cos<sup>2</sup> x|cos x}} // même dénominateur', '= {{sin<sup>2</sup> x|cos x}} // Pythagore', '= sin x × {{sin x|cos x}} = sin x tan x ✓' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Démontrer : (1 − cos<sup>2</sup> x)(1 + cot<sup>2</sup> x) = 1.',
+      s: [ '(1 − cos<sup>2</sup> x)(1 + cot<sup>2</sup> x) = sin<sup>2</sup> x × csc<sup>2</sup> x', '= sin<sup>2</sup> x × {{1|sin<sup>2</sup> x}} = 1 ✓' ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'Valeur exacte de sin {{5π|12}} (75°).',
+          s: [ 'sin({{π|4}} + {{π|6}})', '= {{√2|2}} · {{√3|2}} + {{√2|2}} · {{1|2}}', '= {{√6 + √2|4}} ≈ 0,966' ] } ],
+      [ { t: 'ex', h: 'Exemple 4 —', q: 'Valeur exacte de cos {{π|12}} (15°).',
+          s: [ 'cos({{π|3}} − {{π|4}})', '= {{1|2}} · {{√2|2}} + {{√3|2}} · {{√2|2}}', '= {{√2 + √6|4}} ≈ 0,966' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 5 —', q: 'Simplifier (sin x + cos x)<sup>2</sup>.',
+      s: [ '= sin<sup>2</sup> x + 2 sin x cos x + cos<sup>2</sup> x', '= 1 + 2 sin x cos x = 1 + sin 2x' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Écrire sin(a + b) = sin a + sin b (faux !).',
+          'Travailler les deux membres en même temps comme une équation.',
+          'sin<sup>2</sup> x veut dire (sin x)<sup>2</sup>, pas sin(x<sup>2</sup>).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'sin<sup>2</sup> + cos<sup>2</sup> = 1 : l\'identité reine.',
+          'Tout en sin et cos, même dénominateur.',
+          'Un seul membre à la fois.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+})();
+
+/* ---- 22-math-ts-vecteurs-coniques.js ---- */
+/* Mathématique TS — Vecteurs et coniques */
+(function () {
+  const PI = Math.PI;
+  const cosh = Math.cosh, sinh = Math.sinh;
+  // région : intérieur du cercle x² + y² = 25 au-dessus de y = x + 1
+  const arc = [];
+  for (let t = Math.atan2(4, 3); t <= Math.atan2(-3, -4) + 2 * PI + 1e-9; t += 0.05) arc.push([5 * Math.cos(t), 5 * Math.sin(t)]);
+  arc.push([-4, -3]);
+
+Object.assign(DATA.feuilles['math-ts'], {
+
+/* ============ 14. Vecteurs : notions de base ============ */
+'vecteurs-base': {
+  bulle: 'vecteurs',
+  sous: 'Vecteurs : notions de base',
+  recto: [
+    { t: 'cols', w: '1.15fr 1fr', c: [
+      [ { t: 'txt', p: [
+          'Un **vecteur** est une grandeur qui a une **norme** (sa longueur), une **direction** (la droite qui le porte) et un **sens** (vers où pointe la flèche). On le note <b>u</b>⃗ ou <b>AB</b>⃗ (de A vers B).',
+          'Un **scalaire**, lui, n\'est qu\'un nombre (ex. une masse, une température).',
+        ] },
+        { t: 'form', h: 'formules', items: [
+          ['composantes de AB⃗', '(x<sub>2</sub> − x<sub>1</sub>, y<sub>2</sub> − y<sub>1</sub>)'],
+          ['norme de u⃗ = (a, b)', '‖u⃗‖ = √(a<sup>2</sup> + b<sup>2</sup>)'],
+          ['orientation θ', 'tan θ = {{b|a}}, puis ajuster selon le quadrant'],
+          ['à partir de ‖u⃗‖ et θ', 'u⃗ = (‖u⃗‖ cos θ, ‖u⃗‖ sin θ)'],
+        ], note: 'L\'orientation se mesure dans le sens antihoraire, à partir de l\'axe des x positifs (0° à 360°).' } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 230, h: 200, xmin: -1, xmax: 7, ymin: -1, ymax: 6, tick: 1,
+            fleches: [ { a: [1, 1], b: [5, 4], lbl: 'AB⃗ = (4, 3)', at: [1.1, 3.4] } ],
+            segs: [ { a: [1, 1], b: [5, 1], dash: true }, { a: [5, 1], b: [5, 4], dash: true } ],
+            pts: [ { x: 1, y: 1, lbl: 'A(1, 1)', dx: -8, dy: 14 }, { x: 5, y: 4, lbl: 'B(5, 4)', dx: 4, dy: -6 } ],
+            alt: 'vecteur AB et ses composantes', cap: '‖AB⃗‖ = √(4² + 3²) = 5' },
+        ] } ],
+    ] },
+    { t: 'tab', h: 'vocabulaire', full: true, lcol: true,
+      head: ['Vecteurs…', 'Définition'],
+      rows: [
+        ['**équipollents** (égaux)', 'même norme, même direction, même sens (mêmes composantes), peu importe où ils sont placés'],
+        ['**opposés**', 'même norme, même direction, sens contraires : −u⃗ = (−a, −b)'],
+        ['**colinéaires**', 'même direction (parallèles) : v⃗ = k u⃗'],
+        ['**orthogonaux**', 'directions perpendiculaires'],
+        ['**nul**', '0⃗ = (0, 0), norme 0'],
+        ['**unitaire**', 'norme 1 : on l\'obtient avec {{u⃗|‖u⃗‖}}'],
+      ] },
+    { t: 'list', h: 'où on les utilise', items: [
+      'Déplacements, vitesses, forces (en physique), translations en géométrie.',
+      'Résultante de plusieurs forces : on additionne les vecteurs (feuille suivante).',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'A(−2, 3) et B(4, −5). Composantes, norme et orientation de AB⃗.',
+      s: [ 'AB⃗ = (4 − (−2), −5 − 3) = (6, −8)', '‖AB⃗‖ = √(36 + 64) = √100 = 10', 'tan<sup>−1</sup>({{−8|6}}) ≈ −53,13° // calculatrice', 'le vecteur est dans Q4 → θ ≈ 360° − 53,13° = 306,87°' ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 2 —', q: '‖u⃗‖ = 12 et θ = 150°. Composantes ?',
+          s: [ 'a = 12 cos 150° = −6√3 ≈ −10,39', 'b = 12 sin 150° = 6' ], r: 'u⃗ ≈ (−10,39 ; 6)' } ],
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'u⃗ = (2, −3) et v⃗ = (−6, 9) sont-ils colinéaires ?',
+          s: [ '{{−6|2}} = −3 et {{9|−3}} = −3', 'v⃗ = −3u⃗' ], r: 'oui, de sens contraires' } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 4 —', q: 'Vecteur unitaire de u⃗ = (3, 4).',
+          s: [ '‖u⃗‖ = 5', '{{u⃗|‖u⃗‖}} = ({{3|5}}, {{4|5}})' ] } ],
+      [ { t: 'ex', h: 'Exemple 5 —', q: 'A(1, 2) et AB⃗ = (5, −1). Coordonnées de B ?',
+          s: [ 'B = (1 + 5, 2 − 1) = (6, 1)' ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Faire A − B au lieu de B − A pour AB⃗ (on obtient l\'opposé).',
+          'Se fier à la calculatrice pour l\'orientation : tan<sup>−1</sup> ne donne que des angles entre −90° et 90°.',
+          'Confondre direction (la droite) et sens (la flèche).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'AB⃗ = arrivée − départ.',
+          'Norme = Pythagore.',
+          'Orientation : dessine le vecteur pour trouver le bon quadrant.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 15. Opérations sur les vecteurs ============ */
+'vecteurs-operations': {
+  bulle: 'opérations sur les vecteurs',
+  sous: 'Addition, soustraction et multiplication par un scalaire',
+  recto: [
+    { t: 'cols', w: '1.15fr 1fr', c: [
+      [ { t: 'list', h: 'addition graphique', items: [
+          '**Règle du triangle** (bout à bout) : on place l\'origine de v⃗ à l\'extrémité de u⃗. La somme va de l\'origine de u⃗ à l\'extrémité de v⃗.',
+          '**Règle du parallélogramme** : u⃗ et v⃗ partent du même point ; la somme est la diagonale.',
+          '**Relation de Chasles** : AB⃗ + BC⃗ = AC⃗.',
+        ] },
+        { t: 'form', h: 'avec les composantes', items: [
+          ['somme', '(a, b) + (c, d) = (a + c, b + d)'],
+          ['différence', 'u⃗ − v⃗ = u⃗ + (−v⃗)'],
+          ['scalaire', 'k(a, b) = (ka, kb)'],
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 230, h: 210, xmin: -1, xmax: 6, ymin: -1, ymax: 6, tick: 1,
+            fleches: [
+              { a: [0, 0], b: [3, 1], lbl: 'u⃗', at: [1.8, 0.2] },
+              { a: [0, 0], b: [1, 3], vert: true, lbl: 'v⃗', at: [0.1, 2.2] },
+              { a: [3, 1], b: [4, 4], vert: true, dash: true },
+              { a: [1, 3], b: [4, 4], dash: true },
+              { a: [0, 0], b: [4, 4], pk: true, lbl: 'u⃗ + v⃗ = (4, 4)', at: [2.6, 4.9] },
+            ],
+            alt: 'règle du parallélogramme', cap: 'u⃗ = (3, 1), v⃗ = (1, 3) : la somme est la diagonale' },
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'multiplication par un scalaire k', items: [
+          'La norme est multipliée par |k| : ‖ku⃗‖ = |k| ‖u⃗‖.',
+          'k > 0 : même sens · k < 0 : sens contraire.',
+          'ku⃗ est toujours **colinéaire** à u⃗.',
+        ] } ],
+      [ { t: 'list', h: 'propriétés', items: [
+          'u⃗ + v⃗ = v⃗ + u⃗ (commutativité).',
+          '(u⃗ + v⃗) + w⃗ = u⃗ + (v⃗ + w⃗) (associativité).',
+          'k(u⃗ + v⃗) = ku⃗ + kv⃗ (distributivité).',
+          '‖u⃗ + v⃗‖ ≤ ‖u⃗‖ + ‖v⃗‖ : on n\'additionne **pas** les normes.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'résultante de forces ou de déplacements', items: [
+      '1. Décomposer chaque vecteur en composantes : (‖v⃗‖ cos θ, ‖v⃗‖ sin θ).',
+      '2. Additionner les composantes en x, puis en y.',
+      '3. Calculer la norme et l\'orientation de la résultante.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'u⃗ = (3, 1) et v⃗ = (−1, 4).',
+      s: [ 'u⃗ + v⃗ = (2, 5)', 'u⃗ − v⃗ = (3 − (−1), 1 − 4) = (4, −3)', '2u⃗ − 3v⃗ = (6, 2) − (−3, 12) = (9, −10)', '‖u⃗ + v⃗‖ = √29 ≈ 5,39 // mais ‖u⃗‖ + ‖v⃗‖ = √10 + √17 ≈ 7,29' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Simplifier avec la relation de Chasles.',
+      s: [ 'AB⃗ + BC⃗ + CD⃗ = AD⃗', 'AB⃗ − CB⃗ = AB⃗ + BC⃗ = AC⃗ // −CB⃗ = BC⃗', 'AB⃗ + BA⃗ = 0⃗' ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'Un kayak parcourt 8 km vers l\'est, puis 6 km vers le nord. Déplacement total ?',
+          s: [ '(8, 0) + (0, 6) = (8, 6)', 'norme : √(64 + 36) = 10 km', 'θ = tan<sup>−1</sup>({{6|8}}) ≈ 36,87°' ] } ],
+      [ { t: 'ex', h: 'Exemple 4 —', q: 'Forces de 20 N à 30° et de 10 N à 120°. Résultante ?',
+          s: [ 'F⃗<sub>1</sub> = (20 cos 30°, 20 sin 30°) ≈ (17,32 ; 10)', 'F⃗<sub>2</sub> = (10 cos 120°, 10 sin 120°) ≈ (−5 ; 8,66)', 'R⃗ ≈ (12,32 ; 18,66)', '‖R⃗‖ = √500 ≈ 22,36 N · θ ≈ 56,6°' ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Additionner les normes au lieu des vecteurs.',
+          'Soustraire : bien distribuer le signe sur les deux composantes.',
+          'Oublier qu\'un k négatif inverse le sens.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'On additionne composante par composante.',
+          'Chasles : AB⃗ + BC⃗ = AC⃗.',
+          'Forces : décomposer, additionner, recomposer.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 16. Produit scalaire ============ */
+'produit-scalaire': {
+  bulle: 'produit scalaire',
+  sous: 'Produit scalaire et combinaison linéaire',
+  recto: [
+    { t: 'txt', p: [ 'Le **produit scalaire** de deux vecteurs donne un **nombre** (un scalaire), pas un vecteur. Il mesure à quel point les deux vecteurs « vont dans la même direction ».' ] },
+    { t: 'cols', c: [
+      [ { t: 'box', h: 'avec l\'angle θ entre les vecteurs', f: 'u⃗ · v⃗ = ‖u⃗‖ ‖v⃗‖ cos θ', note: '0° ≤ θ ≤ 180°' } ],
+      [ { t: 'box', h: 'avec les composantes', f: '(a, b) · (c, d) = ac + bd' } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'ce que le signe veut dire', items: [
+          'u⃗ · v⃗ > 0 : angle **aigu** (moins de 90°).',
+          'u⃗ · v⃗ = 0 : vecteurs **orthogonaux** (90°).',
+          'u⃗ · v⃗ < 0 : angle **obtus** (plus de 90°).',
+        ] },
+        { t: 'form', h: 'trouver l\'angle', items: [
+          ['', 'cos θ = {{u⃗ · v⃗|‖u⃗‖ ‖v⃗‖}}'],
+        ] } ],
+      [ { t: 'list', h: 'propriétés', items: [
+          'u⃗ · v⃗ = v⃗ · u⃗.',
+          'u⃗ · (v⃗ + w⃗) = u⃗ · v⃗ + u⃗ · w⃗.',
+          'u⃗ · u⃗ = ‖u⃗‖<sup>2</sup>.',
+          'Colinéaires de même sens : u⃗ · v⃗ = ‖u⃗‖ ‖v⃗‖.',
+          'En physique : travail W = F⃗ · d⃗.',
+        ] } ],
+    ] },
+    { t: 'txt', h: 'combinaison linéaire', p: [
+      'Un vecteur w⃗ est une **combinaison linéaire** de u⃗ et v⃗ s\'il existe deux scalaires a et b tels que **w⃗ = a u⃗ + b v⃗**.',
+      'Si u⃗ et v⃗ ne sont **pas colinéaires**, ils forment une **base** du plan : tout vecteur du plan s\'écrit d\'une seule façon comme combinaison linéaire de u⃗ et v⃗.',
+      'Base usuelle : i⃗ = (1, 0) et j⃗ = (0, 1). Ainsi, (a, b) = a i⃗ + b j⃗.',
+      'Pour trouver a et b : on écrit l\'égalité composante par composante et on résout le **système d\'équations**.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'u⃗ = (3, 4) et v⃗ = (5, −2). Produit scalaire et angle.',
+      s: [ 'u⃗ · v⃗ = 3(5) + 4(−2) = 15 − 8 = 7', '‖u⃗‖ = 5 · ‖v⃗‖ = √29', 'cos θ = {{7|5√29}} ≈ 0,260', 'θ ≈ 74,9°' ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Valeur de k pour que (k, 3) ⟂ (2, −4).',
+          s: [ '2k + 3(−4) = 0', '2k = 12 → k = 6' ] } ],
+      [ { t: 'ex', h: 'Exemple 3 —', q: '‖u⃗‖ = 4, ‖v⃗‖ = 6 et θ = 60°.',
+          s: [ 'u⃗ · v⃗ = 4 × 6 × cos 60°', '= 24 × {{1|2}} = 12' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Écrire w⃗ = (8, 2) comme combinaison linéaire de u⃗ = (1, 2) et v⃗ = (3, −1).',
+      s: [ '(8, 2) = a(1, 2) + b(3, −1)', 'a + 3b = 8  et  2a − b = 2', 'b = 2a − 2 → a + 6a − 6 = 8 → a = 2', 'b = 2(2) − 2 = 2' ],
+      r: 'w⃗ = 2u⃗ + 2v⃗',
+      p: [ 'Vérif. : 2(1, 2) + 2(3, −1) = (2 + 6, 4 − 2) = (8, 2) ✓' ] },
+    { t: 'ex', h: 'Exemple 5 —', q: 'Une force F⃗ = (10, 5) N déplace un objet de d⃗ = (4, 0) m. Travail ?',
+      s: [ 'W = F⃗ · d⃗ = 10(4) + 5(0) = 40 J' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Donner un vecteur comme réponse d\'un produit scalaire : c\'est un **nombre**.',
+          'Utiliser un angle qui n\'est pas celui **entre** les deux vecteurs (placés origine contre origine).',
+          'Croire que u⃗ · v⃗ = 0 veut dire qu\'un des vecteurs est nul.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'u⃗ · v⃗ = ac + bd = ‖u⃗‖‖v⃗‖ cos θ.',
+          'Produit scalaire nul ⇔ orthogonaux.',
+          'Combinaison linéaire → système d\'équations.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 17. Lieux géométriques et cercle ============ */
+cercle: {
+  bulle: 'le cercle',
+  sous: 'Lieux géométriques et cercle',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'lieu géométrique', p: [
+          'Un **lieu géométrique** est l\'ensemble de **tous** les points qui respectent une même condition, souvent une condition de **distance**.',
+        ] },
+        { t: 'list', items: [
+          '**Médiatrice** d\'un segment AB : points à égale distance de A et de B.',
+          '**Cercle** : points à une distance r d\'un centre.',
+          '**Coniques** : ellipse, hyperbole et parabole sont aussi des lieux (feuilles suivantes).',
+        ] },
+        { t: 'box', h: 'distance entre deux points', f: 'd = √((x<sub>2</sub> − x<sub>1</sub>)<sup>2</sup> + (y<sub>2</sub> − y<sub>1</sub>)<sup>2</sup>)' } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 235, h: 235, xmin: -3, xmax: 9, ymin: -8, ymax: 4, tick: 2, ticky: 2,
+            param: [ { px: t => 3 + 5 * Math.cos(t), py: t => -2 + 5 * Math.sin(t), t0: 0, t1: 2 * PI } ],
+            segs: [ { a: [3, -2], b: [6, 2], dash: true } ],
+            pts: [ { x: 3, y: -2, lbl: 'C(3, −2)', dx: -20, dy: 14 }, { x: 6, y: 2, lbl: '(6, 2)', dx: 4, dy: -4 } ],
+            alt: 'cercle de centre 3, −2 et de rayon 5', cap: '(x − 3)² + (y + 2)² = 25' },
+        ] } ],
+    ] },
+    { t: 'form', h: 'équations du cercle', items: [
+      ['centre (0, 0), rayon r', 'x<sup>2</sup> + y<sup>2</sup> = r<sup>2</sup>'],
+      ['centre (h, k), rayon r', '(x − h)<sup>2</sup> + (y − k)<sup>2</sup> = r<sup>2</sup>'],
+      ['forme générale', 'x<sup>2</sup> + y<sup>2</sup> + Dx + Ey + F = 0 → on **complète le carré** pour trouver h, k et r'],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'régions', items: [
+          '(x − h)<sup>2</sup> + (y − k)<sup>2</sup> **<** r<sup>2</sup> : **intérieur** du cercle.',
+          '(x − h)<sup>2</sup> + (y − k)<sup>2</sup> **>** r<sup>2</sup> : **extérieur**.',
+          '≤ ou ≥ : le cercle est inclus (trait plein).',
+        ] } ],
+      [ { t: 'list', h: 'tangente au cercle', items: [
+          'Elle touche le cercle en un seul point.',
+          'Elle est **perpendiculaire au rayon** en ce point : sa pente est l\'opposé de l\'inverse de celle du rayon.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'Centre (2, −3), passe par (5, 1). Équation ?',
+          s: [ 'r<sup>2</sup> = (5 − 2)<sup>2</sup> + (1 + 3)<sup>2</sup> = 9 + 16 = 25' ], r: '(x − 2)<sup>2</sup> + (y + 3)<sup>2</sup> = 25' } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Le point (1, 1) est-il dans le cercle (x − 3)<sup>2</sup> + (y + 2)<sup>2</sup> = 25 ?',
+          s: [ '(1 − 3)<sup>2</sup> + (1 + 2)<sup>2</sup> = 4 + 9 = 13', '13 < 25' ], r: 'oui, à l\'intérieur' } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Trouver le centre et le rayon de x<sup>2</sup> + y<sup>2</sup> − 6x + 4y − 12 = 0.',
+      s: [ '(x<sup>2</sup> − 6x + 9) + (y<sup>2</sup> + 4y + 4) = 12 + 9 + 4 // on complète les carrés', '(x − 3)<sup>2</sup> + (y + 2)<sup>2</sup> = 25' ],
+      r: 'centre (3, −2), rayon 5' },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 4 —', q: 'Tangente à x<sup>2</sup> + y<sup>2</sup> = 25 au point (3, 4).',
+          s: [ 'pente du rayon : {{4|3}} → pente de la tangente : −{{3|4}}', 'y − 4 = −{{3|4}}(x − 3)', 'y = −{{3|4}}x + {{25|4}}' ] } ],
+      [ { t: 'ex', h: 'Exemple 5 —', q: 'Médiatrice de A(0, 0) et B(4, 2).',
+          s: [ 'milieu : (2, 1) · pente de AB : {{1|2}}', 'pente perpendiculaire : −2', 'y = −2x + 5' ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Signes du centre : (x + 3)<sup>2</sup> veut dire h = −3.',
+          'Donner r<sup>2</sup> comme rayon (25 → r = 5).',
+          'Oublier d\'ajouter les mêmes nombres des deux côtés en complétant le carré.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '(x − h)<sup>2</sup> + (y − k)<sup>2</sup> = r<sup>2</sup>.',
+          'Compléter le carré pour la forme générale.',
+          'Tangente ⟂ rayon.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 18. Ellipse ============ */
+ellipse: {
+  bulle: 'l\'ellipse',
+  sous: 'L\'ellipse',
+  recto: [
+    { t: 'cols', w: '1fr 1.1fr', c: [
+      [ { t: 'txt', p: [
+          'L\'**ellipse** est le lieu des points dont la **somme** des distances à deux points fixes, les **foyers**, est constante.',
+          'Cette somme est égale à la longueur du **grand axe**.',
+        ] },
+        { t: 'box', f: 'PF<sub>1</sub> + PF<sub>2</sub> = longueur du grand axe' } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 290, h: 190, xmin: -6.5, xmax: 6.5, ymin: -4, ymax: 4, tick: 1, ticky: 1,
+            param: [ { px: t => 5 * Math.cos(t), py: t => 3 * Math.sin(t), t0: 0, t1: 2 * PI } ],
+            segs: [ { a: [-4, 0], b: [3, 2.4], dash: true }, { a: [4, 0], b: [3, 2.4], dash: true } ],
+            pts: [ { x: -4, y: 0, lbl: 'F₁', dx: -4, dy: 13, pk: true }, { x: 4, y: 0, lbl: 'F₂', dx: -4, dy: 13, pk: true }, { x: 3, y: 2.4, lbl: 'P', dx: 4, dy: -4 }, { x: 5, y: 0 }, { x: 0, y: 3 } ],
+            alt: 'ellipse horizontale avec ses foyers', cap: 'x²/25 + y²/9 = 1 : PF₁ + PF₂ = 10' },
+        ] } ],
+    ] },
+    { t: 'form', h: 'équation (centre à l\'origine)', items: [
+      ['forme canonique', '{{x<sup>2</sup>|a<sup>2</sup>}} + {{y<sup>2</sup>|b<sup>2</sup>}} = 1'],
+      ['sommets', '(±a, 0) et (0, ±b)'],
+      ['centre (h, k)', '{{(x − h)<sup>2</sup>|a<sup>2</sup>}} + {{(y − k)<sup>2</sup>|b<sup>2</sup>}} = 1'],
+    ], note: 'Ici, a est le demi-axe horizontal et b le demi-axe vertical. Certains manuels appellent toujours a le demi-grand axe : vérifie la notation de ta classe.' },
+    { t: 'tab', h: 'où sont les foyers ?', full: true, lcol: true,
+      head: ['Cas', 'Grand axe', 'Foyers', 'Relation'],
+      rows: [
+        ['a > b', 'horizontal, longueur 2a', '(±c, 0)', 'c<sup>2</sup> = a<sup>2</sup> − b<sup>2</sup>'],
+        ['b > a', 'vertical, longueur 2b', '(0, ±c)', 'c<sup>2</sup> = b<sup>2</sup> − a<sup>2</sup>'],
+        ['a = b', 'c\'est un cercle', 'au centre', 'c = 0'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'régions', items: [
+          '{{x<sup>2</sup>|a<sup>2</sup>}} + {{y<sup>2</sup>|b<sup>2</sup>}} < 1 : intérieur ; > 1 : extérieur.',
+        ] } ],
+      [ { t: 'list', h: 'applications', items: [
+          'Orbites des planètes (le Soleil est à un foyer), salles « à murmures », arches.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Analyser 9x<sup>2</sup> + 25y<sup>2</sup> = 225.',
+      s: [ '{{x<sup>2</sup>|25}} + {{y<sup>2</sup>|9}} = 1 // ÷ 225', 'a = 5, b = 3 → grand axe horizontal', 'c<sup>2</sup> = 25 − 9 = 16 → c = 4', 'sommets (±5, 0) et (0, ±3) ; foyers (±4, 0) ; grand axe 10, petit axe 6' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Foyers (0, ±12), grand axe de 26. Équation ?',
+      s: [ 'grand axe vertical : 2b = 26 → b = 13 ; c = 12', 'a<sup>2</sup> = b<sup>2</sup> − c<sup>2</sup> = 169 − 144 = 25' ],
+      r: '{{x<sup>2</sup>|25}} + {{y<sup>2</sup>|169}} = 1' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Centre (1, −2), demi-axe horizontal 4, demi-axe vertical 2.',
+      s: [ '{{(x − 1)<sup>2</sup>|16}} + {{(y + 2)<sup>2</sup>|4}} = 1', 'c = √(16 − 4) = √12 = 2√3 ≈ 3,46', 'foyers (1 ± 2√3, −2)' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Une arche semi-elliptique a 20 m de large et 6 m de haut. Hauteur à 5 m du centre ?',
+      s: [ '{{x<sup>2</sup>|100}} + {{y<sup>2</sup>|36}} = 1', 'y<sup>2</sup> = 36(1 − {{25|100}}) = 27', 'y = √27 ≈ 5,20 m' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier de diviser pour obtenir « = 1 ».',
+          'Utiliser c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup> (c\'est pour l\'hyperbole !).',
+          'Mettre les foyers sur le petit axe.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Somme des distances = grand axe.',
+          'Ellipse : c<sup>2</sup> = grand<sup>2</sup> − petit<sup>2</sup>.',
+          'Foyers sur le grand axe.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 19. Hyperbole ============ */
+hyperbole: {
+  bulle: 'l\'hyperbole',
+  sous: 'L\'hyperbole',
+  recto: [
+    { t: 'cols', w: '1fr 1.15fr', c: [
+      [ { t: 'txt', p: [
+          'L\'**hyperbole** est le lieu des points dont la **différence** (en valeur absolue) des distances aux deux foyers est constante.',
+          'Elle a deux **branches** et deux **asymptotes** obliques qui se croisent au centre.',
+        ] },
+        { t: 'box', f: '|PF<sub>1</sub> − PF<sub>2</sub>| = distance entre les sommets' } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 300, h: 215, xmin: -8, xmax: 8, ymin: -6, ymax: 6, tick: 2, ticky: 2,
+            param: [
+              { px: t => 4 * cosh(t), py: t => 3 * sinh(t), t0: -1.8, t1: 1.8 },
+              { px: t => -4 * cosh(t), py: t => 3 * sinh(t), t0: -1.8, t1: 1.8 },
+            ],
+            droites: [ { a: [0, 0], b: [4, 3], cls: 'ln2', dash: true, lbl: 'y = ¾x', at: [5.2, 5.3], pk: true }, { a: [0, 0], b: [4, -3], cls: 'ln2', dash: true } ],
+            pts: [ { x: -5, y: 0, lbl: 'F₁', dx: -4, dy: 13, pk: true }, { x: 5, y: 0, lbl: 'F₂', dx: -4, dy: 13, pk: true }, { x: 4, y: 0, lbl: '(4, 0)', dx: -32, dy: -5 }, { x: -4, y: 0 } ],
+            alt: 'hyperbole horizontale avec ses asymptotes', cap: 'x²/16 − y²/9 = 1 : foyers (±5, 0)' },
+        ] } ],
+    ] },
+    { t: 'tab', h: 'les deux orientations (centre à l\'origine)', full: true, lcol: true,
+      head: ['', 'Ouverte à gauche et à droite', 'Ouverte en haut et en bas'],
+      rows: [
+        ['équation', '{{x<sup>2</sup>|a<sup>2</sup>}} − {{y<sup>2</sup>|b<sup>2</sup>}} = 1', '{{x<sup>2</sup>|a<sup>2</sup>}} − {{y<sup>2</sup>|b<sup>2</sup>}} = −1'],
+        ['sommets', '(±a, 0)', '(0, ±b)'],
+        ['foyers', '(±c, 0)', '(0, ±c)'],
+        ['constante', '2a', '2b'],
+        ['relation', 'c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup>', 'c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup>'],
+        ['asymptotes', 'y = ±{{b|a}}x', 'y = ±{{b|a}}x'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'esquisser', items: [
+          'Tracer le **rectangle** de 2a sur 2b centré au centre.',
+          'Ses diagonales prolongées sont les **asymptotes**.',
+          'Placer les sommets et dessiner les branches qui s\'approchent des asymptotes.',
+        ] } ],
+      [ { t: 'list', h: 'centre (h, k)', items: [
+          '{{(x − h)<sup>2</sup>|a<sup>2</sup>}} − {{(y − k)<sup>2</sup>|b<sup>2</sup>}} = ±1',
+          'Asymptotes : y − k = ±{{b|a}}(x − h).',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Analyser 9x<sup>2</sup> − 16y<sup>2</sup> = 144.',
+      s: [ '{{x<sup>2</sup>|16}} − {{y<sup>2</sup>|9}} = 1 // ÷ 144', 'a = 4, b = 3, c = √(16 + 9) = 5', 'sommets (±4, 0) · foyers (±5, 0)', 'asymptotes y = ±{{3|4}}x' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Sur cette hyperbole, le point P a une abscisse de 8. Vérifier la définition.',
+      s: [ '{{64|16}} − {{y<sup>2</sup>|9}} = 1 → y<sup>2</sup> = 27 → P(8 ; 5,20)', 'PF<sub>2</sub> = √((8 − 5)<sup>2</sup> + 27) = √36 = 6', 'PF<sub>1</sub> = √((8 + 5)<sup>2</sup> + 27) = √196 = 14', '14 − 6 = 8 = 2a ✓' ] },
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 3 —', q: 'Sommets (0, ±6), foyers (0, ±10). Équation ?',
+          s: [ 'ouverte en haut et en bas : b = 6, c = 10', 'a<sup>2</sup> = c<sup>2</sup> − b<sup>2</sup> = 100 − 36 = 64' ],
+          r: '{{x<sup>2</sup>|64}} − {{y<sup>2</sup>|36}} = −1' } ],
+      [ { t: 'ex', h: 'Exemple 4 —', q: '{{(x − 2)<sup>2</sup>|9}} − {{(y + 1)<sup>2</sup>|16}} = 1',
+          s: [ 'centre (2, −1) ; a = 3, b = 4, c = 5', 'sommets (−1, −1) et (5, −1)', 'foyers (−3, −1) et (7, −1)', 'asymptotes : y + 1 = ±{{4|3}}(x − 2)' ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser c<sup>2</sup> = a<sup>2</sup> − b<sup>2</sup> (c\'est pour l\'ellipse).',
+          'Se tromper d\'orientation : regarde le signe du membre de droite (= 1 ou = −1).',
+          'Oublier les asymptotes dans l\'esquisse.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Différence des distances = distance entre sommets.',
+          'Hyperbole : c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup>.',
+          'Asymptotes : y = ±{{b|a}}x.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 20. Parabole ============ */
+parabole: {
+  bulle: 'la parabole',
+  sous: 'La parabole comme conique',
+  recto: [
+    { t: 'cols', w: '1fr 1fr', c: [
+      [ { t: 'txt', p: [
+          'La **parabole** est le lieu des points situés à **égale distance** d\'un point fixe, le **foyer** F, et d\'une droite fixe, la **directrice** d.',
+          'Le **sommet** est au milieu, entre le foyer et la directrice. c est la distance (avec son signe) du sommet au foyer.',
+        ] },
+        { t: 'box', f: 'distance (P, F) = distance (P, directrice)' } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 240, h: 200, xmin: -4.5, xmax: 4.5, ymin: -2, ymax: 5, tick: 1, ticky: 1,
+            courbes: [ { fn: x => x * x / 4 } ],
+            droites: [ { a: [0, -1], b: [1, -1], cls: 'ln2', dash: true, lbl: 'directrice y = −1', at: [-4.3, -1.6], pk: true } ],
+            segs: [ { a: [2, 1], b: [0, 1], dash: true }, { a: [2, 1], b: [2, -1], dash: true } ],
+            pts: [ { x: 0, y: 1, lbl: 'F(0, 1)', dx: -44, dy: -4, pk: true }, { x: 2, y: 1, lbl: 'P(2, 1)', dx: 5, dy: 3 }, { x: 0, y: 0 } ],
+            alt: 'parabole x² = 4y, foyer et directrice', cap: 'x² = 4y : PF = 2 et distance à d = 2' },
+        ] } ],
+    ] },
+    { t: 'tab', h: 'les formes canoniques (sommet (h, k))', full: true, lcol: true,
+      head: ['Équation', 'Ouverture', 'Foyer', 'Directrice', 'Axe'],
+      rows: [
+        ['(x − h)<sup>2</sup> = 4c(y − k)', 'vers le haut si c > 0, vers le bas si c < 0', '(h, k + c)', 'y = k − c', 'x = h'],
+        ['(y − k)<sup>2</sup> = 4c(x − h)', 'vers la droite si c > 0, vers la gauche si c < 0', '(h + c, k)', 'x = h − c', 'y = k'],
+      ],
+      note: 'Sommet à l\'origine : x<sup>2</sup> = 4cy ou y<sup>2</sup> = 4cx.' },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'lien avec y = a(x − h)<sup>2</sup> + k', items: [
+          'On isole le carré : (x − h)<sup>2</sup> = {{1|a}}(y − k).',
+          'Donc 4c = {{1|a}}, ou c = {{1|4a}}.',
+        ] } ],
+      [ { t: 'list', h: 'propriété de réflexion', items: [
+          'Tout rayon parallèle à l\'axe se réfléchit vers le **foyer** : antennes paraboliques, fours solaires.',
+          'À l\'inverse, une lumière au foyer sort en faisceau parallèle : phares d\'auto.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exemple 1 —', q: 'x<sup>2</sup> = −12y',
+          s: [ '4c = −12 → c = −3', 'ouverte vers le bas', 'foyer (0, −3) · directrice y = 3' ] } ],
+      [ { t: 'ex', h: 'Exemple 2 —', q: 'Foyer (2, 5), directrice y = 1. Équation ?',
+          s: [ 'sommet au milieu : (2, 3)', 'c = 5 − 3 = 2', '(x − 2)<sup>2</sup> = 8(y − 3)' ] } ],
+    ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Analyser (y + 1)<sup>2</sup> = 8(x − 3).',
+      s: [ 'sommet (3, −1) · 4c = 8 → c = 2', 'ouverte vers la droite', 'foyer (3 + 2, −1) = (5, −1)', 'directrice x = 3 − 2 = 1 · axe y = −1' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Une antenne parabolique a 2 m de diamètre et 0,25 m de profondeur. Où placer le récepteur ?',
+      s: [ 'sommet à l\'origine : x<sup>2</sup> = 4cy', 'le bord (1 ; 0,25) est sur la parabole : 1 = 4c(0,25) = c', 'c = 1' ],
+      r: 'au foyer, à 1 m du fond de l\'antenne' },
+    { t: 'ex', h: 'Exemple 5 —', q: 'Foyer de y = 2(x − 1)<sup>2</sup> + 3 ?',
+      s: [ '(x − 1)<sup>2</sup> = {{1|2}}(y − 3) → 4c = {{1|2}} → c = {{1|8}}', 'foyer (1 ; 3 + {{1|8}}) = (1 ; 3,125)' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Prendre 4c pour c (diviser par 4 !).',
+          'Placer le foyer du mauvais côté : il est toujours **à l\'intérieur** de la courbe.',
+          'Confondre (x − h)<sup>2</sup> (ouverte en haut ou en bas) et (y − k)<sup>2</sup> (à gauche ou à droite).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'PF = distance à la directrice.',
+          'Sommet au milieu de F et de d.',
+          'c = {{1|4a}}.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 21. Systèmes avec coniques ============ */
+'systemes-coniques': {
+  bulle: 'systèmes et coniques',
+  sous: 'Systèmes d\'équations et d\'inéquations avec des coniques',
+  recto: [
+    { t: 'cols', w: '1.15fr 1fr', c: [
+      [ { t: 'txt', p: [
+          'Résoudre un système avec une conique, c\'est trouver les **points d\'intersection** des courbes (ou la **région** commune pour des inéquations).',
+        ] },
+        { t: 'list', h: 'méthodes', items: [
+          '**Substitution** : isoler une variable dans l\'équation de la droite (ou la plus simple), la remplacer dans l\'autre.',
+          '**Réduction** : additionner ou soustraire les équations pour éliminer x<sup>2</sup> ou y<sup>2</sup> (deux coniques).',
+          'On obtient souvent une équation du **2<sup>e</sup> degré** : factoriser ou utiliser la formule quadratique.',
+          'Trouver l\'autre coordonnée de **chaque** solution, puis vérifier.',
+        ] } ],
+      [ { t: 'fig', figs: [
+          { kind: 'plan', w: 230, h: 230, xmin: -6.5, xmax: 6.5, ymin: -6.5, ymax: 6.5, tick: 2, ticky: 2,
+            zones: [ { pts: arc } ],
+            param: [ { px: t => 5 * Math.cos(t), py: t => 5 * Math.sin(t), t0: 0, t1: 2 * PI } ],
+            droites: [ { a: [0, 1], b: [1, 2], cls: 'ln2', lbl: 'y = x + 1', at: [3.2, 6], pk: true } ],
+            pts: [ { x: 3, y: 4, lbl: '(3, 4)', dx: 5, dy: 3 }, { x: -4, y: -3, lbl: '(−4, −3)', dx: -12, dy: 15 } ],
+            alt: 'cercle coupé par une droite', cap: 'région : x² + y² ≤ 25 et y ≥ x + 1' },
+        ] } ],
+    ] },
+    { t: 'tab', h: 'combien de solutions ?', full: true, lcol: true,
+      head: ['Situation', 'Nombre de points d\'intersection'],
+      rows: [
+        ['droite et conique', '0, 1 (droite **tangente**) ou 2'],
+        ['deux coniques', 'de 0 à 4'],
+      ],
+      note: 'Avec une équation ax<sup>2</sup> + bx + c = 0, le discriminant Δ = b<sup>2</sup> − 4ac le dit d\'avance : Δ > 0 → 2 ; Δ = 0 → 1 ; Δ < 0 → 0.' },
+    { t: 'list', h: 'système d\'inéquations', items: [
+      'Tracer chaque courbe (trait plein pour ≤ ou ≥, pointillé pour < ou >).',
+      'Pour chaque inéquation, utiliser un **point-test** pour savoir quel côté garder (intérieur ou extérieur, au-dessus ou au-dessous).',
+      'La solution est la région commune à **toutes** les inéquations.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'x<sup>2</sup> + y<sup>2</sup> = 25 et y = x + 1.',
+      s: [ 'x<sup>2</sup> + (x + 1)<sup>2</sup> = 25 // substitution', '2x<sup>2</sup> + 2x − 24 = 0 → x<sup>2</sup> + x − 12 = 0', '(x + 4)(x − 3) = 0 → x = 3 ou x = −4', 'y = 4 ou y = −3' ],
+      r: '(3, 4) et (−4, −3)' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Pour quelle valeur de k la droite y = x + k est-elle tangente à la parabole x<sup>2</sup> = 4y ?',
+      s: [ 'x<sup>2</sup> = 4(x + k) → x<sup>2</sup> − 4x − 4k = 0', 'tangente ⇔ Δ = 0 : (−4)<sup>2</sup> − 4(1)(−4k) = 16 + 16k = 0', 'k = −1 → point de contact : x = 2, y = 1' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'x<sup>2</sup> + y<sup>2</sup> = 25 et x<sup>2</sup> − y<sup>2</sup> = 7.',
+      s: [ '2x<sup>2</sup> = 32 // on additionne', 'x<sup>2</sup> = 16 → x = ±4', 'y<sup>2</sup> = 25 − 16 = 9 → y = ±3' ],
+      r: '4 solutions : (4, 3), (4, −3), (−4, 3), (−4, −3)' },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Région x<sup>2</sup> + y<sup>2</sup> ≤ 25 et y ≥ x + 1 (graphique du recto).',
+      p: [ 'Point-test (0, 2) : 0 + 4 = 4 ≤ 25 ✓ et 2 ≥ 0 + 1 ✓. La région est la partie du disque **au-dessus** de la droite, bornes comprises.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier la 2<sup>e</sup> solution d\'une équation du 2<sup>e</sup> degré.',
+          'Avec y<sup>2</sup> = 9, oublier y = −3.',
+          'Trouver x sans calculer le y qui va avec.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Substitution (droite) ou réduction (2 coniques).',
+          'Discriminant → nombre de solutions.',
+          'Inéquations : point-test pour chaque courbe.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ GÉNÉRAL ============ */
+general: {
+  bulle: 'math TS : tout en 1',
+  sous: 'Résumé de l\'année — Mathématique TS, secondaire 5',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'exponentielles et logarithmes', items: [
+          ['exposants', 'a<sup>m</sup>a<sup>n</sup> = a<sup>m+n</sup> · a<sup>m/n</sup> = <sup>n</sup>√a<sup>m</sup>'],
+          ['exponentielle', 'f(x) = a(c)<sup>b(x − h)</sup> + k ; asymptote y = k'],
+          ['définition', 'log<sub>c</sub> x = y ⇔ c<sup>y</sup> = x'],
+          ['lois', 'log mn = log m + log n · log {{m|n}} = log m − log n'],
+          ['', 'log m<sup>n</sup> = n log m · log<sub>c</sub> x = {{log x|log c}}'],
+          ['logarithmique', 'f(x) = a log<sub>c</sub>(b(x − h)) + k ; asymptote x = h'],
+        ] } ],
+      [ { t: 'list', h: 'fonctions', items: [
+          '**Réciproque** : échanger x et y, isoler y ; symétrie par rapport à y = x ; dom ↔ ima.',
+          '**Opérations** : domaine = intersection (sauf zéros du dénominateur).',
+          '**Composition** : (g ∘ f)(x) = g(f(x)), f d\'abord.',
+          '**Équations** exp : même base ou log · log : un seul log, forme exponentielle, **vérifier**.',
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'form', h: 'trigonométrie', items: [
+          ['radian', 'π rad = 180° · L = rθ'],
+          ['cercle', 'P(θ) = (cos θ, sin θ)'],
+          ['sin et cos', 'f(x) = a sin(b(x − h)) + k ; p = {{2π||b|}}'],
+          ['tangente', 'p = {{π||b|}} ; asymptotes à h + {{p|2}} + np'],
+          ['sinus', 'solutions θ et π − θ (+ 2πn)'],
+          ['cosinus', 'solutions ±θ (+ 2πn)'],
+          ['Pythagore', 'sin<sup>2</sup> x + cos<sup>2</sup> x = 1 ; 1 + tan<sup>2</sup> x = sec<sup>2</sup> x'],
+        ] } ],
+      [ { t: 'form', h: 'vecteurs', items: [
+          ['composantes', 'AB⃗ = (x<sub>2</sub> − x<sub>1</sub>, y<sub>2</sub> − y<sub>1</sub>)'],
+          ['norme', '‖u⃗‖ = √(a<sup>2</sup> + b<sup>2</sup>)'],
+          ['depuis ‖u⃗‖, θ', '(‖u⃗‖ cos θ, ‖u⃗‖ sin θ)'],
+          ['Chasles', 'AB⃗ + BC⃗ = AC⃗'],
+          ['produit scalaire', 'ac + bd = ‖u⃗‖‖v⃗‖ cos θ'],
+          ['orthogonaux', 'u⃗ · v⃗ = 0'],
+          ['comb. linéaire', 'w⃗ = a u⃗ + b v⃗ (système)'],
+        ] } ],
+    ] },
+    { t: 'tab', h: 'coniques (centre ou sommet à l\'origine)', full: true, lcol: true,
+      head: ['Conique', 'Équation', 'Définition (lieu)', 'Relation'],
+      rows: [
+        ['cercle', 'x<sup>2</sup> + y<sup>2</sup> = r<sup>2</sup>', 'distance r du centre', '—'],
+        ['ellipse', '{{x<sup>2</sup>|a<sup>2</sup>}} + {{y<sup>2</sup>|b<sup>2</sup>}} = 1', 'somme des distances aux foyers = grand axe', 'c<sup>2</sup> = grand<sup>2</sup> − petit<sup>2</sup>'],
+        ['hyperbole', '{{x<sup>2</sup>|a<sup>2</sup>}} − {{y<sup>2</sup>|b<sup>2</sup>}} = ±1', '|différence des distances| = constante', 'c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup> ; y = ±{{b|a}}x'],
+        ['parabole', 'x<sup>2</sup> = 4cy ou y<sup>2</sup> = 4cx', 'PF = distance à la directrice', 'c = {{1|4a}}'],
+      ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Exp. —', q: '3(2)<sup>x + 1</sup> − 5 = 43', s: [ '2<sup>x + 1</sup> = 16 → x = 3' ] },
+        { t: 'ex', h: 'Log —', q: 'log<sub>2</sub> x + log<sub>2</sub>(x − 2) = 3', s: [ 'x<sup>2</sup> − 2x − 8 = 0 → x = 4 (−2 rejeté)' ] },
+        { t: 'ex', h: 'Réciproque —', q: 'f(x) = 3x − 6', s: [ 'f<sup>−1</sup>(x) = {{x|3}} + 2' ] },
+        { t: 'ex', h: 'Composition —', q: 'f(x) = 2x − 3, g(x) = x<sup>2</sup> + 1', s: [ '(g ∘ f)(x) = 4x<sup>2</sup> − 12x + 10' ] } ],
+      [ { t: 'ex', h: 'Trigo —', q: '2 sin x − 1 = 0 sur [0, 2π]', s: [ 'x = {{π|6}} ou {{5π|6}}' ] },
+        { t: 'ex', h: 'Sinusoïde —', q: 'max 7 en x = 2, min −1 en x = 5', s: [ 'f(x) = 4 cos({{π|3}}(x − 2)) + 3' ] },
+        { t: 'ex', h: 'Vecteurs —', q: '(3, 4) · (5, −2)', s: [ '= 15 − 8 = 7 ; θ ≈ 74,9°' ] },
+        { t: 'ex', h: 'Conique —', q: '9x<sup>2</sup> + 25y<sup>2</sup> = 225', s: [ 'a = 5, b = 3, c = 4 ; foyers (±4, 0)' ] } ],
+    ] },
+    { t: 'pieges', items: [
+      'log(m + n) ≠ log m + log n ; vérifier les solutions des équations log (argument > 0).',
+      'Période = {{2π|b}}, pas 2πb ; mettre b en évidence pour trouver h.',
+      'Équations trigo : ne pas oublier la 2<sup>e</sup> solution et la période (ajoutée avant de diviser par b).',
+      'Orientation d\'un vecteur : vérifier le quadrant, la calculatrice ne le fait pas.',
+      'Ellipse : c<sup>2</sup> = grand<sup>2</sup> − petit<sup>2</sup> ; hyperbole : c<sup>2</sup> = a<sup>2</sup> + b<sup>2</sup>.',
+      'Calculatrice en radians pour la trigo, en degrés pour les angles des vecteurs.',
+    ] },
+    { t: 'retenir', items: [
+      'Exp et log sont réciproques : on passe de l\'une à l\'autre avec c<sup>y</sup> = x ⇔ log<sub>c</sub> x = y.',
+      'Paramètres a, b, h, k : même rôle pour toutes les fonctions.',
+      'Trigo : cercle d\'abord, calculs ensuite.',
+      'Vecteurs : on travaille composante par composante.',
+      'Coniques : chaque conique est un lieu de points défini par des distances.',
+    ] },
+  ],
+},
+
+});
+})();
+
 </script>
 <script>
 /* =========================================================
@@ -2603,7 +4164,8 @@ general: {
     const sy = y => H - P - (y - f.ymin) / (f.ymax - f.ymin) * (H - 2 * P);
     const id = 'cl' + (++clipN);
     let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(f.alt || 'graphique')}">`;
-    s += `<defs><clipPath id="${id}"><rect x="${P}" y="${P}" width="${W - 2 * P}" height="${H - 2 * P}"/></clipPath></defs>`;
+    const mk = (k, c) => `<marker id="${id}${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="${c}"/></marker>`;
+    s += `<defs><clipPath id="${id}"><rect x="${P}" y="${P}" width="${W - 2 * P}" height="${H - 2 * P}"/></clipPath>${mk('b', '#2d6fa8')}${mk('p', '#cc3f64')}${mk('v', '#2f8a5b')}</defs>`;
     const g = f.grille || 1;
     for (let x = Math.ceil(f.xmin / g) * g; x <= f.xmax; x += g) s += `<line class="gd" x1="${sx(x)}" y1="${sy(f.ymin)}" x2="${sx(x)}" y2="${sy(f.ymax)}"/>`;
     for (let y = Math.ceil(f.ymin / g) * g; y <= f.ymax; y += g) s += `<line class="gd" x1="${sx(f.xmin)}" y1="${sy(y)}" x2="${sx(f.xmax)}" y2="${sy(y)}"/>`;
@@ -2616,18 +4178,54 @@ general: {
     s += `<text class="tk" x="${sx(f.xmax) + 8}" y="${sy(y0) + 4}">${esc(f.nx || 'x')}</text>`;
     s += `<text class="tk" x="${sx(x0) - 4}" y="${sy(f.ymax) - 9}" text-anchor="middle">${esc(f.ny || 'y')}</text>`;
     const tx = f.tick || 1, ty = f.ticky || tx;
-    for (let x = Math.ceil(f.xmin / tx) * tx; x <= f.xmax + 1e-9; x += tx) if (Math.abs(x) > 1e-9)
-      s += `<text class="tk" x="${sx(x)}" y="${sy(y0) + 12}" text-anchor="middle">${x}</text>`;
-    for (let y = Math.ceil(f.ymin / ty) * ty; y <= f.ymax + 1e-9; y += ty) if (Math.abs(y) > 1e-9)
-      s += `<text class="tk" x="${sx(x0) - 4}" y="${sy(y) + 3.5}" text-anchor="end">${y}</text>`;
+    const nb = v => String(+v.toFixed(6)).replace('.', ',').replace('-', '−');
+    const xl = f.xlabels || [];
+    for (let x = Math.ceil(f.xmin / tx) * tx; !f.xlabels && x <= f.xmax + 1e-9; x += tx) if (Math.abs(x) > 1e-9) xl.push([x, nb(x)]);
+    xl.forEach(([x, t]) => {
+      s += `<line class="ax" x1="${sx(x)}" y1="${sy(y0) - 2.5}" x2="${sx(x)}" y2="${sy(y0) + 2.5}"/>`;
+      s += `<text class="tk" x="${sx(x)}" y="${sy(y0) + 12}" text-anchor="middle">${esc(t)}</text>`;
+    });
+    const yl = f.ylabels || [];
+    for (let y = Math.ceil(f.ymin / ty) * ty; !f.ylabels && y <= f.ymax + 1e-9; y += ty) if (Math.abs(y) > 1e-9) yl.push([y, nb(y)]);
+    yl.forEach(([y, t]) => {
+      s += `<text class="tk" x="${sx(x0) - 4}" y="${sy(y) + 3.5}" text-anchor="end">${esc(t)}</text>`;
+    });
     (f.droites || []).forEach(d => {
       const [a, b] = [d.a, d.b];
       const dx = b[0] - a[0], dy = b[1] - a[1], k = 1000;
       s += `<line clip-path="url(#${id})" class="${d.cls || 'ln'}${d.dash ? ' dash' : ''}" x1="${sx(a[0] - k * dx)}" y1="${sy(a[1] - k * dy)}" x2="${sx(a[0] + k * dx)}" y2="${sy(a[1] + k * dy)}"/>`;
       if (d.lbl) s += `<text class="lb${d.pk ? ' pk' : ''}" x="${sx(d.at[0])}" y="${sy(d.at[1])}" text-anchor="${d.anchor || 'start'}">${esc(d.lbl)}</text>`;
     });
+    const span = (f.ymax - f.ymin);
+    const trace = (pts, cls, dash) => {
+      let d = '', pen = false, prev = 0;
+      pts.forEach(([x, y]) => {
+        if (!Number.isFinite(y) || !Number.isFinite(x) || Math.abs(y) > 1e5) { pen = false; return; }
+        if (pen && Math.abs(y - prev) > span * 1.2) pen = false;
+        d += (pen ? 'L' : 'M') + sx(x).toFixed(1) + ',' + sy(y).toFixed(1);
+        pen = true; prev = y;
+      });
+      return `<path clip-path="url(#${id})" class="${cls || 'ln'}${dash ? ' dash' : ''}" d="${d}"/>`;
+    };
+    (f.courbes || []).forEach(c => {
+      const a = c.x0 == null ? f.xmin : c.x0, b = c.x1 == null ? f.xmax : c.x1, n = c.n || 500, pts = [];
+      for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; pts.push([x, c.fn(x)]); }
+      s += trace(pts, c.cls, c.dash);
+      if (c.lbl) s += `<text class="lb${c.pk ? ' pk' : ''}" x="${sx(c.at[0])}" y="${sy(c.at[1])}" text-anchor="${c.anchor || 'start'}">${esc(c.lbl)}</text>`;
+    });
+    (f.param || []).forEach(c => {
+      const n = c.n || 360, pts = [];
+      for (let i = 0; i <= n; i++) { const t = c.t0 + (c.t1 - c.t0) * i / n; pts.push([c.px(t), c.py(t)]); }
+      s += trace(pts, c.cls, c.dash);
+      if (c.lbl) s += `<text class="lb${c.pk ? ' pk' : ''}" x="${sx(c.at[0])}" y="${sy(c.at[1])}" text-anchor="${c.anchor || 'start'}">${esc(c.lbl)}</text>`;
+    });
+    (f.fleches || []).forEach(v => {
+      const col = v.pk ? '#cc3f64' : v.vert ? '#2f8a5b' : '#2d6fa8';
+      s += `<line x1="${sx(v.a[0])}" y1="${sy(v.a[1])}" x2="${sx(v.b[0])}" y2="${sy(v.b[1])}" stroke="${col}" stroke-width="2.2" marker-end="url(#${id}${v.pk ? 'p' : v.vert ? 'v' : 'b'})"${v.dash ? ' stroke-dasharray="5 4"' : ''}/>`;
+      if (v.lbl) s += `<text class="lb${v.pk ? ' pk' : ''}" x="${sx(v.at[0])}" y="${sy(v.at[1])}" text-anchor="${v.anchor || 'start'}">${esc(v.lbl)}</text>`;
+    });
     (f.segs || []).forEach(d => {
-      s += `<line class="${d.cls || 'ln2'}" x1="${sx(d.a[0])}" y1="${sy(d.a[1])}" x2="${sx(d.b[0])}" y2="${sy(d.b[1])}"/>`;
+      s += `<line class="${d.cls || 'ln2'}${d.dash ? ' dash' : ''}" x1="${sx(d.a[0])}" y1="${sy(d.a[1])}" x2="${sx(d.b[0])}" y2="${sy(d.b[1])}"/>`;
     });
     (f.pts || []).forEach(p => {
       s += `<circle class="pt${p.open ? ' open' : ''}" cx="${sx(p.x)}" cy="${sy(p.y)}" r="3.2"/>`;
@@ -2822,7 +4420,7 @@ general: {
       const b = p.querySelector('.p-body');
       if (b.scrollHeight > b.clientHeight) return;
       let f = 15.6;
-      while (f < 17.4) {
+      while (f < 18.6) {
         p.style.fontSize = (f + 0.2).toFixed(1) + 'px';
         if (b.scrollHeight > b.clientHeight) { p.style.fontSize = f.toFixed(1) + 'px'; break; }
         f += 0.2;

@@ -31,7 +31,7 @@ Réglages : format Lettre, marges « Aucune », « Graphiques d'arrière-plan »
 ## Avancement
 
 - [x] Mathématique CST (Général + 20 concepts)
-- [ ] Mathématique TS
+- [x] Mathématique TS (Général + 21 concepts)
 - [ ] Mathématique SN
 - [ ] Français
 - [ ] Anglais (plus tard)
