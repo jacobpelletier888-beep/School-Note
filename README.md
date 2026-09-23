@@ -33,7 +33,7 @@ Réglages : format Lettre, marges « Aucune », « Graphiques d'arrière-plan »
 - [x] Mathématique CST (Général + 20 concepts)
 - [x] Mathématique TS (Général + 21 concepts)
 - [x] Mathématique SN (Général + 25 concepts, dont plusieurs partagés avec TS et CST)
-- [ ] Français
+- [x] Français (Général + 27 concepts)
 - [ ] Anglais (plus tard)
 - [ ] Chimie
 - [ ] Physique

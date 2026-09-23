@@ -356,6 +356,7 @@ main { max-width: 900px; margin: 0 auto; padding-block: 20px 60px; padding-inlin
   box-decoration-break: clone;
 }
 .pk { color: var(--paper-pink); }
+.sym { font-family: "Segoe UI Symbol", "Apple Symbols", "DejaVu Sans", "Noto Sans Symbols 2", sans-serif; font-weight: 700; font-size: .9em; }
 .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; line-height: 1.02; margin: 0 2px; font-size: .92em; }
 .fr > span:first-child { border-bottom: 1.4px solid currentColor; padding: 0 2px; }
 .fr > span:last-child { padding: 0 2px; }
@@ -396,7 +397,7 @@ table.tab td.l, table.tab th.l { text-align: left; }
 .ex-h { font-weight: 700; color: var(--paper-pink); margin-right: 4px; }
 .steps {
   display: grid;
-  grid-template-columns: max-content auto max-content minmax(0, 1fr);
+  grid-template-columns: minmax(0, max-content) auto minmax(0, max-content) minmax(0, 1fr);
   gap: 0 6px;
   align-items: baseline;
   font-size: 1.06em;
@@ -404,6 +405,7 @@ table.tab td.l, table.tab th.l { text-align: left; }
 }
 .steps .l { text-align: right; }
 .steps .o { text-align: center; }
+.steps .l, .steps .r, .steps .full { min-width: 0; overflow-wrap: anywhere; }
 .steps .full { grid-column: 1 / 4; }
 .steps .c { color: var(--paper-pink); font-size: .88em; padding-left: 8px; }
 .rep { margin-top: 2px; }
@@ -435,11 +437,23 @@ svg .nlab { font-size: 13px; fill: #26252d; font-family: var(--hand); text-ancho
 svg .w { font-size: 12px; fill: #26252d; font-family: var(--hand); text-anchor: middle; dominant-baseline: central; }
 svg .wbg { fill: #fff; }
 
+/* extrait de texte à analyser */
+blockquote.cite {
+  margin: 3px 0 2px;
+  padding: 5px 12px 5px 14px;
+  border-left: 4px solid var(--paper-pink);
+  background: rgba(253, 230, 236, .45);
+  border-radius: 0 8px 8px 0;
+}
+blockquote.cite p { margin: 0 0 3px; }
+blockquote.cite footer { font-size: .85em; color: #5d5b66; text-align: right; }
+.page u { text-decoration: underline; text-decoration-color: var(--paper-pink); text-decoration-thickness: 2px; text-underline-offset: 2px; }
+
 /* pièges et à retenir */
 .pieges h3 span { background: linear-gradient(transparent 38%, var(--paper-pink-soft) 38%, var(--paper-pink-soft) 92%, transparent 92%); }
 .pieges ul { margin: 0; padding-left: 18px; }
 .pieges li { margin: 1px 0; }
-.pieges li::marker { content: "✗  "; color: var(--paper-pink); font-weight: 700; }
+.pieges li::marker { content: "×  "; color: var(--paper-pink); font-weight: 700; }
 .retenir {
   position: relative;
   background: var(--paper-note);
@@ -4527,6 +4541,1740 @@ general: {
 });
 })();
 
+/* ---- 40-francais-argumentation.js ---- */
+/* Français — Lecture et écriture argumentatives */
+DATA.feuilles['francais'] = DATA.feuilles['francais'] || {};
+Object.assign(DATA.feuilles['francais'], {
+
+/* ============ 1. Texte argumentatif : structure ============ */
+'texte-argumentatif': {
+  bulle: 'le texte argumentatif',
+  sous: 'Le texte argumentatif : structure',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', p: [
+          'Un **texte argumentatif** cherche à **convaincre** ou à **persuader** un destinataire d\'adhérer à une opinion.',
+          '**Convaincre** : faire appel à la raison (faits, logique). **Persuader** : faire appel aux émotions et aux valeurs.',
+        ] } ],
+      [ { t: 'list', h: 'les éléments clés', items: [
+          '**Sujet** (objet de la controverse) : la question débattue.',
+          '**Thèse** : l\'opinion défendue par l\'énonciateur.',
+          '**Thèse adverse** : l\'opinion contraire.',
+          '**Arguments** : les raisons qui appuient la thèse.',
+          '**Preuves** (ou explications) : ce qui rend chaque argument crédible.',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'le plan du texte', full: true, lcol: true,
+      head: ['Partie', 'Contenu', 'Conseils'],
+      rows: [
+        ['**Introduction**', '**Sujet amené** : situer le sujet dans un contexte.<br>**Sujet posé** : présenter la question et la **thèse**.<br>**Sujet divisé** : annoncer les arguments.', 'Du général au particulier. La thèse doit être claire dès l\'introduction.'],
+        ['**Développement**', 'Un **paragraphe par argument** : argument → explication ou preuves (procédés) → petite conclusion partielle.<br>Souvent une **contre-argumentation** : concession, puis réfutation.', 'Organisateur textuel au début de chaque paragraphe. Garder l\'argument le plus fort pour la fin.'],
+        ['**Conclusion**', '**Synthèse** : rappel de la thèse et des arguments, en d\'autres mots.<br>**Ouverture** : élargir le sujet (question, piste d\'action, souhait).', 'Aucun nouvel argument dans la conclusion.'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'box', h: 'le paragraphe argumentatif', f: 'argument + preuves (exemple, statistique, expert…) + conclusion partielle' } ],
+      [ { t: 'list', h: 'la contre-argumentation', items: [
+          '**Concession** : on reconnaît qu\'un argument adverse a une part de vérité (« Certes… », « Il est vrai que… »).',
+          '**Réfutation** : on montre ensuite qu\'il est faible ou faux (« Toutefois… »).',
+          'Elle rend le texte plus crédible : l\'énonciateur montre qu\'il connaît l\'autre point de vue.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Exemple — introduction d\'une lettre ouverte', p: [
+      '__Chaque automne, des milliers d\'élèves québécois se lèvent avant le soleil pour attraper l\'autobus scolaire.__ __Pourtant, les chercheurs s\'entendent : les adolescents ont un besoin de sommeil plus tardif que celui des adultes. Les écoles secondaires devraient donc commencer leurs cours plus tard le matin.__ __Cette mesure améliorerait la santé des jeunes, favoriserait leur réussite et réduirait les retards.__',
+    ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ '1<sup>re</sup> phrase → sujet amené // contexte général', '2<sup>e</sup> et 3<sup>e</sup> phrases → sujet posé + thèse // « devraient commencer plus tard »', '4<sup>e</sup> phrase → sujet divisé // trois arguments annoncés' ] },
+    { t: 'cite', h: 'Exemple — paragraphe avec contre-argumentation', p: [
+      '__Certes__, décaler l\'horaire compliquerait l\'organisation du transport scolaire. __Cependant__, plusieurs districts scolaires américains ont adopté cet horaire en réorganisant leurs circuits d\'autobus. L\'argument du transport ne tient donc pas.',
+    ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ '« Certes… » → concession // on admet une partie de la thèse adverse', '« Cependant… » → réfutation // preuve : un exemple', 'dernière phrase → conclusion partielle' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Une thèse floue ou cachée : elle doit être claire et formulée dans l\'introduction.',
+          'Un argument sans preuve : c\'est une simple affirmation.',
+          'Ajouter un argument nouveau dans la conclusion.',
+          'Oublier les organisateurs textuels entre les paragraphes.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Intro : sujet amené, posé, divisé.',
+          'Un paragraphe = un argument + ses preuves.',
+          'Concession + réfutation = contre-argumentation.',
+          'Conclusion : synthèse + ouverture.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 2. Stratégies argumentatives ============ */
+strategies: {
+  bulle: 'stratégies argumentatives',
+  sous: 'Les stratégies argumentatives',
+  recto: [
+    { t: 'txt', p: [ 'La **stratégie argumentative** est la façon générale dont l\'énonciateur organise son argumentation pour défendre sa thèse. On en utilise souvent plusieurs dans un même texte.' ] },
+    { t: 'tab', full: true, lcol: true,
+      head: ['Stratégie', 'Principe', 'Marqueurs typiques'],
+      rows: [
+        ['**Explication argumentative**', 'On explique **pourquoi** la thèse est juste, en montrant des causes, des conséquences, des liens logiques. Le texte ressemble à une explication, mais il défend une opinion.', 'parce que, car, en effet, puisque, c\'est pourquoi, ainsi'],
+        ['**Réfutation**', 'On présente la **thèse adverse** (ou un argument adverse), puis on démontre qu\'elle est fausse, exagérée ou mal fondée.', 'certains prétendent que…, or, pourtant, au contraire, en réalité'],
+        ['**Démonstration**', 'On prouve la thèse par une suite d\'étapes **logiques** et de faits vérifiables, comme en sciences.', 'premièrement, de plus, par conséquent, donc, il en découle que'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'réfutation : les façons de contrer', items: [
+          'Montrer une **contradiction** dans la thèse adverse.',
+          'Montrer que ses **preuves** sont fausses, dépassées ou peu fiables.',
+          'Montrer que ses **conséquences** seraient néfastes.',
+          'Retourner l\'argument contre l\'adversaire.',
+          'Opposer un **contre-exemple**.',
+        ] } ],
+      [ { t: 'list', h: 'la contre-argumentation', items: [
+          'Elle combine **concession** (on admet un point) et **réfutation** (on le nuance ou le rejette).',
+          'Mots de concession : certes, il est vrai que, bien que, même si, j\'admets que.',
+          'Mots de réfutation : toutefois, cependant, néanmoins, or, mais.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'comment reconnaître la stratégie dominante', items: [
+      'Le texte parle surtout de la **thèse adverse** pour la démolir → réfutation.',
+      'Le texte enchaîne des **causes et conséquences** pour justifier sa position → explication argumentative.',
+      'Le texte avance par **étapes logiques** et faits mesurables → démonstration.',
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Extrait A', p: [ 'Certains affirment que les jeux vidéo rendent les jeunes violents. Or, aucune étude sérieuse n\'a démontré de lien direct entre ces jeux et les gestes violents. En réalité, la violence juvénile a même diminué depuis que ces jeux sont populaires.' ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ 'thèse adverse présentée → « Certains affirment que… »', 'contestation des preuves → « aucune étude sérieuse »', 'contre-exemple → « la violence a même diminué »' ],
+      r: 'stratégie : réfutation' },
+    { t: 'cite', h: 'Extrait B', p: [ 'Le transport en commun gratuit est une bonne idée, car il incite les citoyens à laisser leur voiture à la maison. Moins de voitures sur les routes signifie moins de gaz à effet de serre et moins de congestion. C\'est pourquoi la santé de la population et l\'économie en profiteraient.' ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ 'cause → « car il incite… »', 'conséquences → « moins de gaz à effet de serre »', 'lien logique → « C\'est pourquoi… »' ],
+      r: 'stratégie : explication argumentative' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre explication argumentative et texte explicatif : ici, l\'énonciateur **défend une opinion**.',
+          'Réfuter sans d\'abord présenter clairement la thèse adverse.',
+          'Faire une concession sans la réfuter ensuite : on affaiblit sa propre thèse.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Explication : pourquoi j\'ai raison.',
+          'Réfutation : pourquoi l\'autre a tort.',
+          'Démonstration : preuve étape par étape.',
+          'Concession + réfutation = contre-argumentation.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 3. Procédés argumentatifs ============ */
+procedes: {
+  bulle: 'procédés argumentatifs',
+  sous: 'Les procédés argumentatifs et les types d\'arguments',
+  recto: [
+    { t: 'txt', p: [ 'Les **procédés argumentatifs** sont les moyens concrets qu\'on utilise pour appuyer un argument et le rendre crédible.' ] },
+    { t: 'tab', full: true, lcol: true,
+      head: ['Procédé', 'Ce que c\'est', 'Exemple'],
+      rows: [
+        ['**Exemple**', 'un cas concret qui illustre l\'argument', 'La Finlande donne peu de devoirs, et ses élèves obtiennent de bons résultats.'],
+        ['**Donnée chiffrée** (statistique)', 'un chiffre précis et vérifiable', 'Selon l\'enquête citée, un élève sur trois dort moins de 7 h.'],
+        ['**Appel à l\'autorité** (citation)', 'l\'avis d\'un expert ou d\'une source reconnue', 'Selon une pédiatre de l\'hôpital…'],
+        ['**Comparaison**, **analogie**', 'rapprocher deux situations', 'Interdire les cellulaires, c\'est comme interdire les calculatrices.'],
+        ['**Cause / conséquence**', 'montrer l\'effet d\'une situation', 'Ce manque de sommeil nuit à la concentration.'],
+        ['**Définition**', 'préciser le sens d\'un terme pour orienter le débat', 'Le vrai loisir, c\'est ce qu\'on choisit librement.'],
+        ['**Question rhétorique**', 'question dont la réponse est évidente', 'Qui voudrait respirer un air pollué ?'],
+        ['**Anecdote**', 'un court récit vécu', 'L\'an dernier, ma sœur a…'],
+        ['**Énumération**, **gradation**', 'accumuler des faits, souvent en intensité croissante', 'inutile, coûteux, dangereux'],
+      ] },
+    { t: 'tab', h: 'types d\'arguments', full: true, lcol: true,
+      head: ['Type', 'Il s\'appuie sur…'],
+      rows: [
+        ['**logique** (rationnel)', 'des faits, des chiffres, un raisonnement'],
+        ['**affectif** (émotif)', 'les émotions du destinataire : peur, pitié, fierté'],
+        ['**moral** (éthique)', 'des valeurs : justice, respect, égalité'],
+        ['**pragmatique**', 'l\'utilité, les avantages concrets, le coût'],
+        ['**d\'autorité**', 'la crédibilité d\'une personne ou d\'un organisme'],
+      ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Extrait à analyser', p: [
+      '(1) Les boissons énergisantes devraient être interdites aux moins de 16 ans. (2) Une grande canette peut contenir plus de caféine qu\'une tasse de café. (3) Selon Santé Canada, les adolescents ne devraient pas dépasser environ 2,5 mg de caféine par kilogramme de masse corporelle chaque jour. (4) Voudrions-nous que nos jeunes deviennent dépendants à un produit qu\'on vend comme une friandise ? (5) Mon cousin, qui en buvait trois par jour, ne réussissait plus à dormir avant 2 h du matin.',
+    ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ '(1) → thèse', '(2) → comparaison + donnée chiffrée // argument logique', '(3) → appel à l\'autorité // source reconnue', '(4) → question rhétorique // argument affectif et moral', '(5) → anecdote // exemple vécu, touche l\'émotion' ] },
+    { t: 'ex', h: 'Bien intégrer un procédé :', q: 'Une preuve seule ne suffit pas : il faut la **relier** à l\'argument.',
+      p: [ '✗ « 30 % des jeunes dorment mal. »', '✓ « Le manque de sommeil touche beaucoup d\'élèves : près de 30 % d\'entre eux disent mal dormir. Des cours plus tardifs répondraient donc à un vrai besoin. »' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Inventer des statistiques ou des experts : à l\'épreuve, utilise les sources du dossier préparatoire.',
+          'Citer sans nommer la source.',
+          'Accumuler des preuves sans les expliquer.',
+          'Confondre le procédé (le moyen) et le type d\'argument (ce sur quoi il s\'appuie).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Varier les procédés rend l\'argumentation plus solide.',
+          'Toujours nommer la source.',
+          'Preuve → explication → lien avec la thèse.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 4. Point de vue et modalisation ============ */
+'point-de-vue': {
+  bulle: 'point de vue',
+  sous: 'Point de vue, modalisation et marques de subjectivité',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'le point de vue', p: [
+          'Le **point de vue** est l\'attitude de l\'énonciateur face à ce qu\'il dit (le sujet) et face à son destinataire.',
+          '**Engagé** (subjectif) : l\'énonciateur montre clairement son opinion et ses sentiments.',
+          '**Distancié** (objectif) : il semble neutre, présente des faits sans se montrer.',
+        ] } ],
+      [ { t: 'txt', h: 'la modalisation', p: [
+          'La **modalisation**, ce sont les moyens linguistiques par lesquels l\'énonciateur laisse voir son point de vue : ce sont les **marques de modalité**.',
+          'Un texte argumentatif est presque toujours **engagé**.',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'les marques de modalité', full: true, lcol: true,
+      head: ['Marque', 'Exemples'],
+      rows: [
+        ['**Vocabulaire connoté** : mélioratif (positif) ou péjoratif (négatif)', 'un __chef-d\'œuvre__, un __torchon__ ; une __brillante__ idée ; __bâcler__'],
+        ['**Adverbes** et expressions modalisateurs', 'heureusement, malheureusement, sans doute, peut-être, évidemment, à mon avis'],
+        ['**Verbes** d\'opinion ou de sentiment', 'je crois, je pense, je doute, je déplore, je souhaite'],
+        ['**Conditionnel** (doute, prudence, rumeur)', 'Le maire __aurait__ accepté l\'offre.'],
+        ['**Pronoms** qui marquent l\'énonciateur', 'je, me, moi, nous, notre, on'],
+        ['**Types de phrases**', 'phrases exclamatives, interrogatives (questions rhétoriques)'],
+        ['**Figures de style**', 'hyperbole, ironie, métaphore, gradation'],
+        ['**Ponctuation expressive**, typographie', '! ?! … guillemets de distance (« l\'expert »), italique'],
+        ['**Discours rapporté** choisi', 'le verbe introducteur juge : il __prétend__ que… ; il __avoue__ que…'],
+      ] },
+    { t: 'list', h: 'marques d\'un point de vue distancié', items: [
+      'Pronoms à la 3<sup>e</sup> personne, aucune trace du « je ».',
+      'Vocabulaire neutre (dénoté), phrases déclaratives.',
+      'Faits, données, sources nommées.',
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Même fait, deux points de vue', p: [
+      '**A.** Le conseil municipal a adopté hier un règlement qui interdit les feux d\'artifice privés.',
+      '**B.** __Hélas__, nos élus ont __encore__ adopté un règlement __absurde__ : __adieu__ les feux d\'artifice de la Saint-Jean ! __Je doute__ fort que cette mesure __serve__ à quoi que ce soit.',
+    ] },
+    { t: 'ex', h: 'Analyse de B :', q: '',
+      s: [ '« Hélas » → adverbe modalisateur // regret', '« encore » → adverbe // agacement, répétition', '« absurde » → adjectif péjoratif', '« adieu … ! » → phrase exclamative // ponctuation expressive', '« Je doute » → pronom je + verbe d\'opinion' ],
+      r: 'A est distancié ; B est engagé (et critique)' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Récrire de façon plus engagée : « Le nouveau parc a coûté 3 millions de dollars. »',
+      p: [ '✓ « Le nouveau parc a coûté la __rondelette__ somme de 3 millions de dollars : un __gaspillage__ que les citoyens paieront __longtemps__ ! »' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Croire qu\'un texte sans « je » est forcément distancié : le vocabulaire connoté trahit l\'opinion.',
+          'Relever une marque sans dire quel sentiment elle exprime.',
+          'Dans ta lettre ouverte, abuser des « je pense que » : varie les marques.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Engagé = subjectif ; distancié = objectif.',
+          'Relever la marque + nommer ce qu\'elle révèle.',
+          'Vocabulaire connoté = l\'indice le plus fréquent.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 5. Énonciation ============ */
+enonciation: {
+  bulle: 'l\'énonciation',
+  sous: 'Énonciation : énonciateur, destinataire et ton',
+  recto: [
+    { t: 'txt', p: [ 'La **situation d\'énonciation**, c\'est le contexte dans lequel un message est produit : **qui** parle, **à qui**, **de quoi**, **quand**, **où** et **pourquoi**.' ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'les éléments', items: [
+          '**Énonciateur** : celui qui produit le message (pas toujours l\'auteur réel : dans une lettre ouverte, il peut parler au nom d\'un groupe).',
+          '**Destinataire** : celui à qui le message s\'adresse (un individu, un groupe, les lecteurs d\'un journal).',
+          '**Message** : le contenu (sujet, thèse).',
+          '**Intention** : informer, convaincre, divertir, émouvoir…',
+          '**Contexte** : moment, lieu, circonstances de publication.',
+        ] } ],
+      [ { t: 'list', h: 'le rapport entre l\'énonciateur et le destinataire', items: [
+          'Rapport d\'**égalité** ou d\'**autorité** (expert → public, élève → ministre).',
+          'Rapport **formel** (vouvoiement, langue soutenue) ou **familier** (tutoiement).',
+          'Marques : pronoms (vous, tu, nous inclusif), apostrophe, variété de langue.',
+          'Le **nous inclusif** crée une complicité : « Nous devons agir ensemble. »',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'le ton', intro: 'Le **ton** est la couleur générale que l\'énonciateur donne à son texte. On le justifie toujours avec des indices.', full: true, lcol: true,
+      head: ['Ton', 'Indices typiques'],
+      rows: [
+        ['**neutre**, didactique', 'vocabulaire dénoté, phrases déclaratives, explications'],
+        ['**humoristique**', 'jeux de mots, exagérations, situations cocasses'],
+        ['**ironique**', 'on dit le contraire de ce qu\'on pense : « Quelle brillante idée ! »'],
+        ['**sarcastique**', 'ironie méchante, qui blesse'],
+        ['**critique**, polémique', 'vocabulaire péjoratif, attaques, questions rhétoriques'],
+        ['**dramatique**, alarmiste', 'vocabulaire de la peur, hyperboles, gradation'],
+        ['**lyrique**, émotif', 'expression des sentiments, exclamations, 1<sup>re</sup> personne'],
+        ['**enthousiaste**', 'vocabulaire mélioratif, exclamations positives'],
+      ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Extrait', p: [ 'Chers membres du conseil d\'établissement, vous avez décidé de supprimer la sortie de fin d\'année. Bravo ! Quelle merveilleuse façon de récompenser nos efforts… Nous, les finissants, vous demandons respectueusement de revoir cette décision.' ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ 'énonciateur → les finissants // « Nous, les finissants »', 'destinataire → le conseil d\'établissement // apostrophe « Chers membres… »', 'rapport → formel (vous, « respectueusement »), d\'élèves à autorité', '« Bravo ! Quelle merveilleuse façon… » → ironie // on pense le contraire', 'intention → convaincre de revoir la décision' ],
+      r: 'ton ironique, puis respectueux et revendicateur' },
+    { t: 'ex', h: 'Justifier un ton (modèle de réponse) :', q: '',
+      p: [ '« Le ton est **ironique**, car l\'énonciateur félicite le conseil (« Bravo ! », « merveilleuse façon ») alors qu\'il désapprouve clairement sa décision. »' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Nommer un ton sans citer d\'indices du texte.',
+          'Confondre l\'auteur (la personne réelle) et l\'énonciateur.',
+          'Changer de rapport en cours de texte : passer du « vous » au « tu ».',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Qui ? À qui ? Pourquoi ? Sur quel ton ?',
+          'Ton = toujours justifié par des indices.',
+          'Lettre ouverte : rapport formel, vouvoiement.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 6. Séquences textuelles ============ */
+sequences: {
+  bulle: 'séquences textuelles',
+  sous: 'Les séquences textuelles',
+  recto: [
+    { t: 'txt', p: [
+      'Une **séquence textuelle** est une portion de texte organisée selon un modèle précis. Un texte en contient souvent plusieurs : la **séquence dominante** donne au texte son type ; les autres sont des **séquences secondaires** (ou enchâssées).',
+      'ex. Un roman (séquence narrative dominante) contient des descriptions et des dialogues.',
+    ] },
+    { t: 'tab', full: true, lcol: true,
+      head: ['Séquence', 'But', 'Structure', 'Indices'],
+      rows: [
+        ['**narrative**', 'raconter', 'situation initiale → élément déclencheur → déroulement → dénouement → situation finale', 'verbes d\'action, temps du passé, organisateurs de temps'],
+        ['**descriptive**', 'décrire (lieu, personne, objet)', 'sujet de la description → aspects → sous-aspects', 'adjectifs, verbes d\'état, vocabulaire des sens, organisateurs d\'espace'],
+        ['**explicative**', 'faire comprendre (pourquoi, comment)', 'phase de questionnement → phase explicative → phase conclusive', 'parce que, car, en effet, vocabulaire précis'],
+        ['**argumentative**', 'convaincre', 'thèse → arguments → conclusion', 'marques de modalité, marqueurs logiques'],
+        ['**dialogale**', 'rapporter un échange', 'ouverture → interaction → clôture', 'tirets ou guillemets, verbes de parole, répliques'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'repérer la séquence dominante', items: [
+          'Quelle est l\'**intention** principale du texte ?',
+          'Quelle séquence occupe le plus de place ou encadre les autres ?',
+        ] } ],
+      [ { t: 'list', h: 'dans ta lettre ouverte', items: [
+          'Dominante **argumentative**.',
+          'Une courte séquence **narrative** (anecdote) ou **explicative** peut servir de preuve.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Extrait', p: [
+      '(1) Samedi dernier, j\'ai participé au nettoyage des berges de la rivière. En trois heures, nous avons ramassé plus de 200 kilos de déchets. (2) Les berges étaient couvertes de bouteilles de plastique, de filets déchirés et de canettes rouillées. (3) Ces déchets s\'accumulent parce que les gens les jettent dans les rues : la pluie les entraîne ensuite dans les égouts, puis dans la rivière. (4) Il est urgent d\'interdire les bouteilles d\'eau jetables dans notre ville.',
+    ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ '(1) → séquence narrative // « Samedi dernier », verbes d\'action au passé', '(2) → séquence descriptive // énumération, adjectifs', '(3) → séquence explicative // « parce que », étapes d\'un phénomène', '(4) → thèse argumentative // « Il est urgent »' ],
+      r: 'séquence dominante : argumentative ; les autres servent de preuves' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre explicatif (faire comprendre un phénomène) et argumentatif (défendre une opinion).',
+          'Dire qu\'un texte est narratif parce qu\'il contient une anecdote.',
+          'Oublier les séquences secondaires quand on analyse un texte.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '5 séquences : narrative, descriptive, explicative, argumentative, dialogale.',
+          'L\'intention du texte = la séquence dominante.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 7. Genres argumentatifs ============ */
+genres: {
+  bulle: 'genres argumentatifs',
+  sous: 'Les genres argumentatifs : lettre ouverte, éditorial, critique, chronique',
+  recto: [
+    { t: 'tab', full: true, lcol: true,
+      head: ['Genre', 'Qui l\'écrit ? Où ?', 'Caractéristiques'],
+      rows: [
+        ['**Lettre ouverte**', 'n\'importe quel citoyen ; publiée dans un journal, un site d\'information', 'adressée à un destinataire précis (un ministre, la population), mais lue par tous ; formule d\'appel et signature ; thèse claire ; vouvoiement'],
+        ['**Éditorial**', 'l\'éditorialiste, au nom du journal', 'prend position sur un sujet d\'actualité ; exprime l\'opinion du journal ; ton souvent sérieux'],
+        ['**Chronique**', 'un chroniqueur, dans une rubrique régulière', 'regard personnel sur l\'actualité, la culture ; ton libre, souvent humoristique ou ironique ; « je » très présent'],
+        ['**Critique**', 'un critique (cinéma, livre, spectacle, jeu vidéo)', 'présente l\'œuvre, puis l\'évalue selon des critères ; recommandation ; souvent une note ou des étoiles'],
+        ['**Texte d\'opinion**', 'lecteur, expert, collaborateur', 'défend une thèse sur une question de société'],
+        ['**Discours**, plaidoyer', 'personne qui s\'adresse à un public', 'destiné à l\'oral ; appels directs au public'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'présentation d\'une lettre ouverte', items: [
+          '**Titre** accrocheur qui annonce le sujet ou la thèse.',
+          '**Formule d\'appel** : « Madame la Ministre, »',
+          'Introduction, développement, conclusion.',
+          '**Formule de salutation** (facultative dans un journal) et **signature** (nom, titre ou qualité : « Élève de 5<sup>e</sup> secondaire »).',
+        ] } ],
+      [ { t: 'list', h: 'pamphlet et autres', items: [
+          '**Pamphlet** : attaque violente et souvent ironique contre une personne ou une institution.',
+          '**Caricature**, **publicité sociale** : argumentation visuelle.',
+          'Tous partagent une **thèse** et une intention de convaincre ou de persuader.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Exemple — début et fin d\'une lettre ouverte', p: [
+      '**Pour un vrai choix de légumes à la cafétéria**',
+      'Madame la Directrice,',
+      'Chaque midi, plus de 800 élèves de notre école mangent à la cafétéria. […]',
+      'Je vous prie d\'agréer, Madame la Directrice, l\'expression de mes sentiments respectueux.',
+      'Léa Tremblay, élève de 5<sup>e</sup> secondaire et présidente du conseil des élèves',
+    ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ 'titre → annonce la thèse', '« Madame la Directrice, » → formule d\'appel // suivie d\'une virgule', 'formule de salutation → registre soutenu', 'signature → nom + qualité // montre sa crédibilité' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Quel genre ? « Ce film est un pur bonheur : scénario habile, acteurs justes, musique envoûtante. Quatre étoiles sur cinq, courez-y ! »',
+      r: 'une critique (évaluation d\'une œuvre selon des critères, recommandation)' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier la formule d\'appel ou la signature d\'une lettre ouverte.',
+          'Tutoyer le destinataire d\'une lettre ouverte.',
+          'Confondre chronique (point de vue personnel, ton libre) et éditorial (position du journal).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Lettre ouverte = à quelqu\'un, lue par tous.',
+          'Critique = évaluer une œuvre.',
+          'Éditorial = opinion du journal.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 8. Épreuve unique d'écriture ============ */
+'epreuve-unique': {
+  bulle: 'l\'épreuve unique',
+  sous: 'Épreuve unique d\'écriture de 5<sup>e</sup> secondaire : méthode et critères',
+  recto: [
+    { t: 'txt', p: [
+      'À la fin du secondaire, l\'épreuve ministérielle d\'écriture demande de rédiger un **texte argumentatif**, souvent une **lettre ouverte**, d\'environ **500 mots**, sur un sujet de société. Un **dossier préparatoire** (textes et documents sur le thème) est remis quelques semaines avant. Vérifie les consignes exactes de l\'année avec ton enseignant.',
+    ] },
+    { t: 'tab', h: 'les critères d\'évaluation', full: true, lcol: true,
+      head: ['Critère', 'Ce qu\'on vérifie'],
+      rows: [
+        ['**1. Adaptation à la situation de communication**', 'thèse claire, arguments pertinents et bien développés, preuves variées, point de vue engagé, respect du destinataire'],
+        ['**2. Cohérence du texte**', 'plan clair (intro, développement, conclusion), paragraphes, organisateurs textuels, reprise de l\'information, aucune contradiction'],
+        ['**3. Vocabulaire**', 'mots précis, variés, adaptés au registre standard ; pas d\'anglicismes ni de répétitions'],
+        ['**4. Syntaxe et ponctuation**', 'phrases bien construites, variées ; virgules au bon endroit'],
+        ['**5. Orthographe**', 'orthographe d\'usage et grammaticale (accords !)'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'avant l\'épreuve', items: [
+          'Lire le dossier et **annoter** : idées, chiffres, citations, noms d\'experts.',
+          'Préparer des arguments pour **les deux** thèses possibles.',
+          'Se faire une liste d\'organisateurs textuels et de marques de modalité.',
+        ] } ],
+      [ { t: 'list', h: 'le jour J (gestion du temps)', items: [
+          '**Planifier** (environ 20 %) : thèse, 2 ou 3 arguments, preuves, plan.',
+          '**Rédiger** (environ 50 %) : brouillon, en sautant des lignes.',
+          '**Réviser** (environ 30 %) : relire plusieurs fois, une fois par type d\'erreur.',
+          'Mettre au propre en gardant du temps pour une dernière relecture.',
+        ] } ],
+    ] },
+    { t: 'list', h: 'réviser efficacement', items: [
+      'Pour chaque verbe : trouver le **sujet** et accorder.',
+      'Pour chaque participe passé : quel **auxiliaire** ? Où est le **CD** ?',
+      'Pour chaque GN : déterminant, nom, adjectifs accordés ensemble.',
+      'Chercher dans le dictionnaire les mots dont tu doutes ; vérifier les homophones (a/à, ou/où, ces/ses, leur/leurs).',
+    ] },
+  ],
+  verso: [
+    { t: 'txt', h: 'Plan type (sujet : faut-il interdire le cellulaire en classe ?)', p: [ 'Thèse : **Oui, le cellulaire devrait être interdit pendant les cours.**' ] },
+    { t: 'tab', full: true, lcol: true,
+      head: ['Partie', 'Contenu prévu', 'Preuves (dossier)'],
+      rows: [
+        ['Introduction', 'sujet amené (omniprésence des écrans) · sujet posé + thèse · sujet divisé', '—'],
+        ['Argument 1', 'Il nuit à la concentration.', 'donnée chiffrée d\'une étude du dossier ; explication'],
+        ['Argument 2', 'Il favorise la cyberintimidation à l\'école.', 'témoignage (appel à l\'autorité) ; conséquence'],
+        ['Contre-argument', 'Certes, il peut servir d\'outil pédagogique. Toutefois, les écoles fournissent déjà des ordinateurs.', 'réfutation'],
+        ['Conclusion', 'synthèse des arguments · ouverture (autoriser le cellulaire aux pauses ?)', '—'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'formules utiles', items: [
+          'Thèse : « Je suis convaincu que… », « Il faut… »',
+          'Introduire une preuve : « Selon… », « Comme le démontre… », « En effet, … »',
+          'Concession : « Certes… Toutefois… »',
+          'Conclusion : « Bref, … », « En somme, … »',
+        ] } ],
+      [ { t: 'list', h: 'citer le dossier', items: [
+          'Guillemets + source : « … », affirme la chercheuse X.',
+          'Citation courte, intégrée à ta phrase.',
+          'Reformuler une idée : pas de guillemets, mais on nomme la source.',
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Changer de thèse en cours de route.',
+          'Recopier de longs passages du dossier.',
+          'Manquer de temps pour la révision : c\'est là que se gagnent les points d\'orthographe.',
+          'Écrire en langue familière.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Planifier, rédiger, réviser.',
+          'Une thèse, 2-3 arguments, des preuves du dossier.',
+          '5 critères : situation, cohérence, vocabulaire, syntaxe-ponctuation, orthographe.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 9. Cohérence textuelle ============ */
+coherence: {
+  bulle: 'cohérence textuelle',
+  sous: 'Cohérence textuelle : reprise de l\'information et progression',
+  recto: [
+    { t: 'txt', p: [ 'Un texte est **cohérent** quand il forme un tout logique et facile à suivre. On vérifie **4 règles**.' ] },
+    { t: 'tab', full: true, lcol: true,
+      head: ['Règle', 'Explication'],
+      rows: [
+        ['**Pertinence**', 'Toutes les idées sont liées au sujet et à l\'intention.'],
+        ['**Continuité**', 'On reprend l\'information d\'une phrase à l\'autre : le lecteur sait toujours de quoi on parle.'],
+        ['**Progression**', 'Chaque phrase apporte de l\'information **nouvelle**. On ne tourne pas en rond.'],
+        ['**Non-contradiction**', 'Aucune idée ne contredit une autre ; les temps de verbes et le point de vue restent constants.'],
+      ] },
+    { t: 'tab', h: 'la reprise de l\'information (continuité)', full: true, lcol: true,
+      head: ['Moyen', 'Exemple (le mot repris : « le castor »)'],
+      rows: [
+        ['**pronom**', 'Le castor construit des barrages. __Il__ utilise des branches.'],
+        ['**synonyme**', '… Ce __rongeur__ …'],
+        ['**terme générique** (plus général)', '… Cet __animal__ …'],
+        ['**terme spécifique** (plus précis)', 'Certains animaux… __Le castor__, par exemple, …'],
+        ['**périphrase** (groupe de mots)', '… L\'__ingénieur des rivières__ …'],
+        ['**changement de déterminant**', '__Un__ castor… __Ce__ castor…'],
+        ['**reprise partielle**', 'Le castor… __Ses dents__ poussent toute sa vie.'],
+        ['**reprise par un adverbe**', 'Il vit au Canada. __Là__, il est un symbole.'],
+        ['**reprise d\'une idée** (nominalisation)', 'Il abat des arbres. __Cet abattage__ …'],
+      ] },
+    { t: 'list', h: 'à surveiller', items: [
+      'Un pronom doit avoir un **antécédent clair** : pas d\'ambiguïté possible.',
+      'Éviter les **répétitions** du même mot : varier les reprises.',
+      'Garder le même **système de temps** (présent ou passé) et le même **point de vue** du début à la fin.',
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Texte avec des problèmes de cohérence', p: [ 'Les abeilles sont essentielles à l\'agriculture. Les abeilles pollinisent de nombreuses cultures. Les abeilles disparaissent à cause des pesticides. Les pesticides sont utilisés partout. Mon oncle a un chalet. Il a interdit les pesticides.' ] },
+    { t: 'ex', h: 'Problèmes :', q: '',
+      s: [ '« Les abeilles » ×3 → répétitions // continuité maladroite', '« Mon oncle a un chalet » → pas pertinent', '« Il a interdit… » → antécédent ambigu // l\'oncle ? le gouvernement ?' ] },
+    { t: 'cite', h: 'Version corrigée', p: [ 'Les abeilles sont essentielles à l\'agriculture. __Ces insectes__ pollinisent en effet de nombreuses cultures. Or, __ils__ disparaissent à cause des pesticides, utilisés dans presque tous les champs. __Cette disparition__ menace notre alimentation ; c\'est pourquoi __le gouvernement__ devrait interdire __ces produits__.' ] },
+    { t: 'ex', h: 'Reprises utilisées :', q: '',
+      s: [ '« Ces insectes » → terme générique', '« ils » → pronom', '« Cette disparition » → reprise d\'une idée', '« ces produits » → terme générique // pour pesticides' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Un « il » ou un « cela » dont on ne sait pas ce qu\'il remplace.',
+          'Passer du présent au passé sans raison.',
+          'Ajouter une anecdote qui ne sert pas l\'argument.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Pertinence, continuité, progression, non-contradiction.',
+          'Varier les reprises : pronom, synonyme, générique, périphrase.',
+          'Chaque pronom = un antécédent clair.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 10. Organisateurs et marqueurs ============ */
+organisateurs: {
+  bulle: 'organisateurs et marqueurs',
+  sous: 'Organisateurs textuels et marqueurs de relation',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'organisateur textuel', p: [
+          'Il **structure le texte** : il marque les grandes étapes ou le passage d\'une partie à l\'autre. Il se place souvent au **début d\'un paragraphe** et il est suivi d\'une **virgule**.',
+          'ex. D\'abord, … Ensuite, … Enfin, … En conclusion, …',
+        ] } ],
+      [ { t: 'txt', h: 'marqueur de relation', p: [
+          'Il **lie deux groupes ou deux phrases** à l\'intérieur d\'un paragraphe et indique le **lien logique** entre eux.',
+          'ex. Il pleuvait, __mais__ nous sommes sortis. Nous sommes restés __parce qu\'__il pleuvait.',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'classés par sens', full: true, lcol: true,
+      head: ['Sens', 'Exemples'],
+      rows: [
+        ['**temps / ordre**', 'd\'abord, premièrement, ensuite, puis, par la suite, enfin, finalement'],
+        ['**addition**', 'et, de plus, en outre, par ailleurs, également, aussi, d\'une part… d\'autre part'],
+        ['**cause**', 'car, parce que, puisque, étant donné que, en effet, comme'],
+        ['**conséquence**', 'donc, ainsi, par conséquent, c\'est pourquoi, si bien que, de sorte que'],
+        ['**opposition**', 'mais, cependant, toutefois, par contre, au contraire, alors que, tandis que'],
+        ['**concession**', 'certes, bien que (+ subjonctif), même si, malgré, pourtant, néanmoins'],
+        ['**but**', 'pour, afin de, afin que (+ subjonctif), pour que'],
+        ['**illustration**', 'par exemple, notamment, entre autres, ainsi'],
+        ['**explication / reformulation**', 'c\'est-à-dire, autrement dit, en d\'autres mots'],
+        ['**conclusion**', 'bref, en somme, en conclusion, pour conclure, somme toute'],
+      ] },
+    { t: 'list', h: 'ponctuation', items: [
+      'Organisateur en début de phrase → **virgule** après : « Ensuite, … »',
+      'Coordonnant (mais, car, donc, or) entre deux phrases → **virgule** avant.',
+      'Marqueur subordonnant (parce que, bien que) → pas de virgule obligatoire avant, sauf si la subordonnée est en tête de phrase.',
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Exemple — relever et nommer', p: [ '__Premièrement__, le vélo en ville réduit la pollution. __En effet__, il ne produit aucun gaz à effet de serre. __Certes__, il est peu pratique l\'hiver ; __toutefois__, de plus en plus de pistes sont déneigées. __Bref__, il mérite plus de place sur nos routes.' ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ '« Premièrement » → organisateur textuel // ordre', '« En effet » → marqueur // explication, cause', '« Certes » → marqueur // concession', '« toutefois » → marqueur // opposition, réfutation', '« Bref » → organisateur textuel // conclusion' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Choisir le bon marqueur : « Le projet est coûteux, ___ il rapportera beaucoup à long terme. »',
+      r: 'mais (ou cependant) : lien d\'opposition' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Mode après le marqueur : « Bien qu\'il ___ (faire) froid, nous sortirons. »',
+      r: 'Bien qu\'il fasse froid (bien que + subjonctif)' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser « malgré que » : en français soigné, on écrit **bien que**.',
+          '« Après que » se construit avec l\'**indicatif** : après qu\'il est parti.',
+          'Répéter toujours « de plus » : varie les marqueurs.',
+          'Mettre un marqueur qui ne correspond pas au lien logique (« donc » pour une opposition).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Organisateur = structure le texte.',
+          'Marqueur = relie des idées, exprime un lien logique.',
+          'Bien que, afin que, pour que → subjonctif.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 11. Discours rapporté ============ */
+'discours-rapporte': {
+  bulle: 'discours rapporté',
+  sous: 'Le discours rapporté et la citation',
+  recto: [
+    { t: 'txt', p: [ 'Le **discours rapporté**, ce sont les paroles ou les pensées de quelqu\'un d\'autre intégrées dans un texte. En argumentation, il sert surtout à **appuyer** une idée (appel à l\'autorité) ou à présenter la **thèse adverse**.' ] },
+    { t: 'tab', full: true, lcol: true,
+      head: ['Forme', 'Caractéristiques', 'Exemple'],
+      rows: [
+        ['**Discours direct**', 'paroles exactes ; deux-points et guillemets (ou tirets dans un dialogue) ; verbe de parole', 'La ministre a déclaré : « Nous investirons dans les écoles. »'],
+        ['**Discours indirect**', 'paroles reformulées dans une **subordonnée complétive** ; pas de guillemets ; changement de pronoms, de temps et d\'indicateurs de temps', 'La ministre a déclaré __qu\'elle investirait__ dans les écoles.'],
+        ['**Discours indirect libre**', 'paroles intégrées au récit, sans verbe de parole ni subordination (surtout en littérature)', 'Elle réfléchit. Investirait-elle vraiment dans les écoles ?'],
+        ['**Modalisation en discours second**', 'on attribue une idée à quelqu\'un', '__Selon__ la ministre, … · __D\'après__ l\'étude, …'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'tab', h: 'passer du direct à l\'indirect (verbe au passé)', full: true, lcol: true,
+          head: ['Direct', 'Indirect'],
+          rows: [
+            ['présent', 'imparfait'],
+            ['passé composé', 'plus-que-parfait'],
+            ['futur simple', 'conditionnel présent'],
+            ['je, nous', 'il/elle, ils/elles'],
+            ['aujourd\'hui, demain', 'ce jour-là, le lendemain'],
+            ['ici', 'là'],
+          ] } ],
+      [ { t: 'list', h: 'citer correctement', items: [
+          'Citation **exacte**, entre guillemets français « ».',
+          '**[…]** indique une coupure dans la citation.',
+          'Nommer la **source** : personne, fonction, organisme.',
+          'Intégrer la citation dans une phrase **grammaticalement correcte**.',
+          'Le **verbe introducteur** peut révéler un jugement : affirmer (neutre), prétendre (doute), avouer (faute), reconnaître (concession).',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Transposer au discours indirect : Le directeur a annoncé : « Je fermerai la cafétéria demain. »',
+      s: [ '« Je » → il', '« fermerai » (futur) → fermerait // conditionnel présent', '« demain » → le lendemain' ],
+      r: 'Le directeur a annoncé qu\'il fermerait la cafétéria le lendemain.' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Transposer : Mon amie m\'a demandé : « As-tu terminé ton travail ? »',
+      s: [ 'question oui/non → si', '« as-tu terminé » (passé composé) → avais terminé // plus-que-parfait', '« tu » / « ton » → je / mon' ],
+      r: 'Mon amie m\'a demandé si j\'avais terminé mon travail.' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Intégrer une citation dans une lettre ouverte.',
+      p: [ '✗ Un expert dit « les jeunes manquent de sommeil ».', '✓ Comme le souligne le chercheur Marc Gagnon, « la majorité des adolescents dorment moins de huit heures par nuit [...] pendant l\'année scolaire ». (source fictive, pour l\'exemple)' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Quel jugement révèle le verbe ? « Le fabricant __prétend__ que son produit est sans danger. »',
+      r: 'un doute : l\'énonciateur ne croit pas le fabricant' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Garder les guillemets au discours indirect.',
+          'Oublier de changer les temps et les pronoms.',
+          'Écrire « il m\'a demandé est-ce que… » : on écrit « il m\'a demandé si… ».',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Direct : « paroles exactes ».',
+          'Indirect : que / si + changements.',
+          'Toujours nommer la source.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+
+/* ---- 41-francais-litterature.js ---- */
+/* Français — Littérature */
+Object.assign(DATA.feuilles['francais'], {
+
+/* ============ 12. Figures de style ============ */
+'figures-style': {
+  bulle: 'figures de style',
+  sous: 'Les figures de style',
+  recto: [
+    { t: 'txt', p: [ 'Une **figure de style** est une façon particulière d\'utiliser les mots pour créer un effet : rendre une idée plus frappante, plus belle, plus drôle ou plus émouvante.' ] },
+    { t: 'tab', full: true, lcol: true,
+      head: ['Figure', 'Définition', 'Exemple'],
+      rows: [
+        ['**Comparaison**', 'rapproche deux réalités **avec un outil** (comme, tel, pareil à, ressembler à)', 'Ses yeux brillaient __comme__ des lanternes.'],
+        ['**Métaphore**', 'rapproche deux réalités **sans outil** de comparaison', 'Ses yeux étaient des lanternes.'],
+        ['**Personnification**', 'donne des traits humains à un objet, un animal, une idée', 'Le vent __gémissait__ dans la cheminée.'],
+        ['**Hyperbole**', 'exagère pour frapper l\'esprit', 'Je te l\'ai dit mille fois !'],
+        ['**Litote**', 'dit moins pour faire entendre plus', 'Ce n\'est pas mauvais. (= c\'est très bon)'],
+        ['**Euphémisme**', 'adoucit une réalité pénible', 'Il nous a quittés. (= il est mort)'],
+        ['**Antithèse**', 'oppose deux idées dans une même phrase', 'Il fait __chaud__ le jour et __froid__ la nuit.'],
+        ['**Oxymore**', 'unit deux mots de sens contraires', 'un __silence assourdissant__'],
+        ['**Gradation**', 'suite de termes d\'intensité croissante (ou décroissante)', 'Je marche, je cours, je vole !'],
+        ['**Énumération**, accumulation', 'suite de termes de même nature', 'Des livres, des crayons, des cartables traînaient partout.'],
+        ['**Anaphore**', 'répétition d\'un mot en début de phrase ou de vers', '__Nous__ voulons… __Nous__ exigeons… __Nous__ refusons…'],
+        ['**Ironie**', 'dire le contraire de ce qu\'on pense', 'Bravo, quel beau travail ! (devant un désastre)'],
+        ['**Métonymie**', 'désigne une chose par une autre qui lui est liée', 'boire un __verre__ ; lire un __Tremblay__'],
+        ['**Périphrase**', 'remplace un mot par une expression qui le décrit', 'l\'astre du jour (= le soleil)'],
+        ['**Question rhétorique**', 'question qui n\'attend pas de réponse', 'Qui oserait dire le contraire ?'],
+        ['**Allitération** / **assonance**', 'répétition d\'un son consonne / voyelle', 'Le vent siffle sans cesse sur les sapins. (son « s »)'],
+      ] },
+    { t: 'list', h: 'analyser une figure : 3 étapes', items: [
+      '1. **Relever** l\'extrait exact.',
+      '2. **Nommer** la figure.',
+      '3. **Expliquer l\'effet** : qu\'est-ce qu\'elle fait ressentir ou comprendre ?',
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Extrait à analyser', p: [
+      '(1) La ville dormait sous une couverture de neige. (2) Les réverbères, comme des sentinelles fatiguées, veillaient sur les rues désertes. (3) Au loin, un chien aboya, puis hurla, puis se tut. (4) Dans cette nuit à la fois douce et cruelle, Marie avançait, seule.',
+    ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ '(1) « La ville dormait » → personnification // la ville semble paisible, vivante', '(1) « une couverture de neige » → métaphore // la neige protège et enveloppe', '(2) « comme des sentinelles fatiguées » → comparaison (+ personnification)', '(3) « aboya, puis hurla, puis se tut » → gradation // tension, puis silence inquiétant', '(4) « douce et cruelle » → antithèse // émotions contradictoires de Marie' ] },
+    { t: 'ex', h: 'Modèle de réponse complète :', q: '',
+      p: [ '« Dans la phrase 2, l\'auteur utilise une **comparaison** (« comme des sentinelles fatiguées ») : les réverbères semblent protéger la ville, mais leur fatigue crée une atmosphère triste et lourde. »' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre comparaison (avec « comme ») et métaphore (sans outil).',
+          'Nommer la figure sans expliquer son effet.',
+          'Confondre antithèse (deux idées opposées) et oxymore (deux mots opposés collés).',
+          'Voir une comparaison dans toute phrase avec « comme » : « comme il pleuvait » exprime une cause.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Relever, nommer, expliquer l\'effet.',
+          'Comparaison = outil ; métaphore = sans outil.',
+          'Hyperbole ↑ ; litote et euphémisme ↓.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 13. Univers narratif ============ */
+'univers-narratif': {
+  bulle: 'univers narratif',
+  sous: 'L\'univers narratif : roman et nouvelle',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'le schéma narratif', items: [
+          '**Situation initiale** : personnages, lieu, époque, équilibre de départ.',
+          '**Élément déclencheur** : ce qui brise l\'équilibre.',
+          '**Déroulement** : péripéties, actions pour résoudre le problème.',
+          '**Dénouement** : l\'événement qui règle (ou non) le problème.',
+          '**Situation finale** : le nouvel équilibre.',
+        ] },
+        { t: 'list', h: 'roman ou nouvelle ?', items: [
+          '**Nouvelle** : texte court, peu de personnages, une seule intrigue, souvent une **chute** (fin surprenante).',
+          '**Roman** : texte long, plusieurs intrigues et personnages, évolution des personnages.',
+          'Genres : policier, fantastique, science-fiction, historique, d\'apprentissage, psychologique…',
+        ] } ],
+      [ { t: 'tab', h: 'le narrateur', full: true, lcol: true,
+          head: ['Narrateur', 'Indices'],
+          rows: [
+            ['**participant** (personnage)', 'raconte à la 1<sup>re</sup> personne (je) : il est le héros ou un témoin'],
+            ['**omniscient**', '3<sup>e</sup> personne ; sait tout : pensées de tous, passé, avenir'],
+            ['**témoin** (externe)', '3<sup>e</sup> personne ; raconte seulement ce qu\'on peut voir et entendre'],
+          ] },
+        { t: 'list', h: 'les personnages', items: [
+          '**Principal** (héros), **secondaires**, **figurants** ; adjuvants (aident) et opposants (nuisent).',
+          'Caractérisation **physique** et **psychologique**, directe (le narrateur la décrit) ou indirecte (par les actions, les paroles).',
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'le temps du récit', items: [
+          '**Ordre** : chronologique, ou avec **retour en arrière** (analepse) ou **anticipation** (prolepse).',
+          '**Rythme** : scène (temps réel), sommaire (résumé), ellipse (saut dans le temps), pause (description).',
+          '**Temps verbaux** : passé simple (actions de premier plan) et imparfait (arrière-plan, description), ou présent de narration.',
+        ] } ],
+      [ { t: 'list', h: 'autres éléments', items: [
+          '**Lieux** : réels ou imaginaires ; ils créent une atmosphère.',
+          '**Thèmes** : les grandes idées abordées (amitié, deuil, liberté…).',
+          '**Valeurs** véhiculées et **vision du monde** de l\'œuvre.',
+          '**Point de vue** du narrateur : engagé ou distancié.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Extrait à analyser', p: [
+      'Depuis trois semaines, Olivier n\'adressait plus la parole à personne. Ce matin-là pourtant, en ouvrant son casier, il découvrit une enveloppe jaune. Il la déchira d\'un geste nerveux. À l\'intérieur, une seule phrase : « Je sais ce qui s\'est passé au chalet. » Son cœur se mit à battre plus fort ; il savait déjà qui l\'avait écrite.',
+    ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ 'narrateur → omniscient // 3<sup>e</sup> personne, connaît les pensées d\'Olivier (« il savait déjà »)', '« Depuis trois semaines… » → situation initiale // imparfait = arrière-plan', '« Ce matin-là pourtant… il découvrit » → élément déclencheur // passé simple', '« au chalet » → allusion à un événement passé // retour en arrière possible', 'caractérisation indirecte → « geste nerveux », « cœur … plus fort » // anxiété' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Récrire la 1<sup>re</sup> phrase avec un narrateur participant.',
+      r: '« Depuis trois semaines, je n\'adressais plus la parole à personne. »' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Confondre l\'auteur (personne réelle) et le narrateur (voix qui raconte).',
+          'Dire « omniscient » simplement parce que le texte est à la 3<sup>e</sup> personne : il faut qu\'il connaisse les pensées.',
+          'Résumer l\'histoire au lieu d\'analyser les procédés.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Schéma : SI, ED, déroulement, dénouement, SF.',
+          'Narrateur : participant, omniscient ou témoin.',
+          'Toujours justifier avec une citation.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 14. Poésie ============ */
+poesie: {
+  bulle: 'la poésie',
+  sous: 'La poésie : versification, rimes et strophes',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'le vers et la strophe', items: [
+          '**Vers** : une ligne du poème. **Strophe** : un groupe de vers séparé par un blanc.',
+          'Strophes : **distique** (2 vers), **tercet** (3), **quatrain** (4), **quintil** (5), **sizain** (6).',
+          '**Mètre** : nombre de syllabes d\'un vers : **alexandrin** (12), **décasyllabe** (10), **octosyllabe** (8).',
+        ] },
+        { t: 'list', h: 'compter les syllabes', items: [
+          'Le **e muet** compte devant une **consonne** : « bel/le/ ro/se » → 4.',
+          'Il ne compte **pas** devant une voyelle (élision) ni en **fin de vers**.',
+          '**Diérèse** : on sépare deux voyelles pour allonger (li-on). **Synérèse** : on les unit (lion).',
+        ] } ],
+      [ { t: 'tab', h: 'les rimes', full: true, lcol: true,
+          head: ['Disposition', 'Schéma'],
+          rows: [
+            ['**plates** (suivies)', 'AABB'],
+            ['**croisées**', 'ABAB'],
+            ['**embrassées**', 'ABBA'],
+          ] },
+        { t: 'list', items: [
+          '**Richesse** : pauvre (1 son commun), suffisante (2), riche (3 et plus).',
+          '**Genre** : **féminine** si elle finit par un e muet (branches), **masculine** sinon (doré).',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'formes de poèmes', full: true, lcol: true,
+      head: ['Forme', 'Caractéristiques'],
+      rows: [
+        ['**Sonnet**', 'forme fixe : 2 quatrains + 2 tercets (14 vers), souvent en alexandrins'],
+        ['**Poème en vers réguliers**', 'mètre et rimes constants'],
+        ['**Vers libres**', 'longueurs variées, rimes facultatives (très fréquent en poésie québécoise contemporaine)'],
+        ['**Poème en prose**', 'pas de vers : des paragraphes, mais un travail poétique des images et du rythme'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'effets de rythme', items: [
+          '**Enjambement** : la phrase continue sur le vers suivant.',
+          '**Rejet** : un mot court rejeté au début du vers suivant, mis en valeur.',
+          '**Césure** : pause au milieu de l\'alexandrin (6 + 6).',
+        ] } ],
+      [ { t: 'list', h: 'analyser un poème', items: [
+          'Thème, émotion, ton (lyrique, mélancolique…).',
+          'Champs lexicaux, figures de style, sonorités.',
+          'Lien entre la forme et le sens.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Quatrain à analyser', p: [
+      'Le vent du soir berce les branches,<br>Sur le lac dort un ciel doré ;<br>Les étoiles, fragiles et blanches,<br>Brillent sur le bois coloré.',
+    ] },
+    { t: 'ex', h: 'Compter les syllabes :', q: '',
+      s: [ 'Le / vent / du / soir / ber / ce / les / bran(ches) → 8 // « ches » final ne compte pas', 'Sur / le / lac / dort / un / ciel / do / ré → 8', 'Les / é / toi / les / fra / gi / l(es)‿et / blan(ches) → 8 // élision devant « et »', 'Bril / lent / sur / le / bois / co / lo / ré → 8' ],
+      r: 'des octosyllabes' },
+    { t: 'ex', h: 'Rimes :', q: '',
+      s: [ 'branches (A) · doré (B) · blanches (A) · coloré (B) → rimes croisées ABAB', 'branches / blanches → rimes féminines // e muet', 'doré / coloré → rimes masculines', 'doré / coloré → sons « o-ré » : rime suffisante' ] },
+    { t: 'ex', h: 'Sens :', q: '',
+      p: [ '« Le vent … berce » et « dort un ciel » sont des **personnifications** : la nature semble douce et protectrice. Le champ lexical de la lumière (doré, étoiles, blanches, brillent) crée une atmosphère paisible.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Compter le e muet final du vers.',
+          'Oublier l\'élision d\'un e devant une voyelle.',
+          'Dire « rime riche » dès que deux mots riment.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '12 = alexandrin, 10 = décasyllabe, 8 = octosyllabe.',
+          'AABB plates, ABAB croisées, ABBA embrassées.',
+          'Forme + figures + sonorités = sens.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 15. Théâtre ============ */
+theatre: {
+  bulle: 'le théâtre',
+  sous: 'Le texte de théâtre',
+  recto: [
+    { t: 'txt', p: [ 'Le **texte dramatique** est écrit pour être **joué** devant un public. Il n\'y a pas de narrateur : l\'histoire avance par les **paroles** des personnages et les **indications** de l\'auteur.' ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'le vocabulaire du théâtre', items: [
+          '**Réplique** : ce que dit un personnage à son tour de parole.',
+          '**Tirade** : une longue réplique.',
+          '**Monologue** : un personnage seul sur scène parle à voix haute.',
+          '**Aparté** : réplique que le public entend, mais pas les autres personnages.',
+          '**Didascalies** : indications de l\'auteur (en italique ou entre parenthèses) sur les gestes, le ton, le décor.',
+          '**Actes** et **scènes** : divisions de la pièce (nouvelle scène = entrée ou sortie d\'un personnage).',
+          '**Quiproquo** : un personnage en prend un autre pour quelqu\'un d\'autre (malentendu).',
+        ] } ],
+      [ { t: 'list', h: 'la double énonciation', items: [
+          'Un personnage parle à un autre personnage…',
+          '… mais l\'auteur s\'adresse en même temps au **public**, qui en sait souvent plus que les personnages.',
+        ] },
+        { t: 'tab', h: 'les grands genres', full: true, lcol: true,
+          head: ['Genre', 'Caractéristiques'],
+          rows: [
+            ['**Tragédie**', 'personnages nobles, destin fatal, fin malheureuse'],
+            ['**Comédie**', 'faire rire, critiquer les travers de la société, fin heureuse'],
+            ['**Drame**', 'mélange de sérieux et de comique, personnages ordinaires'],
+          ] } ],
+    ] },
+    { t: 'list', h: 'analyser un extrait de théâtre', items: [
+      'Qui parle à qui ? Quelle est la **relation** entre les personnages (conflit, complicité) ?',
+      'Que révèlent les **didascalies** (émotions, tension) ?',
+      'Quel est le **registre** (comique, tragique, dramatique) ? Relever les procédés : quiproquo, répétitions, jeux de mots, exagérations.',
+      'Au Québec, plusieurs pièces utilisent la langue **familière** ou le **joual** pour peindre des personnages réalistes.',
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Extrait (scène inventée pour l\'exemple)', p: [
+      '<b>JULIE</b>, <i>entrant en coup de vent</i>. — Maman, j\'ai eu mon permis !',
+      '<b>LA MÈRE</b>, <i>sans lever les yeux de son journal</i>. — C\'est bien, ma chouette.',
+      '<b>JULIE</b>, <i>à part</i>. — Elle n\'a rien entendu, comme d\'habitude.',
+      '<i>(Elle dépose bruyamment les clés de l\'auto sur la table.)</i>',
+      '<b>LA MÈRE</b>, <i>se levant d\'un bond</i>. — Quoi ? Tu as pris MON auto ?',
+    ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ '« entrant en coup de vent » → didascalie // excitation de Julie', '« sans lever les yeux » → didascalie // indifférence de la mère', '« à part » → aparté // le public partage la frustration de Julie', '« se levant d\'un bond » → didascalie // retournement comique', '« MON auto » → majuscules // insistance, colère' ],
+      r: 'registre comique : contraste entre l\'indifférence et la réaction finale' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier que les didascalies ne sont pas dites par les acteurs.',
+          'Confondre monologue (seul sur scène) et tirade (longue réplique devant d\'autres).',
+          'Chercher un narrateur : il n\'y en a pas au théâtre.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Répliques + didascalies = texte de théâtre.',
+          'Aparté : seul le public entend.',
+          'Double énonciation : on parle aussi au public.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 16. Appréciation critique ============ */
+appreciation: {
+  bulle: 'appréciation critique',
+  sous: 'L\'appréciation critique d\'une œuvre',
+  recto: [
+    { t: 'txt', p: [ 'Une **appréciation critique** donne un **jugement** justifié sur une œuvre (roman, film, pièce, chanson). Elle ne se contente pas de dire « j\'ai aimé » : elle s\'appuie sur des **critères** et des **exemples** tirés de l\'œuvre.' ] },
+    { t: 'tab', h: 'critères d\'appréciation', full: true, lcol: true,
+      head: ['Aspect', 'Questions à se poser'],
+      rows: [
+        ['**Intrigue**', 'Est-elle originale, captivante, vraisemblable ? Le rythme est-il bon ?'],
+        ['**Personnages**', 'Sont-ils crédibles, attachants, nuancés ? Évoluent-ils ?'],
+        ['**Thèmes** et valeurs', 'Sont-ils actuels, profonds ? Font-ils réfléchir ?'],
+        ['**Style** (écriture)', 'Vocabulaire, figures de style, dialogues, niveau de langue : efficaces ?'],
+        ['**Structure**', 'Ordre des événements, fin (surprenante, satisfaisante ?)'],
+        ['**Effet** sur le lecteur', 'Émotions ressenties, suspense, humour.'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'structure du texte', items: [
+          '**Introduction** : présentation de l\'œuvre (titre, auteur, genre, bref résumé sans dévoiler la fin) + **appréciation générale**.',
+          '**Développement** : un paragraphe par **critère** : jugement → justification → exemple ou **citation** de l\'œuvre.',
+          '**Conclusion** : rappel de l\'appréciation, **recommandation** (à qui ?).',
+        ] } ],
+      [ { t: 'list', h: 'vocabulaire appréciatif', items: [
+          'Mélioratif : captivant, touchant, habile, percutant, nuancé, poignant.',
+          'Péjoratif : prévisible, invraisemblable, superficiel, lourd, décousu.',
+          'Nuancer : « malgré quelques longueurs… », « bien que la fin soit prévisible… ».',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Exemple de paragraphe de développement', p: [
+      '__Les personnages du roman sont particulièrement attachants.__ __En effet, l\'autrice prend le temps de montrer les doutes et les contradictions de sa narratrice : celle-ci veut aider son frère, mais elle lui en veut aussi de l\'avoir abandonnée.__ __Lorsqu\'elle écrit « je t\'aime assez pour te détester », on comprend toute la complexité de leur relation.__ __C\'est cette profondeur qui rend le récit si touchant.__',
+    ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ '1<sup>re</sup> phrase → jugement sur un critère // les personnages', '2<sup>e</sup> phrase → justification // explication', '3<sup>e</sup> phrase → citation de l\'œuvre // preuve', '4<sup>e</sup> phrase → conclusion partielle // effet sur le lecteur' ] },
+    { t: 'ex', h: 'Transformer une appréciation vague :', q: '',
+      p: [ '✗ « Le film est bon, j\'ai aimé la fin. »', '✓ « La finale, à la fois inattendue et logique, récompense le spectateur attentif : tous les indices semés dès la première scène prennent enfin leur sens. »' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Résumer toute l\'histoire au lieu de l\'apprécier.',
+          'Dévoiler la fin sans avertissement.',
+          'Donner un jugement sans exemple de l\'œuvre.',
+          'Utiliser seulement « bon », « beau », « nul » : vocabulaire trop vague.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Critère → jugement → justification → exemple.',
+          'Vocabulaire précis et nuancé.',
+          'Conclure avec une recommandation.',
+        ] } ],
+    ] },
+  ],
+},
+
+});
+
+/* ---- 42-francais-grammaire.js ---- */
+/* Français — Grammaire, oral et feuille Général */
+Object.assign(DATA.feuilles['francais'], {
+
+/* ============ 17. Classes de mots ============ */
+'classes-mots': {
+  bulle: 'classes de mots',
+  sous: 'Les classes de mots et les groupes',
+  recto: [
+    { t: 'tab', h: 'les classes de mots', full: true, lcol: true,
+      head: ['Classe', 'Variable ?', 'Rôle et repères', 'Exemples'],
+      rows: [
+        ['**Nom**', 'oui (genre, nombre)', 'noyau du GN ; désigne une personne, une chose, une idée', 'élève, Montréal, liberté'],
+        ['**Déterminant**', 'oui', 'précède le nom et en reçoit le genre et le nombre', 'le, une, ces, mon, plusieurs, trois'],
+        ['**Adjectif**', 'oui', 'caractérise le nom ; on peut souvent ajouter « très »', 'grand, québécois, fatigué'],
+        ['**Pronom**', 'oui', 'remplace un GN (ou autre) ou désigne un participant', 'il, elle, le, lui, qui, celui-ci, tout'],
+        ['**Verbe**', 'oui (personne, nombre, temps, mode)', 'noyau du GV ; se conjugue ; encadrable par « ne… pas »', 'réussir, être, prendre'],
+        ['**Adverbe**', 'non', 'modifie un verbe, un adjectif, un adverbe ou une phrase', 'vite, très, hier, heureusement'],
+        ['**Préposition**', 'non', 'introduit un complément (noyau du GPrép)', 'à, de, pour, avec, sans, malgré'],
+        ['**Conjonction**', 'non', 'coordonne (mais, ou, et, donc, or, ni, car) ou subordonne (que, quand, parce que, si)', 'et, mais, lorsque, bien que'],
+      ],
+      note: 'Invariables : adverbe, préposition, conjonction (et l\'interjection : oh ! hélas !).' },
+    { t: 'tab', h: 'les groupes de mots', full: true, lcol: true,
+      head: ['Groupe', 'Noyau', 'Exemple'],
+      rows: [
+        ['**GN**', 'nom (ou pronom)', '__les petits chats__ du voisin'],
+        ['**GV**', 'verbe conjugué', 'Elle __mange une pomme__.'],
+        ['**GAdj**', 'adjectif', '__très fier de lui__'],
+        ['**GPrép**', 'préposition', '__dans la cour__'],
+        ['**GAdv**', 'adverbe', '__vraiment bien__'],
+        ['**GInf**', 'verbe à l\'infinitif', '__Lire des romans__ me détend.'],
+        ['**GPart**', 'verbe au participe présent', '__Voyant la pluie__, il resta.'],
+      ] },
+    { t: 'list', h: 'astuces pour identifier', items: [
+      'Déterminant ou pronom ? « __le__ livre » (devant un nom → déterminant) ; « je __le__ lis » (devant un verbe → pronom).',
+      'Adjectif ou adverbe ? L\'adjectif s\'accorde (une robe __chère__) ; l\'adverbe non (elle coûte __cher__).',
+      'Préposition ou conjonction ? La préposition introduit un groupe (__avant__ le cours) ; la conjonction introduit une phrase (__avant qu\'__il parte).',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Donner la classe de chaque mot : « Ces jeunes musiciens jouent très bien leur dernière chanson. »',
+      s: [ 'Ces → déterminant (démonstratif)', 'jeunes → adjectif', 'musiciens → nom', 'jouent → verbe', 'très → adverbe // modifie « bien »', 'bien → adverbe // modifie « jouent »', 'leur → déterminant (possessif) // devant le nom « chanson »', 'dernière → adjectif · chanson → nom' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: '« Je __leur__ ai parlé » ou « __leurs__ amis » ?',
+      s: [ '« je leur ai parlé » → pronom // invariable, devant le verbe', '« leurs amis » → déterminant // s\'accorde avec le nom' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Délimiter les groupes : « Mon frère aîné travaille dans un restaurant du quartier. »',
+      s: [ '[Mon frère aîné] → GN (sujet)', '[travaille dans un restaurant du quartier] → GV', '[dans un restaurant du quartier] → GPrép // complément du verbe', '[du quartier] → GPrép // complément du nom « restaurant »' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          '« leur » devant un verbe ne prend jamais de s.',
+          'Accorder un adverbe : « Ils parlent fort » (invariable).',
+          'Confondre « tout » déterminant (tous les jours), pronom (tous sont venus) et adverbe (tout petit).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '8 classes : 5 variables, 3 invariables.',
+          'Le noyau donne son nom au groupe.',
+          'Devant un nom → déterminant ; devant un verbe → pronom.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 18. Phrase de base et fonctions ============ */
+'phrase-base': {
+  bulle: 'phrase de base et fonctions',
+  sous: 'Phrase de base, manipulations syntaxiques et fonctions',
+  recto: [
+    { t: 'cols', w: '1fr 1.1fr', c: [
+      [ { t: 'box', h: 'la phrase de base (P)', f: 'Sujet + Prédicat + (Complément de phrase)', note: 'Elle est déclarative, positive, active, neutre et personnelle.' },
+        { t: 'tab', h: 'les manipulations', full: true, lcol: true,
+          head: ['Manipulation', 'Sert à…'],
+          rows: [
+            ['**Effacement**', 'voir si un élément est obligatoire'],
+            ['**Déplacement**', 'repérer le CP (mobile)'],
+            ['**Remplacement**', 'trouver la fonction (par un pronom)'],
+            ['**Addition**', 'reconnaître un adjectif (+ très)'],
+            ['**Encadrement**', 'sujet : « C\'est… qui » ; verbe : « ne… pas »'],
+          ] } ],
+      [ { t: 'tab', h: 'les fonctions', full: true, lcol: true,
+          head: ['Fonction', 'Comment la reconnaître'],
+          rows: [
+            ['**Sujet**', 'encadrable par « C\'est… qui » ; remplaçable par il, elle, ils, cela'],
+            ['**Prédicat**', 'ce qu\'on dit du sujet ; c\'est le GV'],
+            ['**Complément de phrase** (CP)', 'effaçable et **déplaçable** ; souvent temps, lieu, cause, but'],
+            ['**Complément direct** (CD)', 'non déplaçable ; remplaçable par le, la, les, en, cela ; pas de préposition'],
+            ['**Complément indirect** (CI)', 'introduit par une préposition ; remplaçable par lui, leur, y, en'],
+            ['**Attribut du sujet**', 'après un verbe attributif (être, paraître, sembler, devenir, rester, demeurer, avoir l\'air) ; remplaçable par « le »'],
+            ['**Complément du nom**', 'dans un GN, précise le nom'],
+            ['**Complément de l\'adjectif**', 'complète l\'adjectif : fier __de toi__'],
+            ['**Modificateur**', 'adverbe (ou GPrép) qui modifie le sens : parler __doucement__'],
+            ['**Attribut du CD**', 'caractérise le CD : Je la trouve __drôle__.'],
+          ] } ],
+    ] },
+    { t: 'list', h: 'démarche pour analyser une phrase', items: [
+      '1. Trouver le **verbe conjugué** (encadrement ne… pas) et son **sujet** (C\'est… qui).',
+      '2. Isoler les **CP** : ce qui se déplace et s\'efface.',
+      '3. Dans le GV : trouver les compléments du verbe (CD, CI) ou l\'attribut par remplacement.',
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Analyser : « Chaque matin, ma voisine donne des graines aux oiseaux du parc. »',
+      s: [ '« Chaque matin » → CP // Ma voisine donne… chaque matin (déplacement)', '« ma voisine » → sujet // C\'est ma voisine qui donne…', '« donne des graines aux oiseaux du parc » → prédicat (GV)', '« des graines » → CD du verbe // elle __en__ donne', '« aux oiseaux du parc » → CI du verbe // elle __leur__ donne', '« du parc » → complément du nom « oiseaux »' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: '« Les élèves semblent fatigués après l\'examen. »',
+      s: [ '« semblent » → verbe attributif', '« fatigués » → attribut du sujet // ils le semblent', '« après l\'examen » → CP // Après l\'examen, les élèves…' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'CD ou attribut ? « Elle est devenue __médecin__. » / « Elle a soigné __un patient__. »',
+      s: [ 'devenir = verbe attributif → « médecin » : attribut du sujet', 'soigner = verbe non attributif → « un patient » : CD // elle l\'a soigné' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Prendre un CI pour un CP : le CI ne se déplace pas.',
+          'Oublier qu\'un sujet peut être placé après le verbe (« Où vont __les enfants__ ? »).',
+          'Confondre attribut (après être, sembler…) et CD.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'P = sujet + prédicat + (CP).',
+          'CP : se déplace et s\'efface.',
+          'CD : le/la/les ; CI : lui/leur/y/en.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 19. Types et formes de phrases ============ */
+'types-formes': {
+  bulle: 'types et formes',
+  sous: 'Types et formes de phrases, phrases à construction particulière',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'tab', h: 'les 4 types (une phrase en a un seul)', full: true, lcol: true,
+          head: ['Type', 'Exemple'],
+          rows: [
+            ['**déclaratif**', 'Tu étudies ce soir.'],
+            ['**interrogatif**', 'Étudies-tu ce soir ? Est-ce que tu étudies ?'],
+            ['**exclamatif**', 'Comme tu étudies fort !'],
+            ['**impératif**', 'Étudie ce soir.'],
+          ] } ],
+      [ { t: 'tab', h: 'les 4 paires de formes (une de chaque paire)', full: true, lcol: true,
+          head: ['Forme', 'Exemple'],
+          rows: [
+            ['**positive** / **négative**', 'Il vient. / Il ne vient pas.'],
+            ['**active** / **passive**', 'Le chat mange la souris. / La souris est mangée par le chat.'],
+            ['**neutre** / **emphatique**', 'Julie a gagné. / C\'est Julie qui a gagné.'],
+            ['**personnelle** / **impersonnelle**', 'Trois élèves manquent. / Il manque trois élèves.'],
+          ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'transformations à connaître', items: [
+          '**Négative** : ne… pas / plus / jamais / rien / personne / aucun. On garde le « ne » à l\'écrit !',
+          '**Passive** : le CD devient sujet ; verbe **être** + participe passé ; l\'ancien sujet devient complément introduit par « par ». Seuls les verbes avec un CD peuvent se mettre au passif.',
+          '**Emphatique** : mettre un élément en relief par « C\'est… qui / que » ou par un **détachement** avec un pronom (« Ce film, je l\'ai adoré. »).',
+          '**Interrogative** : inversion du sujet (avec trait d\'union), « est-ce que », ou mot interrogatif.',
+        ] } ],
+      [ { t: 'list', h: 'phrases à construction particulière', items: [
+          '**Non verbale** (sans verbe conjugué) : Silence ! Quelle soirée !',
+          '**Infinitive** : Ralentir. Que faire ?',
+          '**À présentatif** : __Voici__ le résultat. __C\'est__ l\'heure. __Il y a__ du monde.',
+          '**Impersonnelle** : __Il__ pleut. __Il__ faut partir. (« il » ne remplace rien)',
+        ] } ],
+    ] },
+    { t: 'box', h: 'le « t » euphonique', f: 'A-t-il fini ? Va-t-elle venir ? (entre deux voyelles, avec deux traits d\'union)' },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Donner le type et les formes : « Ce roman n\'a pas été écrit par une Québécoise. »',
+      s: [ 'type → déclaratif', 'formes → négative, passive, neutre, personnelle', 'phrase active → Une Québécoise n\'a pas écrit ce roman.' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Transformer « Les élèves préparent le spectacle. » à la forme passive, puis emphatique.',
+      s: [ 'passive → Le spectacle est préparé par les élèves.', 'emphatique → Ce sont les élèves qui préparent le spectacle.' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Mettre à la forme interrogative par inversion : « Ton frère a réussi son examen. »',
+      r: 'Ton frère a-t-il réussi son examen ?',
+      p: [ 'Avec un sujet GN, on garde le GN et on ajoute un pronom après le verbe (inversion complexe).' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Négation à l\'écrit.',
+      p: [ '✗ « J\'ai pas compris. »  ✓ « Je n\'ai pas compris. »', '✗ « Personne a répondu. »  ✓ « Personne n\'a répondu. »' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier le « ne » de la négation (très fréquent à l\'oral).',
+          'Écrire « a-t\'il » avec une apostrophe : c\'est un trait d\'union (a-t-il).',
+          'Vouloir mettre au passif une phrase sans CD : « Marie dort » n\'a pas de forme passive.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          '1 type + 4 formes.',
+          'Passif : être + participe passé + par.',
+          'Emphase : c\'est… qui / que.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 20. Subordonnées ============ */
+subordonnees: {
+  bulle: 'les subordonnées',
+  sous: 'Subordonnées relative, complétive et circonstancielle',
+  recto: [
+    { t: 'txt', p: [ 'Une **subordonnée** est une phrase **enchâssée** dans une autre à l\'aide d\'un **subordonnant**. Elle ne peut pas exister seule et joue une **fonction** dans la phrase.' ] },
+    { t: 'tab', full: true, lcol: true,
+      head: ['Subordonnée', 'Subordonnants', 'Fonction', 'Exemple'],
+      rows: [
+        ['**relative**', 'qui, que, dont, où, lequel, auquel, duquel…', '**complément du nom** (ou du pronom)', 'Le livre __que tu m\'as prêté__ est génial.'],
+        ['**complétive**', 'que, si, à ce que, de ce que ; mots interrogatifs (interrogative indirecte)', '**CD**, **CI**, **sujet**, complément de l\'adjectif ou du nom', 'Je pense __que tu as raison__. Je me demande __si tu viendras__.'],
+        ['**circonstancielle**', 'quand, lorsque, parce que, puisque, pour que, afin que, bien que, si, même si, alors que…', 'surtout **complément de phrase** (temps, cause, but, concession, condition, opposition)', '__Quand la cloche sonne__, tout le monde sort.'],
+      ],
+      note: 'Les subordonnées corrélatives (si… que, tellement… que, plus… que) ne sont pas des compléments de phrase : elles dépendent d\'un adverbe.' },
+    { t: 'cols', c: [
+      [ { t: 'tab', h: 'choisir le bon pronom relatif', full: true, lcol: true,
+          head: ['Pronom', 'Remplace…'],
+          rows: [
+            ['**qui**', 'un sujet'],
+            ['**que**', 'un CD (ou un attribut)'],
+            ['**dont**', 'un complément introduit par **de**'],
+            ['**où**', 'un complément de lieu ou de temps'],
+            ['**à qui**, **auquel**…', 'un complément introduit par à, pour, avec…'],
+          ] } ],
+      [ { t: 'list', h: 'le mode du verbe', items: [
+          'Subjonctif après : bien que, pour que, afin que, avant que, à moins que, sans que, jusqu\'à ce que.',
+          'Indicatif après : parce que, puisque, lorsque, **après que**, pendant que, si (condition).',
+          'Complétive : subjonctif après un verbe de volonté, de doute ou de sentiment (je veux que tu __viennes__).',
+        ] },
+        { t: 'list', h: 'réduire une subordonnée', items: [
+          'Pour que je __réussisse__ → pour __réussir__ (GInf, même sujet).',
+          'Avant qu\'il __parte__ → avant __son départ__ (GN).',
+          'Les élèves qui étaient épuisés → les élèves __épuisés__ (GAdj).',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Compléter avec le bon pronom relatif.',
+      s: [ 'L\'amie ___ je te parle → dont // parler DE quelqu\'un', 'La ville ___ je suis née → où // lieu', 'Le film ___ nous avons vu → que // voir QUELQUE CHOSE (CD)', 'Le prof ___ j\'ai posé la question → à qui // poser À quelqu\'un' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Identifier la subordonnée et sa fonction : « Bien qu\'il soit fatigué, Samuel affirme qu\'il terminera son travail. »',
+      s: [ '« Bien qu\'il soit fatigué » → circonstancielle de concession // CP, subjonctif', '« qu\'il terminera son travail » → complétive // CD de « affirme » (il l\'affirme)' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Relative : « Les élèves qui ont réussi l\'examen recevront un certificat. »',
+      s: [ '« qui ont réussi l\'examen » → relative, complément du nom « élèves »', '« qui » → sujet de « ont réussi »' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Réduire : « Je travaille fort afin que je réussisse mon année. »',
+      r: 'Je travaille fort afin de réussir mon année.' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          '« La chose que j\'ai besoin » ✗ → « La chose **dont** j\'ai besoin » (avoir besoin **de**).',
+          '« Après qu\'il soit parti » ✗ → « Après qu\'il **est** parti ».',
+          '« Malgré que » ✗ → « Bien que ».',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Relative → complément du nom.',
+          'Complétive → complément du verbe (souvent CD).',
+          'Circonstancielle → surtout CP.',
+          'dont = de ; où = lieu ou temps.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 21. Coordination et juxtaposition ============ */
+coordination: {
+  bulle: 'coordination',
+  sous: 'Coordination et juxtaposition',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'la coordination', p: [
+          'On **coordonne** deux éléments de même fonction (deux phrases, deux GN, deux adjectifs…) avec un **coordonnant** qui exprime un lien logique.',
+          'ex. Il pleuvait, __mais__ nous sommes sortis.',
+        ] } ],
+      [ { t: 'txt', h: 'la juxtaposition', p: [
+          'On **juxtapose** des éléments avec un **signe de ponctuation** seulement : virgule, point-virgule ou deux-points. Le lien logique est sous-entendu.',
+          'ex. Il pleuvait ; nous sommes restés.',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'les coordonnants', full: true, lcol: true,
+      head: ['Sens', 'Coordonnants'],
+      rows: [
+        ['addition', 'et, ni, puis, de plus, aussi, en outre'],
+        ['opposition, restriction', 'mais, cependant, toutefois, pourtant, par contre, néanmoins'],
+        ['cause', 'car, en effet'],
+        ['conséquence', 'donc, alors, ainsi, c\'est pourquoi, par conséquent'],
+        ['alternative', 'ou, ou bien, soit… soit'],
+        ['explication', 'c\'est-à-dire, en effet'],
+        ['transition, argument', 'or'],
+      ],
+      note: 'Conjonctions de coordination : mais, ou, et, donc, or, ni, car. Les autres sont des adverbes coordonnants.' },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'ponctuation avec les coordonnants', items: [
+          '**Virgule devant** les coordonnants (mais, car, donc, or, puis, cependant…).',
+          '**Pas de virgule** devant **et**, **ou**, **ni** quand ils unissent deux éléments.',
+          'Virgule devant « et » si la 2<sup>e</sup> partie a un sujet différent et qu\'on veut marquer une pause, ou dans une énumération répétée (et… et…).',
+        ] } ],
+      [ { t: 'list', h: 'signes de juxtaposition', items: [
+          '**Virgule** : énumération, phrases courtes liées.',
+          '**Point-virgule** : deux phrases étroitement liées, souvent en opposition ou en parallèle.',
+          '**Deux-points** : explication, cause, conséquence ou énumération annoncée.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Ponctuer : « Elle voulait venir mais elle était malade donc elle est restée chez elle. »',
+      r: 'Elle voulait venir, mais elle était malade, donc elle est restée chez elle.' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Nommer le lien : « Il a raté l\'autobus : il est arrivé en retard. »',
+      s: [ 'deux-points → juxtaposition', 'lien sous-entendu → conséquence // donc il est arrivé en retard' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Coordonner correctement.',
+      p: [ '✗ « J\'aime le soccer et jouer au hockey. » (un GN et un GInf : fonctions semblables, mais structures déséquilibrées)', '✓ « J\'aime jouer au soccer et au hockey. »', '✗ « Il n\'aime ni le froid, ni la neige. »  ✓ « Il n\'aime ni le froid ni la neige. »' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Juxtaposer avec un point-virgule : « Mon frère adore les sciences. Ma sœur préfère les arts. »',
+      r: 'Mon frère adore les sciences ; ma sœur préfère les arts.' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Oublier la virgule devant « mais » ou « car ».',
+          'Mettre une virgule entre deux éléments coordonnés par « et ».',
+          'Coordonner des éléments de structures différentes.',
+          'Commencer une phrase par « Car » (on écrit plutôt « En effet »).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Coordination = coordonnant ; juxtaposition = ponctuation.',
+          'Virgule devant mais, car, donc.',
+          'Pas de virgule devant et, ou, ni (2 éléments).',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 22. Ponctuation ============ */
+ponctuation: {
+  bulle: 'la ponctuation',
+  sous: 'La ponctuation (surtout la virgule)',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'on met une virgule…', items: [
+          'après un **CP en début de phrase** : « Demain, … »',
+          'autour d\'un **CP au milieu** de la phrase : « Nous irons, demain, … »',
+          'entre les éléments d\'une **énumération** (sauf devant et, ou).',
+          'devant les **coordonnants** mais, car, donc, or…',
+          'autour d\'un **complément du nom détaché** (apposition) : « Paul, mon voisin, … »',
+          'autour d\'une **relative explicative** : « Mon frère, qui vit à Gatineau, … »',
+          'autour d\'une **apostrophe** : « Julie, viens ici. »',
+          'autour d\'une **incise** : « Oui, dit-il, je viens. »',
+          'après un **organisateur textuel** : « Ensuite, … »',
+          'pour détacher un élément (emphase) : « Ce film, je l\'ai adoré. »',
+        ] } ],
+      [ { t: 'box', h: 'virgules INTERDITES', f: 'entre le sujet et le verbe<br>entre le verbe et son complément (CD, CI)<br>entre le verbe et l\'attribut', note: 'Sauf si un élément est inséré entre eux : on met alors une virgule avant ET après cet élément.' },
+        { t: 'list', h: 'les autres signes', items: [
+          '**Point-virgule** : sépare deux phrases étroitement liées.',
+          '**Deux-points** : annonce une explication, une énumération ou une citation.',
+          '**Guillemets** « » : citation, mot employé de façon particulière.',
+          '**Parenthèses** : information accessoire.',
+          '**Tiret** : dialogue ; ou encadre une précision (comme des parenthèses).',
+          '**Points de suspension** : phrase inachevée, hésitation (jamais après « etc. »).',
+        ] } ],
+    ] },
+    { t: 'tab', h: 'espaces (typographie française)', full: true, lcol: true,
+      head: ['Signe', 'Avant', 'Après'],
+      rows: [
+        ['. , …', 'aucune', 'une espace'],
+        ['; ! ?', 'espace fine (ou aucune à la main)', 'une espace'],
+        [':', 'une espace', 'une espace'],
+        ['« »', 'espace après « et avant »', '—'],
+      ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Ajouter les virgules : « Pendant les vacances mes cousins qui habitent en Gaspésie sont venus nous voir mais ils sont repartis trop vite. »',
+      s: [ '« Pendant les vacances, » → CP en début de phrase', '« mes cousins, qui habitent en Gaspésie, » → relative explicative', '« , mais ils… » → coordonnant' ],
+      r: 'Pendant les vacances, mes cousins, qui habitent en Gaspésie, sont venus nous voir, mais ils sont repartis trop vite.' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Trouver l\'erreur : « Les élèves de la classe de madame Roy, ont gagné le concours. »',
+      s: [ 'sujet → « Les élèves de la classe de madame Roy »', 'verbe → « ont gagné »', 'virgule entre le sujet et le verbe ✗' ],
+      r: 'Les élèves de la classe de madame Roy ont gagné le concours.' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Relative déterminative ou explicative ?',
+      p: [ '« Les élèves __qui ont étudié__ ont réussi. » → **déterminative** : seulement ceux qui ont étudié. Pas de virgules.', '« Les élèves, __qui ont étudié__, ont réussi. » → **explicative** : tous les élèves ont étudié. Virgules.' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Virgule entre un long sujet et son verbe.',
+          'Oublier la 2<sup>e</sup> virgule d\'un élément inséré.',
+          'Mettre « … » après « etc. ».',
+          'Virgule avant « que » dans « Je pense que… ».',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'CP déplacé → virgule.',
+          'Jamais entre sujet et verbe.',
+          'Élément inséré → deux virgules.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 23. Accords GN et GV ============ */
+'accords-gn-gv': {
+  bulle: 'accords GN et GV',
+  sous: 'Les accords dans le groupe du nom et dans le groupe du verbe',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'txt', h: 'dans le GN', p: [
+          'Le **nom noyau** est le **donneur** : il donne son **genre** et son **nombre** au déterminant et aux adjectifs.',
+          'les __petites__ voitures __rouges__ · un __vieil__ ami',
+        ] },
+        { t: 'list', items: [
+          'Adjectif qui qualifie plusieurs noms : **pluriel** ; masculin si un des noms est masculin (une jupe et un chandail __neufs__).',
+          '**Adjectifs de couleur** : simples, ils s\'accordent (des robes __vertes__) ; tirés d\'un nom, ils sont invariables (des chandails __orange__, __marron__), sauf rose, mauve, écarlate, fauve, pourpre ; composés, ils sont invariables (des yeux __bleu foncé__).',
+          '**Demi** : invariable devant le nom (une __demi__-heure) ; accordé en genre après (deux heures et __demie__).',
+          '**Vingt** et **cent** prennent un s s\'ils sont multipliés et terminent le nombre : quatre-vingt__s__, deux cent__s__, mais deux cent trois. **Mille** est invariable.',
+        ] } ],
+      [ { t: 'txt', h: 'dans le GV', p: [
+          'Le **sujet** est le donneur : le **verbe** s\'accorde en **personne** et en **nombre** avec le noyau du sujet.',
+          'L\'**attribut du sujet** s\'accorde en **genre** et en **nombre** avec le sujet.',
+          'Mes sœurs __sont__ __contentes__.',
+        ] },
+        { t: 'list', h: 'cas délicats (sujet)', items: [
+          'Sujet **« qui »** : accord avec l\'antécédent (C\'est moi qui __suis__ prêt ; les amis qui __viennent__).',
+          '**Plusieurs sujets** : pluriel ; toi et moi → nous (Toi et moi __partirons__).',
+          '**Sujet éloigné** ou **inversé** : bien le trouver (Où __vont__ les oiseaux ?).',
+          '**Sujet collectif** + complément (une foule de gens) : accord selon le sens (__attendait__ ou __attendaient__).',
+          '**La plupart**, **beaucoup** + nom pluriel : verbe au pluriel.',
+          '**Écran** entre le sujet et le verbe : « Les élèves que le prof __interroge__… » (sujet = le prof).',
+        ] } ],
+    ] },
+    { t: 'box', h: 'méthode de révision', f: 'Verbe → « C\'est… qui » → sujet → flèche vers le verbe · Nom → flèche vers déterminant et adjectifs' },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Corriger : « Les spectateurs, émus par la finale, applaudissait les acteur québécois. »',
+      s: [ 'sujet → « Les spectateurs » (3<sup>e</sup> pers. plur.)', 'applaudissait → applaudissaient', 'GN « les acteur québécois » → noyau pluriel : les acteurs québécois' ],
+      r: 'Les spectateurs, émus par la finale, applaudissaient les acteurs québécois.' },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Accorder : « Ce sont mes amies qui (avoir) organisé la fête. Elles semblaient (ravi). »',
+      s: [ 'qui → antécédent « mes amies » → ont', 'attribut de « Elles » → ravies' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Couleurs : « des souliers (brun) et des chandails (orange) avec des bas (vert pâle) ».',
+      s: [ 'brun → bruns // couleur simple', 'orange → orange // nom de fruit : invariable', 'vert pâle → vert pâle // couleur composée : invariable' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Écrire en lettres : 280 et 300.',
+      r: 'deux cent quatre-vingts (ou deux-cent-quatre-vingts, orthographe rectifiée) ; trois cents' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Accorder le verbe avec le mot le plus proche au lieu du vrai sujet.',
+          'Oublier l\'accord de l\'attribut avec le sujet.',
+          '« leur » pronom ne prend jamais de s.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'GN : le nom donne son genre et son nombre.',
+          'GV : le sujet donne personne et nombre au verbe.',
+          'Attribut = accord avec le sujet.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 24. Participe passé ============ */
+'participe-passe': {
+  bulle: 'participe passé',
+  sous: 'L\'accord du participe passé',
+  recto: [
+    { t: 'tab', h: 'les 4 grandes règles', full: true, lcol: true,
+      head: ['Cas', 'Règle', 'Exemple'],
+      rows: [
+        ['**Seul** (sans auxiliaire)', 'comme un **adjectif** : avec le nom qu\'il complète', 'des devoirs __terminés__'],
+        ['avec **être**', 'avec le **sujet**', 'Elles sont __parties__ tôt.'],
+        ['avec **avoir**', 'avec le **CD s\'il est placé avant** le verbe ; sinon, **invariable**', 'Les pommes que j\'ai __mangées__. / J\'ai __mangé__ des pommes.'],
+        ['**verbe pronominal**', 'voir ci-dessous', 'Elle s\'est __lavée__. / Elle s\'est __lavé__ les mains.'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'avec avoir : trouver le CD', items: [
+          'Poser la question : « avoir + participe + **qui ?** ou **quoi ?** »',
+          'Le CD est souvent un pronom placé avant : **que**, **le**, **la**, **les**, **l\'**, **me**, **te**, **nous**, **vous**.',
+          '« que » → chercher son **antécédent** pour connaître le genre et le nombre.',
+          'Avec **en** : participe **invariable** (Des pommes, j\'en ai __mangé__).',
+        ] },
+        { t: 'list', h: 'cas particuliers', items: [
+          '**Coûté**, **valu**, **pesé**, **mesuré**, **duré** avec un complément de prix, de poids ou de durée : invariables (les 20 $ que ce livre m\'a __coûté__).',
+          '**Fait** suivi d\'un infinitif : toujours invariable (Elle s\'est __fait__ couper les cheveux).',
+          'Participe d\'un verbe **impersonnel** : invariable (les tempêtes qu\'il y a __eu__).',
+        ] } ],
+      [ { t: 'list', h: 'verbes pronominaux', items: [
+          '**Essentiellement pronominaux** (n\'existent qu\'avec « se ») : accord avec le **sujet** : Elles se sont __souvenues__. Il s\'est __évanoui__.',
+          '**Sens différent** du verbe non pronominal (s\'apercevoir, s\'attendre) : accord avec le **sujet** : Elles se sont __aperçues__ de leur erreur.',
+          '**Autres** : on remplace « être » par « avoir » et on applique la règle du CD placé avant.',
+          '• Elle s\'est __lavée__ → elle a lavé qui ? se (= elle), placé avant → accord.',
+          '• Elle s\'est __lavé__ les mains → CD « les mains » placé après → invariable.',
+          '• Ils se sont __parlé__ → parler **à** quelqu\'un : se = CI → invariable.',
+        ] } ],
+    ] },
+    { t: 'box', h: 'démarche', f: 'auxiliaire ? → être : sujet · avoir : CD avant ? · pronominal : type de verbe, puis CD' },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: '« Les lettres que tu m\'as (envoyer) sont (arriver) hier. »',
+      s: [ 'm\'as envoyé… : auxiliaire avoir ; envoyé quoi ? « que » = les lettres, placé avant → envoyées', 'sont arrivé… : auxiliaire être → accord avec « les lettres » → arrivées' ],
+      r: 'Les lettres que tu m\'as envoyées sont arrivées hier.' },
+    { t: 'ex', h: 'Exemple 2 —', q: '« Nous avons (voir) plusieurs films. Ceux que nous avons (préférer) étaient québécois. »',
+      s: [ 'avons vu quoi ? « plusieurs films » placé après → vu (invariable)', 'avons préféré quoi ? « que » = ceux (films), placé avant → préférés' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Pronominaux.',
+      s: [ 'Elles se sont (téléphoner) → téléphoné // téléphoner À : se = CI', 'Elles se sont (maquiller) → maquillées // maquiller qui ? se, avant', 'Elles se sont (acheter) des billets → acheté // CD après', 'Les billets qu\'elles se sont (acheter) → achetés // CD « que » avant', 'Elles se sont (enfuir) → enfuies // essentiellement pronominal' ] },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Accorder avec le sujet quand l\'auxiliaire est avoir.',
+          'Accorder avec un CD placé après.',
+          'Oublier de remonter à l\'antécédent de « que ».',
+          '« Ils se sont parlés » ✗ → « parlé ».',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Être → sujet.',
+          'Avoir → CD placé avant.',
+          'En, fait + infinitif → invariable.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 25. Conjugaison ============ */
+conjugaison: {
+  bulle: 'conjugaison',
+  sous: 'Modes, temps et concordance des temps',
+  recto: [
+    { t: 'tab', h: 'les modes', full: true, lcol: true,
+      head: ['Mode', 'Valeur', 'Exemple'],
+      rows: [
+        ['**Indicatif**', 'faits réels, situés dans le temps (inclut le conditionnel présent et passé)', 'il vient, il viendra, il viendrait'],
+        ['**Subjonctif**', 'souhait, doute, obligation, sentiment ; après certains subordonnants', 'Il faut qu\'il __vienne__.'],
+        ['**Impératif**', 'ordre, conseil (sans sujet)', 'Viens ! Venons ! Venez !'],
+        ['**Infinitif**', 'forme non conjuguée', 'venir, être venu'],
+        ['**Participe**', 'présent (-ant) ou passé', 'venant, venu'],
+      ] },
+    { t: 'cols', c: [
+      [ { t: 'box', h: 'si + imparfait → conditionnel', f: 'Si j\'<b>avais</b> le temps, j\'<b>irais</b>.<br>Si j\'<b>avais eu</b> le temps, je <b>serais allé</b>.', note: 'Jamais de conditionnel après « si » : « Si j\'aurais » ✗' },
+        { t: 'list', h: 'terminaisons à connaître', items: [
+          'Impératif des verbes en -er : pas de s (mange, parle), sauf devant en et y (manges-en, vas-y).',
+          'Futur (je parlerai) ≠ conditionnel (je parlerais) : remplacer par « nous » (parlerons / parlerions).',
+          '-é (participe) ou -er (infinitif) ? Remplacer par « vendu » / « vendre ».',
+          'Subjonctif de faire, pouvoir, savoir, aller : que je fasse, puisse, sache, aille.',
+        ] } ],
+      [ { t: 'tab', h: 'concordance : verbe principal au PASSÉ', full: true, lcol: true,
+          head: ['L\'action de la subordonnée est…', 'Temps'],
+          rows: [
+            ['**en même temps** (simultanéité)', 'imparfait : Je savais qu\'il __était__ là.'],
+            ['**avant** (antériorité)', 'plus-que-parfait : Je savais qu\'il __était parti__.'],
+            ['**après** (postériorité)', 'conditionnel présent : Je savais qu\'il __viendrait__.'],
+          ],
+          note: 'Verbe principal au présent ou au futur : tous les temps sont possibles selon le sens.' },
+        { t: 'list', h: 'temps composés', items: [
+          'auxiliaire (avoir ou être) conjugué + participe passé.',
+          'Plus-que-parfait = imparfait de l\'auxiliaire : j\'__avais__ fini.',
+          'Futur antérieur = futur de l\'auxiliaire : j\'__aurai__ fini.',
+          'Conditionnel passé : j\'__aurais__ fini.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Concordance : « Elle croyait que tu (réussir) ton examen la semaine suivante. »',
+      s: [ 'verbe principal au passé (croyait)', 'action après → postériorité → conditionnel présent' ], r: 'que tu réussirais' },
+    { t: 'ex', h: 'Exemple 2 —', q: '« Si tu (étudier) davantage, tu (obtenir) de meilleures notes. »',
+      r: 'Si tu étudiais davantage, tu obtiendrais de meilleures notes.' },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Mode : « Bien qu\'il (pleuvoir), nous jouerons. Il faut que tu (faire) ton travail. »',
+      s: [ 'bien que → subjonctif → qu\'il pleuve', 'il faut que → subjonctif → que tu fasses' ] },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Futur ou conditionnel ? « Demain, je (aller) au cinéma si j\'ai de l\'argent. »',
+      s: [ 'si + présent → futur dans la principale', 'j\'irai (et non j\'irais)' ] },
+    { t: 'ex', h: 'Exemple 5 —', q: 'Impératif : « (Manger) tes légumes ! (Aller) - y ! »',
+      r: 'Mange tes légumes ! Vas-y !' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          '« Si j\'aurais » ✗.',
+          'Confondre je finirai (futur) et je finirais (conditionnel).',
+          '« Il faut que tu fais » ✗ → « que tu fasses ».',
+          'Mettre un s à l\'impératif des verbes en -er (« manges » ✗).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Si + imparfait → conditionnel.',
+          'Passé : simultanéité imparfait, antériorité plus-que-parfait, postériorité conditionnel.',
+          'Bien que, pour que, il faut que → subjonctif.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 26. Lexique ============ */
+lexique: {
+  bulle: 'lexique',
+  sous: 'Lexique : formation des mots, sens et variétés de langue',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'tab', h: 'la formation des mots', full: true, lcol: true,
+          head: ['Procédé', 'Exemple'],
+          rows: [
+            ['**dérivation** (préfixe, suffixe)', '__in__égal, bleu__âtre__, __dé__faire'],
+            ['**composition**', 'arc-en-ciel, pomme de terre, portefeuille'],
+            ['**télescopage** (mot-valise)', 'courriel (courrier + électronique)'],
+            ['**abrègement**', 'prof, ado, vélo'],
+            ['**sigle** / **acronyme**', 'CÉGEP, SAAQ / radar, ovni'],
+            ['**emprunt**', 'pizza (italien), kayak (inuktitut)'],
+            ['**néologisme**', 'clavarder, divulgâcher'],
+          ] },
+        { t: 'list', h: 'les sens d\'un mot', items: [
+          '**Sens propre** (premier) / **figuré** (imagé) : un __loup__ / cet homme est un __loup__.',
+          '**Dénotation** (sens neutre) / **connotation** (valeur ajoutée, positive ou négative).',
+          '**Polysémie** : un mot a plusieurs sens (une __souris__ : animal ou accessoire).',
+        ] } ],
+      [ { t: 'list', h: 'les relations entre les mots', items: [
+          '**Synonymes** : sens proche (rapide / vite).',
+          '**Antonymes** : sens contraire (généreux / avare).',
+          '**Homophones** : même son, sens différent (vert, verre, vers, ver).',
+          '**Paronymes** : mots qui se ressemblent (éminent / imminent, conjecture / conjoncture).',
+          '**Champ lexical** : mots liés à un même thème.',
+          '**Générique** / **spécifique** : fruit → pomme.',
+        ] },
+        { t: 'tab', h: 'les variétés de langue', full: true, lcol: true,
+          head: ['Variété', 'Exemple'],
+          rows: [
+            ['**soutenue**', 'Je suis fort las de ces querelles.'],
+            ['**standard**', 'Je suis fatigué de ces disputes.'],
+            ['**familière**', 'Chu tanné de ces chicanes.'],
+            ['**populaire**', 'expressions très relâchées, parfois vulgaires'],
+          ],
+          note: 'À l\'écrit scolaire : la langue **standard**. Les québécismes standards (courriel, magasiner, dépanneur) sont acceptés.' } ],
+    ] },
+    { t: 'tab', h: 'anglicismes fréquents à éviter', full: true, lcol: true,
+      head: ['À éviter', 'À dire'],
+      rows: [
+        ['appliquer sur un emploi', 'postuler un emploi, poser sa candidature'],
+        ['prendre une marche', 'faire une promenade'],
+        ['canceller, céduler', 'annuler, planifier (ou fixer)'],
+        ['à date', 'jusqu\'à maintenant, jusqu\'ici'],
+        ['définitivement (au sens de « certainement »)', 'certainement, assurément'],
+        ['faire du sens', 'avoir du sens, être logique'],
+      ] },
+  ],
+  verso: [
+    { t: 'ex', h: 'Exemple 1 —', q: 'Analyser la formation : « inacceptable », « téléverser », « OQLF ».',
+      s: [ 'in + accept + able → dérivation // préfixe + suffixe', 'élément télé- (« à distance ») + verser → néologisme québécois', 'OQLF → sigle // Office québécois de la langue française' ] },
+    { t: 'ex', h: 'Exemple 2 —', q: 'Connotation : classer « bavard », « éloquent », « volubile ».',
+      s: [ 'éloquent → mélioratif', 'volubile → plutôt neutre', 'bavard → péjoratif' ] },
+    { t: 'ex', h: 'Exemple 3 —', q: 'Récrire en langue standard : « Mon chum pis moi, on a jasé longtemps, c\'tait l\'fun. »',
+      r: 'Mon ami et moi avons longuement discuté ; c\'était agréable.' },
+    { t: 'ex', h: 'Exemple 4 —', q: 'Paronymes : « La tempête est (éminente / imminente). »',
+      r: 'imminente (qui va arriver bientôt) ; éminent = remarquable' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Utiliser un mot familier dans une lettre ouverte.',
+          'Confondre des paronymes (effraction / infraction).',
+          'Utiliser un anglicisme sans le savoir : vérifier dans un dictionnaire ou la Banque de dépannage linguistique de l\'OQLF.',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Dérivation, composition, emprunt…',
+          'Dénotation (neutre) vs connotation (jugement).',
+          'Écrit scolaire = langue standard.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ 27. Oral ============ */
+oral: {
+  bulle: 'communication orale',
+  sous: 'Communication orale : débat et exposé argumentatif',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'le débat', items: [
+          '**Animateur** (modérateur) : présente le sujet, donne la parole, fait respecter le temps, résume.',
+          '**Débatteurs** : défendent une position avec des arguments et des preuves.',
+          '**Public** : écoute, pose parfois des questions.',
+        ] },
+        { t: 'list', h: 'stratégies pendant un débat', items: [
+          '**Écouter** activement et prendre des notes.',
+          '**Reformuler** la position de l\'autre avant d\'y répondre (« Si je comprends bien… »).',
+          '**Concéder** puis **réfuter** (« Tu as raison sur ce point, mais… »).',
+          'Demander des **précisions** ou des **preuves**.',
+          'Rester **respectueux** : on critique les idées, pas les personnes.',
+        ] } ],
+      [ { t: 'list', h: 'l\'exposé argumentatif', items: [
+          '**Introduction** : accroche, sujet, thèse, annonce du plan.',
+          '**Développement** : arguments et preuves, avec des marqueurs clairs (« Mon deuxième argument… »).',
+          '**Conclusion** : rappel de la thèse et ouverture ; remercier l\'auditoire.',
+          'Utiliser des **aide-mémoire** (mots-clés, pas un texte à lire) et un **support visuel** simple.',
+        ] },
+        { t: 'tab', h: 'les éléments à travailler', full: true, lcol: true,
+          head: ['Type', 'Éléments'],
+          rows: [
+            ['**prosodiques** (la voix)', 'volume, débit, intonation, articulation, pauses'],
+            ['**non verbaux** (le corps)', 'regard, posture, gestes, expressions du visage'],
+            ['**verbaux** (la langue)', 'vocabulaire précis, langue standard, marqueurs de relation'],
+          ] } ],
+    ] },
+    { t: 'list', h: 'formules utiles', items: [
+      'Donner son opinion : « À mon avis… », « Je suis convaincu que… », « Pour ma part… »',
+      'Être d\'accord : « Je partage ton point de vue », « Effectivement… »',
+      'Être en désaccord : « Je ne suis pas de cet avis, car… », « Au contraire… »',
+      'Garder la parole : « Permets-moi de terminer… » · Conclure : « En somme… »',
+    ] },
+  ],
+  verso: [
+    { t: 'cite', h: 'Échange à analyser (débat sur l\'uniforme scolaire)', p: [
+      '<b>Amir</b> — L\'uniforme réduit la pression liée aux marques de vêtements.',
+      '<b>Chloé</b> — Si je comprends bien, tu dis que tout le monde serait sur un pied d\'égalité ? C\'est vrai en partie. Par contre, les élèves se distinguent aussi par leurs souliers, leur cellulaire… La pression ne disparaît donc pas.',
+      '<b>Amir</b> — Tu as raison, mais elle diminue quand même, selon le sondage de notre école.',
+    ] },
+    { t: 'ex', h: 'Analyse :', q: '',
+      s: [ '« Si je comprends bien, tu dis que… » → reformulation', '« C\'est vrai en partie. » → concession', '« Par contre, … » → réfutation + exemples', '« Tu as raison, mais… » → concession puis retour à sa thèse', '« selon le sondage » → preuve (appel à une source)' ],
+      r: 'un débat respectueux : on reformule, on concède, on réfute' },
+    { t: 'cols', c: [
+      [ { t: 'pieges', items: [
+          'Lire son texte mot à mot sans regarder l\'auditoire.',
+          'Parler trop vite par nervosité.',
+          'Couper la parole ou attaquer la personne plutôt que l\'idée.',
+          'Utiliser des tics de langage (« genre », « comme », « faque »).',
+        ] } ],
+      [ { t: 'retenir', items: [
+          'Écouter, reformuler, concéder, réfuter.',
+          'Voix, corps, langue : les trois comptent.',
+          'Aide-mémoire = mots-clés.',
+        ] } ],
+    ] },
+  ],
+},
+
+/* ============ GÉNÉRAL ============ */
+general: {
+  bulle: 'français : tout en 1',
+  sous: 'Résumé de l\'année — Français, secondaire 5',
+  recto: [
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'argumenter', items: [
+          '**Thèse** + **arguments** + **preuves** ; thèse adverse.',
+          'Intro : sujet **amené**, **posé**, **divisé** · Conclusion : **synthèse** + **ouverture**.',
+          '**Stratégies** : explication argumentative, réfutation, démonstration.',
+          '**Contre-argumentation** : concession (certes) + réfutation (toutefois).',
+          '**Procédés** : exemple, statistique, appel à l\'autorité, comparaison, question rhétorique, anecdote…',
+          '**Point de vue** engagé / distancié ; **marques de modalité** : vocabulaire connoté, adverbes, conditionnel, ponctuation expressive…',
+          '**Énonciation** : énonciateur, destinataire, ton (justifié par des indices).',
+          '**Cohérence** : pertinence, continuité (reprises), progression, non-contradiction.',
+        ] } ],
+      [ { t: 'list', h: 'lire la littérature', items: [
+          '**Figures** : comparaison (comme), métaphore, personnification, hyperbole, litote, antithèse, oxymore, gradation, anaphore, ironie → relever, nommer, expliquer l\'effet.',
+          '**Récit** : schéma narratif ; narrateur participant, omniscient ou témoin.',
+          '**Poésie** : alexandrin 12, décasyllabe 10, octosyllabe 8 ; rimes plates, croisées, embrassées.',
+          '**Théâtre** : répliques, didascalies, aparté, monologue, double énonciation.',
+          '**Appréciation** : critère → jugement → justification → exemple.',
+        ] } ],
+    ] },
+    { t: 'cols', c: [
+      [ { t: 'list', h: 'grammaire de la phrase', items: [
+          'P = **sujet** + **prédicat** + (**CP**). CP : déplaçable, effaçable.',
+          'CD : le/la/les ; CI : lui/leur/y/en ; attribut : après être, sembler…',
+          'Subordonnées : **relative** (complément du nom), **complétive** (CD…), **circonstancielle** (CP).',
+          'dont = de ; bien que, pour que, il faut que → **subjonctif**.',
+          'Virgule : après un CP en tête, devant mais/car/donc, autour d\'un élément inséré ; **jamais** entre sujet et verbe.',
+        ] } ],
+      [ { t: 'list', h: 'accords et conjugaison', items: [
+          'GN : le nom donne genre et nombre. GV : le sujet donne personne et nombre.',
+          'PP : **être** → sujet ; **avoir** → CD placé avant ; « en » et « fait + infinitif » → invariable.',
+          '**Si + imparfait → conditionnel.**',
+          'Concordance au passé : imparfait (même temps), plus-que-parfait (avant), conditionnel (après).',
+          'Langue **standard** ; éviter les anglicismes.',
+        ] } ],
+    ] },
+  ],
+  verso: [
+    { t: 'cols', c: [
+      [ { t: 'ex', h: 'Thèse —', q: '« Les écoles devraient commencer plus tard. »', s: [ '« devraient » → conditionnel // position claire' ] },
+        { t: 'ex', h: 'Contre-argument —', q: '« Certes, … Toutefois, … »', s: [ 'concession → réfutation' ] },
+        { t: 'ex', h: 'Modalité —', q: '« Hélas, un règlement absurde ! »', s: [ 'adverbe + adjectif péjoratif + exclamation' ] },
+        { t: 'ex', h: 'Figure —', q: '« La ville dormait »', s: [ 'personnification // calme, vie' ] } ],
+      [ { t: 'ex', h: 'Relatif —', q: 'l\'outil ___ j\'ai besoin', s: [ 'dont // avoir besoin DE' ] },
+        { t: 'ex', h: 'PP —', q: 'les lettres que tu m\'as (envoyer)', s: [ 'envoyées // CD « que » avant' ] },
+        { t: 'ex', h: 'Conjugaison —', q: 'Si j\'(avoir) le temps, j\'(aller)…', s: [ 'avais → irais' ] },
+        { t: 'ex', h: 'Virgule —', q: 'Pendant l\'été mes cousins sont venus.', s: [ 'Pendant l\'été, mes cousins… // CP en tête' ] } ],
+    ] },
+    { t: 'pieges', items: [
+      'Thèse floue ; argument sans preuve ; nouvel argument dans la conclusion.',
+      'Nommer une figure ou un ton sans expliquer l\'effet ni citer d\'indices.',
+      'Virgule entre sujet et verbe ; oublier la 2<sup>e</sup> virgule d\'un élément inséré.',
+      'Accorder le PP avec avoir sur le sujet ; accorder avec un CD placé après.',
+      '« Si j\'aurais », « malgré que », « après qu\'il soit », « la chose que j\'ai besoin ».',
+      'Langue familière ou anglicismes dans un texte scolaire.',
+    ] },
+    { t: 'retenir', items: [
+      'Épreuve unique : planifier, rédiger, réviser (garder du temps pour les accords !).',
+      '5 critères : situation de communication, cohérence, vocabulaire, syntaxe et ponctuation, orthographe.',
+      'Réviser : chaque verbe → son sujet ; chaque PP → son auxiliaire ; chaque GN → ses accords.',
+    ] },
+  ],
+},
+
+});
+
 </script>
 <script>
 /* =========================================================
@@ -4546,6 +6294,8 @@ general: {
     return String(s == null ? '' : s)
       .replace(/\*\*(.+?)\*\*/g, '<b class="kw">$1</b>')
       .replace(/!!(.+?)!!/g, '<span class="pk">$1</span>')
+      .replace(/__(.+?)__/g, '<u>$1</u>')
+      .replace(/([✓✗])/g, '<span class="sym">$1</span>')
       .replace(/\{\{(.+?)\|(.+?)\}\}/g, '<span class="fr"><span>$1</span><span>$2</span></span>');
   }
 
@@ -4735,6 +6485,8 @@ general: {
           (b.s ? steps(b.s) : '') +
           (b.p ? [].concat(b.p).map(p => `<p>${md(p)}</p>`).join('') : '') +
           (b.r ? `<p class="rep">Réponse : <b>${md(b.r)}</b></p>` : '') + `</div>`;
+      case 'cite':
+        return `<div class="blk">${H(b.h)}${b.intro ? `<p>${md(b.intro)}</p>` : ''}<blockquote class="cite">${[].concat(b.p).map(p => `<p>${md(p)}</p>`).join('')}${b.src ? `<footer>${md(b.src)}</footer>` : ''}</blockquote></div>`;
       case 'fig':
         return `<div class="blk">${H(b.h)}<div class="figs">${[].concat(b.figs || b.fig).map(figure).join('')}</div>${b.note ? `<p class="note">${md(b.note)}</p>` : ''}</div>`;
       case 'cols':

@@ -356,6 +356,7 @@ main { max-width: 900px; margin: 0 auto; padding-block: 20px 60px; padding-inlin
   box-decoration-break: clone;
 }
 .pk { color: var(--paper-pink); }
+.sym { font-family: "Segoe UI Symbol", "Apple Symbols", "DejaVu Sans", "Noto Sans Symbols 2", sans-serif; font-weight: 700; font-size: .9em; }
 .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; line-height: 1.02; margin: 0 2px; font-size: .92em; }
 .fr > span:first-child { border-bottom: 1.4px solid currentColor; padding: 0 2px; }
 .fr > span:last-child { padding: 0 2px; }
@@ -396,7 +397,7 @@ table.tab td.l, table.tab th.l { text-align: left; }
 .ex-h { font-weight: 700; color: var(--paper-pink); margin-right: 4px; }
 .steps {
   display: grid;
-  grid-template-columns: max-content auto max-content minmax(0, 1fr);
+  grid-template-columns: minmax(0, max-content) auto minmax(0, max-content) minmax(0, 1fr);
   gap: 0 6px;
   align-items: baseline;
   font-size: 1.06em;
@@ -404,6 +405,7 @@ table.tab td.l, table.tab th.l { text-align: left; }
 }
 .steps .l { text-align: right; }
 .steps .o { text-align: center; }
+.steps .l, .steps .r, .steps .full { min-width: 0; overflow-wrap: anywhere; }
 .steps .full { grid-column: 1 / 4; }
 .steps .c { color: var(--paper-pink); font-size: .88em; padding-left: 8px; }
 .rep { margin-top: 2px; }
@@ -435,11 +437,23 @@ svg .nlab { font-size: 13px; fill: #26252d; font-family: var(--hand); text-ancho
 svg .w { font-size: 12px; fill: #26252d; font-family: var(--hand); text-anchor: middle; dominant-baseline: central; }
 svg .wbg { fill: #fff; }
 
+/* extrait de texte à analyser */
+blockquote.cite {
+  margin: 3px 0 2px;
+  padding: 5px 12px 5px 14px;
+  border-left: 4px solid var(--paper-pink);
+  background: rgba(253, 230, 236, .45);
+  border-radius: 0 8px 8px 0;
+}
+blockquote.cite p { margin: 0 0 3px; }
+blockquote.cite footer { font-size: .85em; color: #5d5b66; text-align: right; }
+.page u { text-decoration: underline; text-decoration-color: var(--paper-pink); text-decoration-thickness: 2px; text-underline-offset: 2px; }
+
 /* pièges et à retenir */
 .pieges h3 span { background: linear-gradient(transparent 38%, var(--paper-pink-soft) 38%, var(--paper-pink-soft) 92%, transparent 92%); }
 .pieges ul { margin: 0; padding-left: 18px; }
 .pieges li { margin: 1px 0; }
-.pieges li::marker { content: "✗  "; color: var(--paper-pink); font-weight: 700; }
+.pieges li::marker { content: "×  "; color: var(--paper-pink); font-weight: 700; }
 .retenir {
   position: relative;
   background: var(--paper-note);
@@ -550,6 +564,8 @@ svg .wbg { fill: #fff; }
     return String(s == null ? '' : s)
       .replace(/\*\*(.+?)\*\*/g, '<b class="kw">$1</b>')
       .replace(/!!(.+?)!!/g, '<span class="pk">$1</span>')
+      .replace(/__(.+?)__/g, '<u>$1</u>')
+      .replace(/([✓✗])/g, '<span class="sym">$1</span>')
       .replace(/\{\{(.+?)\|(.+?)\}\}/g, '<span class="fr"><span>$1</span><span>$2</span></span>');
   }
 
@@ -739,6 +755,8 @@ svg .wbg { fill: #fff; }
           (b.s ? steps(b.s) : '') +
           (b.p ? [].concat(b.p).map(p => `<p>${md(p)}</p>`).join('') : '') +
           (b.r ? `<p class="rep">Réponse : <b>${md(b.r)}</b></p>` : '') + `</div>`;
+      case 'cite':
+        return `<div class="blk">${H(b.h)}${b.intro ? `<p>${md(b.intro)}</p>` : ''}<blockquote class="cite">${[].concat(b.p).map(p => `<p>${md(p)}</p>`).join('')}${b.src ? `<footer>${md(b.src)}</footer>` : ''}</blockquote></div>`;
       case 'fig':
         return `<div class="blk">${H(b.h)}<div class="figs">${[].concat(b.figs || b.fig).map(figure).join('')}</div>${b.note ? `<p class="note">${md(b.note)}</p>` : ''}</div>`;
       case 'cols':
