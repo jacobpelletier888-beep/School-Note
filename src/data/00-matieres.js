@@ -156,7 +156,7 @@ const DATA = {
       ],
     },
     {
-      id: 'anglais', nom: 'Anglais', court: 'anglais', couleur: '#c9b8f2', plusTard: true,
+      id: 'anglais', nom: 'Anglais', court: 'anglais', couleur: '#c9b8f2',
       sections: [
         { nom: 'Compétences et processus', concepts: [
           { id: 'response-process', titre: 'Response Process' },
