@@ -1,0 +1,36 @@
+# Notes de sec 5
+
+App web d'aide aux études pour le secondaire 5 au Québec : une feuille de notes recto verso (format lettre) par concept, dans un style « notes de cahier ».
+
+## Structure
+
+- `src/template.html` : style et code d'affichage (navigation, rendu des feuilles, impression).
+- `src/data/00-matieres.js` : liste des matières et de leurs concepts.
+- `src/data/1x-*.js` : contenu des feuilles, un fichier par section. Chaque feuille = `{ bulle, sous, recto: [blocs], verso: [blocs] }`.
+- `build.mjs` : assemble tout en une seule page HTML autonome dans `dist/`.
+- `tests/verif-pages.mjs` : vérifie avec Chromium que chaque feuille entre dans exactement 2 pages lettre.
+
+## Commandes
+
+```sh
+node build.mjs                      # génère dist/school-note.html et dist/school-note-imprimable.html
+node tests/verif-pages.mjs          # vérifie toutes les feuilles
+node tests/verif-pages.mjs math-cst # vérifie une seule matière
+```
+
+## Imprimer
+
+Ouvrir `dist/school-note-imprimable.html` dans un navigateur, choisir une feuille, cliquer sur « Imprimer ».
+Réglages : format Lettre, marges « Aucune », « Graphiques d'arrière-plan » coché.
+
+## Avancement
+
+- [x] Mathématique CST (Général + 20 concepts)
+- [ ] Mathématique TS
+- [ ] Mathématique SN
+- [ ] Français
+- [ ] Anglais (plus tard)
+- [ ] Chimie
+- [ ] Physique
+- [ ] Monde contemporain
+- [ ] Éducation financière

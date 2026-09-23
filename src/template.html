@@ -1,0 +1,846 @@
+<title>Notes de sec 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Patrick+Hand&display=swap">
+<style>
+/* ---------- Jetons : interface (suit le thème) ---------- */
+:root {
+  --bg: #f2f3f6;
+  --bg-grid: #e2e5eb;
+  --surface: #ffffff;
+  --ink: #25242c;
+  --muted: #66656f;
+  --line: #d5d6de;
+  --accent: #c93d62;
+  --accent-soft: #fbe1e8;
+  --ok: #2f7d57;
+  --ok-soft: #dcf1e5;
+  --wait: #8a6d10;
+  --wait-soft: #fbf0c8;
+  --shadow: 0 1px 2px rgba(30, 20, 40, .08), 0 6px 18px rgba(30, 20, 40, .08);
+  /* papier : toujours une feuille blanche, peu importe le thème */
+  --paper: #ffffff;
+  --paper-grid: #e4e7ec;
+  --paper-ink: #26252d;
+  --paper-rule: #8e8c98;
+  --paper-pink: #cc3f64;
+  --paper-pink-soft: #fde6ec;
+  --paper-hl: #fff09c;
+  --paper-note: #fff8d6;
+  --hand: "Patrick Hand", "Segoe Print", "Comic Sans MS", "Chalkboard SE", cursive;
+  --bubble: "Fredoka", "Arial Rounded MT Bold", "Varela Round", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #16161b;
+    --bg-grid: #212129;
+    --surface: #202028;
+    --ink: #ecebf2;
+    --muted: #a3a2ae;
+    --line: #34343f;
+    --accent: #f27a99;
+    --accent-soft: #3a2029;
+    --ok: #7fd3a6;
+    --ok-soft: #1c3328;
+    --wait: #e8c860;
+    --wait-soft: #3a3217;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 22px rgba(0, 0, 0, .35);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #16161b;
+  --bg-grid: #212129;
+  --surface: #202028;
+  --ink: #ecebf2;
+  --muted: #a3a2ae;
+  --line: #34343f;
+  --accent: #f27a99;
+  --accent-soft: #3a2029;
+  --ok: #7fd3a6;
+  --ok-soft: #1c3328;
+  --wait: #e8c860;
+  --wait-soft: #3a3217;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 22px rgba(0, 0, 0, .35);
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font-family: var(--hand);
+  font-size: 18px;
+  line-height: 1.35;
+}
+button, a { font-family: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* ---------- Barre du haut ---------- */
+.topbar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-in {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+}
+.brand { font-family: var(--bubble); font-weight: 600; color: var(--accent); font-size: 19px; letter-spacing: .01em; }
+.crumb { color: var(--muted); font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1; }
+.btn {
+  appearance: none;
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 5px 14px 4px;
+  font-size: 18px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--accent-soft); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(1.06); }
+.btn svg { width: 16px; height: 16px; }
+
+main { max-width: 900px; margin: 0 auto; padding-block: 20px 60px; padding-inline: 16px; }
+
+/* ---------- Titres bulles (interface) ---------- */
+.app-title {
+  font-family: var(--bubble);
+  font-weight: 600;
+  font-size: clamp(34px, 8vw, 54px);
+  line-height: 1.05;
+  margin: 8px 0 4px;
+  color: var(--accent-soft);
+  -webkit-text-stroke: 2px var(--accent);
+  paint-order: stroke fill;
+  text-wrap: balance;
+}
+.lede { color: var(--muted); margin: 0 0 20px; max-width: 60ch; }
+
+/* ---------- Accueil ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+.tile {
+  position: relative;
+  text-align: left;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 22px 16px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .12s ease, box-shadow .12s ease;
+  font-size: 18px;
+}
+.tile:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--ink); }
+.tile:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+.tile .tab {
+  position: absolute;
+  top: -2px;
+  left: 16px;
+  width: 54px;
+  height: 10px;
+  border: 2px solid var(--ink);
+  border-top: 0;
+  border-radius: 0 0 6px 6px;
+  background: var(--tab);
+}
+.tile .name { font-family: var(--bubble); font-weight: 600; font-size: 22px; line-height: 1.1; }
+.tile .meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: var(--muted); font-size: 16px; }
+.chip {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 1;
+  padding: 5px 9px 4px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.wait { background: var(--wait-soft); color: var(--wait); }
+.bar { height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+
+/* ---------- Liste des concepts ---------- */
+.general-card {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-bottom: 22px;
+}
+.general-card:hover { filter: brightness(1.03); }
+.general-card .gname { font-family: var(--bubble); font-weight: 600; font-size: 24px; color: var(--accent); }
+.general-card .gtext { flex: 1; min-width: 0; }
+.general-card .gsub { color: var(--muted); font-size: 16px; }
+.sec-name {
+  font-family: var(--bubble);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 22px 0 8px;
+}
+.clist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.crow {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 18px;
+}
+.crow:hover { border-color: var(--ink); }
+.crow .num {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1.5px dashed var(--muted);
+  display: grid; place-items: center;
+  font-size: 15px; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.crow.done .num { border-style: solid; border-color: var(--ok); color: var(--ok); }
+.crow.todo .ctitle { color: var(--muted); }
+
+/* ---------- Écran feuille ---------- */
+.sheet-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.print-hint { color: var(--muted); font-size: 15px; margin: 0 0 14px; }
+.print-note {
+  background: var(--wait-soft);
+  color: var(--ink);
+  border: 1.5px solid var(--wait);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 16px;
+  margin: 0 0 16px;
+}
+.side-label {
+  font-family: var(--bubble);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--accent);
+  margin: 18px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.side-label::after { content: ""; flex: 1; border-top: 2px dashed var(--line); }
+.soon {
+  background: var(--surface);
+  border: 2px dashed var(--line);
+  border-radius: 16px;
+  padding: 40px 20px;
+  text-align: center;
+}
+.soon .app-title { font-size: clamp(28px, 6vw, 40px); }
+
+/* =========================================================
+   LA FEUILLE (format lettre 8,5 x 11 po)
+   ========================================================= */
+.page {
+  --pad-x: 0.42in;
+  width: 8.5in;
+  height: 11in;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--paper-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+  background-size: 0.25in 0.25in;
+  background-position: -1px -1px;
+  color: var(--paper-ink);
+  font-family: var(--hand);
+  font-size: 15.6px;
+  line-height: 1.26;
+  padding: 0.3in var(--pad-x) 0.24in;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 4px rgba(0,0,0,.08), 0 12px 30px rgba(0,0,0,.12);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.page a { color: var(--paper-pink); }
+.p-head { display: flex; align-items: center; gap: 12px; }
+.corner { flex: 0 0 auto; width: 104px; display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+.corner .tag { color: var(--paper-pink); font-size: 15px; line-height: 1; transform: rotate(-4deg); margin-left: 4px; }
+.corner .tag.b { font-size: 12.5px; opacity: .8; margin-top: 2px; }
+.corner svg { width: 98px; height: 30px; display: block; margin: 2px 0; }
+.bubble {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+  font-family: var(--bubble);
+  font-weight: 600;
+  line-height: 1.02;
+  color: #fff3f6;
+  -webkit-text-stroke: 1.8px var(--paper-pink);
+  paint-order: stroke fill;
+  text-shadow: 2px 2px 0 #f5b6c7;
+  letter-spacing: .01em;
+  text-wrap: balance;
+}
+.p-sub { text-align: center; font-size: 15.5px; color: #55535e; margin: 2px 0 2px; }
+.p-body { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+.p-foot {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  font-size: 13px; color: #6f6d78;
+  border-top: 2px dashed var(--paper-rule);
+  padding-top: 4px;
+}
+.p-foot a { font-size: 14px; }
+
+/* blocs de premier niveau séparés par un pointillé, comme dans un cahier */
+.blk { padding: 7px 0 8px; }
+.blk + .blk { border-top: 2px dashed var(--paper-rule); }
+.p-body > .blk:first-child { border-top: 2px dashed var(--paper-rule); }
+.blk h3 {
+  font-family: var(--hand);
+  font-weight: 400;
+  font-size: 1.25em;
+  margin: 0 0 3px;
+  line-height: 1.15;
+}
+.blk h3 span {
+  background: linear-gradient(transparent 38%, var(--paper-hl) 38%, var(--paper-hl) 92%, transparent 92%);
+  padding: 0 3px;
+}
+.blk p { margin: 0 0 4px; }
+.blk p:last-child { margin-bottom: 0; }
+.kw {
+  font-weight: 700;
+  background: linear-gradient(transparent 30%, var(--paper-hl) 30%, var(--paper-hl) 94%, transparent 94%);
+  padding: 0 2px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.pk { color: var(--paper-pink); }
+.fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; line-height: 1.02; margin: 0 2px; font-size: .92em; }
+.fr > span:first-child { border-bottom: 1.4px solid currentColor; padding: 0 2px; }
+.fr > span:last-child { padding: 0 2px; }
+sup, sub { font-size: .72em; line-height: 0; }
+ul.hl { margin: 0; padding-left: 16px; }
+ul.hl li { margin: 1px 0; }
+ul.hl li::marker { content: "•  "; color: var(--paper-pink); }
+
+.cols { display: grid; gap: 0; }
+.cols > .col { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.cols > .col + .col { border-left: 2px dashed var(--paper-rule); padding-left: 12px; margin-left: 12px; }
+.cols .blk { padding: 0; border: 0 !important; }
+
+.form { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-items: baseline; }
+.form .fl { color: #4f4d58; }
+.form .fv { font-size: 1.06em; }
+.box {
+  border: 2px solid var(--paper-pink);
+  background: var(--paper-pink-soft);
+  border-radius: 10px;
+  padding: 4px 12px;
+  display: inline-block;
+  font-size: 1.09em;
+}
+.center { text-align: center; }
+
+table.tab { border-collapse: collapse; font-size: .96em; margin: 2px 0; }
+table.tab th, table.tab td { border: 1.4px solid #6e6c77; padding: 1px 7px; text-align: center; background: rgba(255,255,255,.75); }
+table.tab th { font-weight: 700; background: var(--paper-note); }
+table.tab td.l, table.tab th.l { text-align: left; }
+.tabwrap { overflow-x: auto; }
+.note { font-size: .9em; color: #5d5b66; }
+
+/* exemples */
+.ex { display: grid; grid-template-columns: minmax(0, 1fr); gap: 3px 16px; }
+.ex.has-fig { grid-template-columns: minmax(0, 1fr) auto; }
+.ex .fig { grid-row: span 3; align-self: start; }
+.ex-h { font-weight: 700; color: var(--paper-pink); margin-right: 4px; }
+.steps {
+  display: grid;
+  grid-template-columns: max-content auto max-content minmax(0, 1fr);
+  gap: 0 6px;
+  align-items: baseline;
+  font-size: 1.06em;
+  margin: 2px 0 0 10px;
+}
+.steps .l { text-align: right; }
+.steps .o { text-align: center; }
+.steps .full { grid-column: 1 / 4; }
+.steps .c { color: var(--paper-pink); font-size: .88em; padding-left: 8px; }
+.rep { margin-top: 2px; }
+.rep b { background: var(--paper-hl); padding: 0 4px; }
+
+/* figures */
+.fig { text-align: center; }
+.fig svg { display: block; margin: 0 auto; max-width: 100%; height: auto; overflow: visible; }
+.fig .cap { font-size: .8em; color: #5d5b66; }
+.figs { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: center; align-items: flex-start; }
+svg .ax { stroke: #3e3c47; stroke-width: 1.3; }
+svg .gd { stroke: #d6d9df; stroke-width: 1; }
+svg .tk { font-size: 10.5px; fill: #55535e; font-family: var(--hand); }
+svg .ln { stroke: #2d6fa8; stroke-width: 2; fill: none; }
+svg .ln2 { stroke: var(--paper-pink); stroke-width: 2; fill: none; }
+svg .ln3 { stroke: #2f8a5b; stroke-width: 2; fill: none; }
+svg .dash { stroke-dasharray: 6 4; }
+svg .zone { fill: rgba(250, 214, 80, .38); stroke: none; }
+svg .zone2 { fill: rgba(204, 63, 100, .14); stroke: none; }
+svg .pt { fill: #26252d; }
+svg .pt.open { fill: #fff; stroke: #26252d; stroke-width: 1.5; }
+svg .lb { font-size: 13px; fill: #26252d; font-family: var(--hand); }
+svg .lb.pk { fill: var(--paper-pink); }
+svg .edge { stroke: #3e3c47; stroke-width: 1.8; fill: none; }
+svg .edge.hot { stroke: var(--paper-pink); stroke-width: 3.2; }
+svg .edge.cold { stroke: #b5b3bd; stroke-dasharray: 4 4; }
+svg .node { fill: #fff; stroke: #26252d; stroke-width: 1.8; }
+svg .nlab { font-size: 13px; fill: #26252d; font-family: var(--hand); text-anchor: middle; dominant-baseline: central; }
+svg .w { font-size: 12px; fill: #26252d; font-family: var(--hand); text-anchor: middle; dominant-baseline: central; }
+svg .wbg { fill: #fff; }
+
+/* pièges et à retenir */
+.pieges h3 span { background: linear-gradient(transparent 38%, var(--paper-pink-soft) 38%, var(--paper-pink-soft) 92%, transparent 92%); }
+.pieges ul { margin: 0; padding-left: 18px; }
+.pieges li { margin: 1px 0; }
+.pieges li::marker { content: "✗  "; color: var(--paper-pink); font-weight: 700; }
+.retenir {
+  position: relative;
+  background: var(--paper-note);
+  border: 1.6px solid #e0c95c;
+  border-radius: 4px;
+  padding: 10px 14px 7px;
+  margin-top: 6px;
+  transform: rotate(-.4deg);
+}
+.retenir::before {
+  content: "";
+  position: absolute;
+  top: -8px; left: 50%;
+  width: 80px; height: 16px;
+  margin-left: -40px;
+  background: rgba(244, 170, 190, .6);
+  transform: rotate(-3deg);
+}
+.retenir h3 { text-align: center; }
+.retenir ul { margin: 0; padding-left: 18px; }
+.retenir li::marker { content: "★  "; color: #c9a21a; }
+.blk.retenir + .blk, .blk + .blk.retenir { border-top: 0; }
+
+/* ---------- Téléphone : la feuille se replie en largeur ---------- */
+@media screen and (max-width: 880px) {
+  .page {
+    width: 100%;
+    height: auto;
+    --pad-x: 14px;
+    padding: 16px var(--pad-x) 12px;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+  .p-body { overflow: visible; }
+  .p-head { flex-direction: column-reverse; gap: 4px; }
+  .corner { flex-direction: row; align-items: center; width: auto; gap: 6px; }
+  .corner svg { width: 70px; height: 22px; }
+  .bubble { font-size: 30px !important; }
+  .cols { grid-template-columns: 1fr !important; }
+  .cols > .col + .col { border-left: 0; margin-left: 0; padding-left: 0; border-top: 2px dashed var(--paper-rule); padding-top: 8px; margin-top: 8px; }
+  .ex.has-fig { grid-template-columns: minmax(0, 1fr); }
+  .ex .fig { grid-row: auto; }
+  .steps { font-size: 1em; margin-left: 0; }
+  .steps .c { grid-column: 1 / -1; padding-left: 0; margin-bottom: 2px; }
+  table.tab { font-size: .9em; }
+  .p-foot { flex-direction: column; gap: 2px; margin-top: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile { transition: none; }
+}
+
+/* ---------- Impression : exactement 2 pages ---------- */
+@page { size: letter; margin: 0; }
+@media print {
+  html, body { background: #fff !important; }
+  body { background-image: none !important; }
+  :root { padding: 0 !important; }
+  .topbar, .no-print, .side-label, .print-hint, .print-note { display: none !important; }
+  main { max-width: none; padding: 0; margin: 0; }
+  .page {
+    box-shadow: none;
+    margin: 0;
+    height: 10.98in;
+    break-after: page;
+    page-break-after: always;
+  }
+  .page.last { break-after: auto; page-break-after: auto; }
+}
+</style>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <button class="btn" id="btn-retour" type="button" hidden>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Retour
+    </button>
+    <span class="brand" id="brand">notes de sec 5</span>
+    <span class="crumb" id="crumb"></span>
+    <button class="btn primary" id="btn-imprimer" type="button" hidden>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6V2h8v4M4 12H2V6h12v6h-2M4 9h8v5H4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      Imprimer
+    </button>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+/* =========================================================
+   CONTENU (données seulement — voir src/data/)
+   ========================================================= */
+/*@@DATA@@*/
+</script>
+<script>
+/* =========================================================
+   AFFICHAGE
+   ========================================================= */
+(function () {
+  const app = document.getElementById('app');
+  const btnRetour = document.getElementById('btn-retour');
+  const btnImprimer = document.getElementById('btn-imprimer');
+  const crumb = document.getElementById('crumb');
+  const brand = document.getElementById('brand');
+
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  /* mini-balisage :  **mot-clé**   {{numérateur|dénominateur}}   !!texte rose!! */
+  function md(s) {
+    return String(s == null ? '' : s)
+      .replace(/\*\*(.+?)\*\*/g, '<b class="kw">$1</b>')
+      .replace(/!!(.+?)!!/g, '<span class="pk">$1</span>')
+      .replace(/\{\{(.+?)\|(.+?)\}\}/g, '<span class="fr"><span>$1</span><span>$2</span></span>');
+  }
+
+  const matiere = id => DATA.matieres.find(m => m.id === id);
+  const feuilles = id => (DATA.feuilles && DATA.feuilles[id]) || {};
+  const tousConcepts = m => m.sections.flatMap(s => s.concepts);
+  function progres(m) {
+    const f = feuilles(m.id);
+    const liste = tousConcepts(m);
+    const faits = liste.filter(c => f[c.id]).length + (f.general ? 1 : 0);
+    return { faits, total: liste.length + 1 };
+  }
+
+  /* ---------- crayon (coin du titre) ---------- */
+  const CRAYON = '<svg viewBox="0 0 120 34" aria-hidden="true">' +
+    '<path d="M4 17 22 9v16z" fill="#f3d2a6" stroke="#3a3440" stroke-width="1.6" stroke-linejoin="round"/>' +
+    '<path d="M4 17 10 14.4v5.2z" fill="#3a3440"/>' +
+    '<rect x="22" y="9" width="62" height="16" fill="#f7cf3c" stroke="#3a3440" stroke-width="1.6"/>' +
+    '<path d="M22 14.3h62M22 19.7h62" stroke="#e1a91f" stroke-width="1.4"/>' +
+    '<rect x="84" y="8" width="12" height="18" fill="#c9ccd3" stroke="#3a3440" stroke-width="1.6"/>' +
+    '<path d="M88 8v18M92 8v18" stroke="#8f929b" stroke-width="1.1"/>' +
+    '<path d="M96 8h14a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H96z" fill="#f4a3b8" stroke="#3a3440" stroke-width="1.6"/>' +
+    '</svg>';
+
+  /* ---------- figures ---------- */
+  let clipN = 0;
+  function figPlan(f) {
+    const W = f.w || 250, H = f.h || 210, P = 20;
+    const sx = x => P + (x - f.xmin) / (f.xmax - f.xmin) * (W - 2 * P);
+    const sy = y => H - P - (y - f.ymin) / (f.ymax - f.ymin) * (H - 2 * P);
+    const id = 'cl' + (++clipN);
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(f.alt || 'graphique')}">`;
+    s += `<defs><clipPath id="${id}"><rect x="${P}" y="${P}" width="${W - 2 * P}" height="${H - 2 * P}"/></clipPath></defs>`;
+    const g = f.grille || 1;
+    for (let x = Math.ceil(f.xmin / g) * g; x <= f.xmax; x += g) s += `<line class="gd" x1="${sx(x)}" y1="${sy(f.ymin)}" x2="${sx(x)}" y2="${sy(f.ymax)}"/>`;
+    for (let y = Math.ceil(f.ymin / g) * g; y <= f.ymax; y += g) s += `<line class="gd" x1="${sx(f.xmin)}" y1="${sy(y)}" x2="${sx(f.xmax)}" y2="${sy(y)}"/>`;
+    (f.zones || []).forEach(z => {
+      s += `<polygon clip-path="url(#${id})" class="${z.cls || 'zone'}" points="${z.pts.map(p => sx(p[0]) + ',' + sy(p[1])).join(' ')}"/>`;
+    });
+    const x0 = Math.min(Math.max(0, f.xmin), f.xmax), y0 = Math.min(Math.max(0, f.ymin), f.ymax);
+    s += `<line class="ax" x1="${sx(f.xmin)}" y1="${sy(y0)}" x2="${sx(f.xmax) + 6}" y2="${sy(y0)}"/>`;
+    s += `<line class="ax" x1="${sx(x0)}" y1="${sy(f.ymin)}" x2="${sx(x0)}" y2="${sy(f.ymax) - 6}"/>`;
+    s += `<text class="tk" x="${sx(f.xmax) + 8}" y="${sy(y0) + 4}">${esc(f.nx || 'x')}</text>`;
+    s += `<text class="tk" x="${sx(x0) - 4}" y="${sy(f.ymax) - 9}" text-anchor="middle">${esc(f.ny || 'y')}</text>`;
+    const tx = f.tick || 1, ty = f.ticky || tx;
+    for (let x = Math.ceil(f.xmin / tx) * tx; x <= f.xmax + 1e-9; x += tx) if (Math.abs(x) > 1e-9)
+      s += `<text class="tk" x="${sx(x)}" y="${sy(y0) + 12}" text-anchor="middle">${x}</text>`;
+    for (let y = Math.ceil(f.ymin / ty) * ty; y <= f.ymax + 1e-9; y += ty) if (Math.abs(y) > 1e-9)
+      s += `<text class="tk" x="${sx(x0) - 4}" y="${sy(y) + 3.5}" text-anchor="end">${y}</text>`;
+    (f.droites || []).forEach(d => {
+      const [a, b] = [d.a, d.b];
+      const dx = b[0] - a[0], dy = b[1] - a[1], k = 1000;
+      s += `<line clip-path="url(#${id})" class="${d.cls || 'ln'}${d.dash ? ' dash' : ''}" x1="${sx(a[0] - k * dx)}" y1="${sy(a[1] - k * dy)}" x2="${sx(a[0] + k * dx)}" y2="${sy(a[1] + k * dy)}"/>`;
+      if (d.lbl) s += `<text class="lb${d.pk ? ' pk' : ''}" x="${sx(d.at[0])}" y="${sy(d.at[1])}" text-anchor="${d.anchor || 'start'}">${esc(d.lbl)}</text>`;
+    });
+    (f.segs || []).forEach(d => {
+      s += `<line class="${d.cls || 'ln2'}" x1="${sx(d.a[0])}" y1="${sy(d.a[1])}" x2="${sx(d.b[0])}" y2="${sy(d.b[1])}"/>`;
+    });
+    (f.pts || []).forEach(p => {
+      s += `<circle class="pt${p.open ? ' open' : ''}" cx="${sx(p.x)}" cy="${sy(p.y)}" r="3.2"/>`;
+      if (p.lbl) s += `<text class="lb${p.pk ? ' pk' : ''}" x="${sx(p.x) + (p.dx == null ? 5 : p.dx)}" y="${sy(p.y) + (p.dy == null ? -5 : p.dy)}" text-anchor="${p.anchor || 'start'}">${esc(p.lbl)}</text>`;
+    });
+    return s + '</svg>';
+  }
+
+  function figGraphe(f) {
+    const W = f.w || 260, H = f.h || 160;
+    const S = f.sommets, lab = f.labels || {};
+    const pal = ['#fff', '#fbd3dd', '#cfe6fb', '#d6f0d9', '#fff0a8'];
+    const size = k => { const t = lab[k] || k; const w = Math.max(26, t.length * 7.5 + 12); return { t, w, h: 26 }; };
+    const id = 'ar' + (++clipN);
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(f.alt || 'graphe')}">`;
+    s += `<defs><marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#3e3c47"/></marker>` +
+      `<marker id="${id}h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#cc3f64"/></marker></defs>`;
+    const hot = new Set((f.gras || []).map(e => e.split('-').sort().join('-')));
+    const cold = new Set((f.pale || []).map(e => e.split('-').sort().join('-')));
+    const labels = [];
+    (f.aretes || []).forEach(e => {
+      const [u, v, w] = e;
+      const A = S[u], B = S[v];
+      const key = [u, v].sort().join('-');
+      const cls = 'edge' + (hot.has(key) ? ' hot' : '') + (cold.has(key) ? ' cold' : '');
+      let x1 = A[0], y1 = A[1], x2 = B[0], y2 = B[1];
+      if (f.oriente) {
+        const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L;
+        const sb = size(v), cut = Math.min(Math.abs(sb.w / 2 / (ux || 1e-9)), Math.abs(sb.h / 2 / (uy || 1e-9))) + 2;
+        x2 -= ux * cut; y2 -= uy * cut;
+      }
+      const mk = f.oriente ? ` marker-end="url(#${id}${hot.has(key) ? 'h' : ''})"` : '';
+      s += `<line class="${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"${mk}/>`;
+      if (w != null && w !== '') {
+        const mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2;
+        const off = e[3] || [0, 0];
+        const bw = Math.max(18, String(w).length * 6.6 + 6);
+        labels.push(`<rect class="wbg" x="${mx + off[0] - bw / 2}" y="${my + off[1] - 8}" width="${bw}" height="16" rx="4"/><text class="w" x="${mx + off[0]}" y="${my + off[1]}">${esc(w)}</text>`);
+      }
+    });
+    s += labels.join('');
+    Object.keys(S).forEach(k => {
+      const [x, y] = S[k];
+      const z = size(k);
+      const fill = f.couleurs && f.couleurs[k] ? pal[f.couleurs[k]] : '#fff';
+      if (z.t.length <= 2) s += `<circle class="node" cx="${x}" cy="${y}" r="13" style="fill:${fill}"/>`;
+      else s += `<rect class="node" x="${x - z.w / 2}" y="${y - 13}" width="${z.w}" height="26" rx="13" style="fill:${fill}"/>`;
+      s += `<text class="nlab" x="${x}" y="${y}">${esc(z.t)}</text>`;
+    });
+    return s + '</svg>';
+  }
+
+  function figure(f) {
+    if (!f) return '';
+    let svg = f.kind === 'graphe' ? figGraphe(f) : f.kind === 'plan' ? figPlan(f) : (f.svg || '');
+    return `<div class="fig">${svg}${f.cap ? `<div class="cap">${md(f.cap)}</div>` : ''}</div>`;
+  }
+
+  /* ---------- étapes de calcul alignées ---------- */
+  function steps(arr) {
+    return '<div class="steps">' + arr.map(line => {
+      const parts = String(line).split(' // ');
+      const main = parts[0], com = parts[1];
+      const m = main.match(/^(.*?) (=|≤|≥|<|>|≈|⇒|→|⇔) (.*)$/);
+      const row = m
+        ? `<span class="l">${md(m[1])}</span><span class="o">${m[2]}</span><span class="r">${md(m[3])}</span>`
+        : `<span class="full">${md(main)}</span>`;
+      return row + `<span class="c">${com ? md(com) : ''}</span>`;
+    }).join('') + '</div>';
+  }
+
+  /* ---------- blocs ---------- */
+  const H = h => h ? `<h3><span>${md(h)}</span></h3>` : '';
+  function bloc(b) {
+    switch (b.t) {
+      case 'txt':
+        return `<div class="blk">${H(b.h)}${[].concat(b.p).map(p => `<p>${md(p)}</p>`).join('')}${b.fig ? figure(b.fig) : ''}</div>`;
+      case 'list':
+        return `<div class="blk">${H(b.h)}${b.intro ? `<p>${md(b.intro)}</p>` : ''}<ul class="hl">${b.items.map(i => `<li>${md(i)}</li>`).join('')}</ul></div>`;
+      case 'form':
+        return `<div class="blk">${H(b.h)}${b.intro ? `<p>${md(b.intro)}</p>` : ''}<div class="form">${b.items.map(r => `<span class="fl">${md(r[0])}</span><span class="fv">${md(r[1])}</span>`).join('')}</div>${b.note ? `<p class="note">${md(b.note)}</p>` : ''}</div>`;
+      case 'box':
+        return `<div class="blk center">${H(b.h)}${b.intro ? `<p>${md(b.intro)}</p>` : ''}<span class="box">${md(b.f)}</span>${b.note ? `<p class="note">${md(b.note)}</p>` : ''}</div>`;
+      case 'tab':
+        return `<div class="blk">${H(b.h)}${b.intro ? `<p>${md(b.intro)}</p>` : ''}<div class="tabwrap"><table class="tab"${b.full ? ' style="width:100%"' : ''}>` +
+          (b.head ? `<tr>${b.head.map((c, i) => `<th${i === 0 && b.lcol ? ' class="l"' : ''}>${md(c)}</th>`).join('')}</tr>` : '') +
+          b.rows.map(r => `<tr>${r.map((c, i) => `<td${i === 0 && b.lcol ? ' class="l"' : ''}>${md(c)}</td>`).join('')}</tr>`).join('') +
+          `</table></div>${b.note ? `<p class="note">${md(b.note)}</p>` : ''}</div>`;
+      case 'ex':
+        return `<div class="blk ex${b.fig ? ' has-fig' : ''}">` +
+          (b.h || b.q ? `<p>${b.h ? `<span class="ex-h">${md(b.h)}</span>` : ''}${md(b.q || '')}</p>` : '') +
+          (b.fig ? figure(b.fig) : '') +
+          (b.s ? steps(b.s) : '') +
+          (b.p ? [].concat(b.p).map(p => `<p>${md(p)}</p>`).join('') : '') +
+          (b.r ? `<p class="rep">Réponse : <b>${md(b.r)}</b></p>` : '') + `</div>`;
+      case 'fig':
+        return `<div class="blk">${H(b.h)}<div class="figs">${[].concat(b.figs || b.fig).map(figure).join('')}</div>${b.note ? `<p class="note">${md(b.note)}</p>` : ''}</div>`;
+      case 'cols':
+        return `<div class="blk cols" style="grid-template-columns:${b.w || '1fr 1fr'}">${b.c.map(col => `<div class="col">${col.map(bloc).join('')}</div>`).join('')}</div>`;
+      case 'pieges':
+        return `<div class="blk pieges">${H(b.h || 'pièges fréquents')}<ul>${b.items.map(i => `<li>${md(i)}</li>`).join('')}</ul></div>`;
+      case 'retenir':
+        return `<div class="blk retenir">${H(b.h || 'à retenir')}<ul>${b.items.map(i => `<li>${md(i)}</li>`).join('')}</ul></div>`;
+      default:
+        return '';
+    }
+  }
+
+  function page(m, c, f, cote) {
+    const titre = f.bulle || c.titre;
+    const taille = Math.max(28, Math.min(46, Math.round(1150 / Math.max(titre.length, 12))));
+    const blocs = (cote === 'recto' ? f.recto : f.verso) || [];
+    const pied = cote === 'recto'
+      ? `<span>${esc(m.nom)} · ${esc(c.titre)}</span><span>recto · 1/2</span>`
+      : `<span>Pour aller plus loin : <a href="https://www.alloprof.qc.ca" target="_blank" rel="noopener">Alloprof</a></span><span>verso · 2/2</span>`;
+    return `<article class="page${cote === 'verso' ? ' last' : ''}" data-cote="${cote}">` +
+      `<header class="p-head"><div class="corner"><span class="tag">${esc(m.court)}</span>${CRAYON}<span class="tag b">${cote === 'recto' ? 'notions + formules' : 'exemples + pièges'}</span></div>` +
+      `<h1 class="bubble" style="font-size:${taille}px">${esc(titre)}</h1></header>` +
+      `<p class="p-sub">${md(f.sous || c.titre)}</p>` +
+      `<div class="p-body">${blocs.map(bloc).join('')}</div>` +
+      `<footer class="p-foot">${pied}</footer></article>`;
+  }
+
+  /* ---------- écrans ---------- */
+  function ecranAccueil() {
+    brand.hidden = false; crumb.textContent = '';
+    btnRetour.hidden = true; btnImprimer.hidden = true;
+    app.innerHTML =
+      `<h1 class="app-title">mes notes de sec 5</h1>` +
+      `<p class="lede">Une feuille recto verso par concept, pour étudier avant l'examen. Choisis une matière.</p>` +
+      `<div class="grid">` + DATA.matieres.map(m => {
+        const p = progres(m);
+        const pct = Math.round(p.faits / p.total * 100);
+        const chip = m.plusTard ? '<span class="chip wait">plus tard</span>'
+          : p.faits === p.total ? '<span class="chip ok">complet</span>'
+          : p.faits ? `<span class="chip wait">${p.faits}/${p.total}</span>` : '<span class="chip wait">bientôt</span>';
+        return `<button class="tile" type="button" data-go="m-${m.id}" style="--tab:${m.couleur}">` +
+          `<span class="tab"></span><span class="name">${esc(m.nom)}</span>` +
+          `<span class="meta"><span>${p.total} feuilles</span>${chip}</span>` +
+          `<span class="bar" aria-hidden="true"><i style="width:${pct}%"></i></span></button>`;
+      }).join('') + `</div>`;
+  }
+
+  function ecranListe(m) {
+    const f = feuilles(m.id);
+    brand.hidden = true; crumb.textContent = m.nom;
+    btnRetour.hidden = false; btnImprimer.hidden = true;
+    btnRetour.dataset.go = '';
+    let n = 0;
+    app.innerHTML =
+      `<h1 class="app-title">${esc(m.nom.toLowerCase())}</h1>` +
+      `<p class="lede">${tousConcepts(m).length} concepts${m.plusTard ? ' · cette matière sera ajoutée plus tard' : ''}</p>` +
+      `<button class="general-card" type="button" data-go="s-${m.id}~general">` +
+      `<span class="gtext"><span class="gname">Général</span><br><span class="gsub">Résumé de tous les concepts de l'année sur une feuille recto verso</span></span>` +
+      (f.general ? '<span class="chip ok">prêt</span>' : '<span class="chip wait">bientôt disponible</span>') + `</button>` +
+      m.sections.map(s =>
+        `<h2 class="sec-name">${esc(s.nom)}</h2><ul class="clist">` + s.concepts.map(c => {
+          n++;
+          const ok = !!f[c.id];
+          return `<li><button class="crow ${ok ? 'done' : 'todo'}" type="button" data-go="s-${m.id}~${c.id}">` +
+            `<span class="num">${n}</span><span class="ctitle">${esc(c.titre)}</span>` +
+            (ok ? '<span class="chip ok">prêt</span>' : '<span class="chip wait">bientôt disponible</span>') + `</button></li>`;
+        }).join('') + `</ul>`).join('');
+  }
+
+  function ecranFeuille(m, cid) {
+    const f = feuilles(m.id)[cid];
+    const c = cid === 'general' ? { id: 'general', titre: 'Général — résumé de l\'année' } : tousConcepts(m).find(x => x.id === cid);
+    if (!c) return ecranListe(m);
+    brand.hidden = true; crumb.textContent = m.nom + ' › ' + (cid === 'general' ? 'Général' : c.titre);
+    btnRetour.hidden = false; btnRetour.dataset.go = 'm-' + m.id;
+    if (!f) {
+      btnImprimer.hidden = true;
+      app.innerHTML = `<div class="soon"><h1 class="app-title">bientôt disponible</h1><p class="lede" style="margin:8px auto 0">${esc(c.titre)}<br>Cette feuille n'est pas encore écrite.</p></div>`;
+      return;
+    }
+    btnImprimer.hidden = false;
+    app.innerHTML =
+      `<p class="print-hint no-print">Pour imprimer : format Lettre, marges « Aucune », « Graphiques d'arrière-plan » coché. Ça sort sur 2 pages.</p>` +
+      `<div id="print-note" class="print-note no-print" hidden>Rien ne s'est ouvert ? L'aperçu de Claude bloque l'impression. Ouvre plutôt le fichier <b>school-note.html</b> (dossier <b>dist</b> du projet) dans ton navigateur, puis clique sur Imprimer.</div>` +
+      `<div class="side-label">Recto</div>` + page(m, c, f, 'recto') +
+      `<div class="side-label">Verso</div>` + page(m, c, f, 'verso');
+    ajuster();
+  }
+
+  /* Grossit un peu le texte des pages peu remplies, sans jamais déborder (format lettre seulement). */
+  const reflow = window.matchMedia('screen and (max-width: 880px)');
+  function ajuster() {
+    document.querySelectorAll('.page').forEach(p => {
+      p.style.fontSize = '';
+      if (reflow.matches) return;
+      const b = p.querySelector('.p-body');
+      if (b.scrollHeight > b.clientHeight) return;
+      let f = 15.6;
+      while (f < 17.4) {
+        p.style.fontSize = (f + 0.2).toFixed(1) + 'px';
+        if (b.scrollHeight > b.clientHeight) { p.style.fontSize = f.toFixed(1) + 'px'; break; }
+        f += 0.2;
+      }
+    });
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
+  if (reflow.addEventListener) reflow.addEventListener('change', ajuster);
+  window.addEventListener('beforeprint', () => { if (reflow.matches) document.querySelectorAll('.page').forEach(p => { p.style.fontSize = ''; }); });
+
+  function route() {
+    let h = '';
+    try { h = decodeURIComponent((location.hash || '').slice(1)); } catch (e) { h = ''; }
+    const mm = h.match(/^m-(.+)$/), ms = h.match(/^s-(.+?)~(.+)$/);
+    const m = mm ? matiere(mm[1]) : ms ? matiere(ms[1]) : null;
+    if (ms && m) ecranFeuille(m, ms[2]);
+    else if (mm && m) ecranListe(m);
+    else ecranAccueil();
+    window.scrollTo(0, 0);
+  }
+  function go(h) {
+    const cible = h ? '#' + h : '#';
+    if (location.hash === cible || (!h && !location.hash)) route();
+    else location.hash = cible;
+  }
+
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-go]');
+    if (t) { e.preventDefault(); go(t.dataset.go); }
+  });
+  btnImprimer.addEventListener('click', () => {
+    const t0 = Date.now();
+    try { window.print(); } catch (e) { /* bloqué */ }
+    if (Date.now() - t0 < 400) {
+      const n = document.getElementById('print-note');
+      if (n) n.hidden = false;
+    }
+  });
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
