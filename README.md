@@ -12,6 +12,10 @@ App web d'aide aux études pour le secondaire 5 au Québec : une feuille de note
 - `tools/pdf.mjs` : génère `dist/pdf/<matière>.pdf`, toutes les feuilles d'une matière à la suite (2 pages par feuille).
 - `tests/verif-pages.mjs` : vérifie avec Chromium que chaque feuille entre dans exactement 2 pages lettre.
 
+## Recherche
+
+Chaque matière a une barre de recherche au-dessus de sa liste. Elle cherche dans les titres et dans tout le texte des feuilles, sans tenir compte des accents ni des majuscules. Elle tolère les fautes de frappe (« virgulle », « logaritme », « inpot ») et classe les feuilles de la plus pertinente à la moins pertinente, avec un extrait où le mot est surligné.
+
 ## Commandes
 
 ```sh

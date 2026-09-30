@@ -254,6 +254,32 @@ main { max-width: 900px; margin: 0 auto; padding-block: 20px 60px; padding-inlin
 .crow.done .num { border-style: solid; border-color: var(--ok); color: var(--ok); }
 .crow.todo .ctitle { color: var(--muted); }
 
+/* ---------- Recherche dans une matière ---------- */
+.search {
+  position: relative;
+  margin: 0 0 18px;
+}
+.search svg { position: absolute; left: 14px; top: 50%; width: 20px; height: 20px; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+.search input {
+  width: 100%;
+  font: inherit;
+  font-size: 18px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px 12px 44px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.search input:focus { outline: none; border-color: var(--accent); }
+.search input::placeholder { color: var(--muted); }
+.search-info { color: var(--muted); font-size: 16px; margin: -8px 0 16px; min-height: 1em; }
+.search-info b { color: var(--ink); }
+.snip { display: block; color: var(--muted); font-size: 15px; line-height: 1.35; margin-top: 3px; }
+.snip mark, .search-info mark { background: var(--wait-soft); color: var(--ink); border-radius: 3px; padding: 0 2px; }
+.aucun { color: var(--muted); text-align: center; padding: 24px 8px; border: 1.5px dashed var(--line); border-radius: 12px; }
+
 /* ---------- Écran feuille ---------- */
 .sheet-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 6px; }
 .print-hint { color: var(--muted); font-size: 15px; margin: 0 0 14px; }
@@ -14831,20 +14857,205 @@ general: {
     btnRetour.hidden = false; btnImprimer.hidden = true;
     btnRetour.dataset.go = '';
     let n = 0;
+    const chip = ok => ok ? '<span class="chip ok">prêt</span>' : '<span class="chip wait">bientôt disponible</span>';
     app.innerHTML =
       `<h1 class="app-title">${esc(m.nom.toLowerCase())}</h1>` +
       `<p class="lede">${tousConcepts(m).length} concepts${m.plusTard ? ' · cette matière sera ajoutée plus tard' : ''}</p>` +
+      `<div class="search" role="search"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="m13 13 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>` +
+      `<input id="q" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search" placeholder="Chercher dans les feuilles (ex. : ${esc(EXEMPLES[m.id] || 'un mot-clé')})" aria-label="Chercher dans les feuilles de ${esc(m.nom)}"></div>` +
+      `<p class="search-info" id="q-info" aria-live="polite"></p>` +
+      `<div id="q-liste">` +
       `<button class="general-card" type="button" data-go="s-${m.id}~general">` +
       `<span class="gtext"><span class="gname">Général</span><br><span class="gsub">Résumé de tous les concepts de l'année sur une feuille recto verso</span></span>` +
-      (f.general ? '<span class="chip ok">prêt</span>' : '<span class="chip wait">bientôt disponible</span>') + `</button>` +
+      chip(f.general) + `</button>` +
       m.sections.map(s =>
         `<h2 class="sec-name">${esc(s.nom)}</h2><ul class="clist">` + s.concepts.map(c => {
           n++;
           const ok = !!f[c.id];
           return `<li><button class="crow ${ok ? 'done' : 'todo'}" type="button" data-go="s-${m.id}~${c.id}">` +
             `<span class="num">${n}</span><span class="ctitle">${esc(c.titre)}</span>` +
-            (ok ? '<span class="chip ok">prêt</span>' : '<span class="chip wait">bientôt disponible</span>') + `</button></li>`;
-        }).join('') + `</ul>`).join('');
+            chip(ok) + `</button></li>`;
+        }).join('') + `</ul>`).join('') +
+      `</div><div id="q-res" class="clist" hidden></div><p class="aucun" id="q-aucun" hidden></p>`;
+    const q = document.getElementById('q');
+    q.value = recherches[m.id] || '';
+    let t = 0;
+    q.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => filtrer(m, q.value), 120); });
+    q.addEventListener('keydown', e => { if (e.key === 'Escape') { q.value = ''; filtrer(m, ''); } });
+    if (q.value) filtrer(m, q.value);
+  }
+
+  /* =========================================================
+     RECHERCHE — sans accents, tolère les fautes de frappe
+     ========================================================= */
+  const recherches = {};
+  const EXEMPLES = {
+    'math-cst': 'droite baladeuse', 'math-ts': 'logarithme', 'math-sn': 'parabole', francais: 'virgule',
+    anglais: 'present perfect', chimie: 'enthalpie', physique: 'accélération', 'monde-contemporain': 'migration',
+    histoire: 'guerre froide', 'education-financiere': 'budget',
+  };
+  const VIDES = new Set('a au aux avec ce ces d dans de des du en est et l la le les leur ou par pour qu que qui sa se ses son sur un une y the of to and in is'.split(' '));
+  const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+    .replace(/œ/g, 'oe').replace(/æ/g, 'ae');
+  const mots = s => norm(s).split(/[^a-z0-9]+/).filter(Boolean);
+  // Texte lisible d'un morceau de feuille : balises et mini-balisage retirés.
+  const nettoyer = s => String(s)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\{\{(.+?)\|(.+?)\}\}/g, '$1/$2')
+    .replace(/\*\*|!!|__/g, '')
+    .replace(/&[a-z]+;/g, ' ')
+    .replace(/ \/\/ /g, ' — ')
+    .replace(/\s+/g, ' ').trim();
+
+  // Distance de Levenshtein, abandonnée dès qu'elle dépasse max.
+  function distance(a, b, max) {
+    if (Math.abs(a.length - b.length) > max) return max + 1;
+    let prev2 = [];
+    let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+    for (let i = 1; i <= a.length; i++) {
+      const cur = [i];
+      let min = i;
+      for (let j = 1; j <= b.length; j++) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        // transposition de deux lettres voisines (« virugle ») = une seule faute
+        if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) cur[j] = Math.min(cur[j], prev2[j - 2] + 1);
+        if (cur[j] < min) min = cur[j];
+      }
+      if (min > max) return max + 1;
+      prev2 = prev; prev = cur;
+    }
+    return prev[b.length];
+  }
+
+  const index = {};
+  function indexer(m) {
+    if (index[m.id]) return index[m.id];
+    const f = feuilles(m.id);
+    const docs = [{ id: 'general', titre: 'Général' }].concat(tousConcepts(m)).map(c => {
+      const morceaux = [c.titre];
+      const ramasser = (v, k) => {
+        if (typeof v === 'string') { if (k !== 't' && k !== 'kind' && k !== 'cls' && !/^#[0-9a-f]{3,8}$/i.test(v)) morceaux.push(nettoyer(v)); }
+        else if (Array.isArray(v)) v.forEach(x => ramasser(x, k));
+        else if (v && typeof v === 'object') Object.keys(v).forEach(k2 => ramasser(v[k2], k2));
+      };
+      if (f[c.id]) ramasser(f[c.id]);
+      const tous = morceaux.filter(Boolean);
+      const freq = new Map();
+      tous.flatMap(mots).forEach(w => freq.set(w, (freq.get(w) || 0) + 1));
+      return { id: c.id, nom: c.id === 'general' ? 'Général — résumé de l\'année' : c.titre, titre: new Set(mots(c.titre)), morceaux: tous, mots: freq };
+    });
+    // vocabulaire : mot normalisé → forme affichable (avec accents)
+    const vocab = new Map();
+    docs.forEach(d => d.morceaux.forEach(t => (t.match(/[\p{L}\p{N}]+/gu) || []).forEach(w => {
+      const k = norm(w);
+      if (!vocab.has(k)) vocab.set(k, w.toLowerCase());
+    })));
+    return (index[m.id] = { docs, vocab });
+  }
+
+  // Mots du vocabulaire qui correspondent à un mot tapé, avec un score (3 = exact … 1 = faute de frappe).
+  function correspondances(tape, vocab) {
+    const n = tape.length, tol = n <= 3 ? 0 : n <= 6 ? 1 : 2;
+    const res = new Map();
+    for (const w of vocab.keys()) {
+      let sc = 0;
+      if (w === tape) sc = 3;
+      else if (n >= 3 && w.startsWith(tape)) sc = 2;
+      else if (tol && distance(tape, w, tol) <= tol) sc = 1.5;
+      else if (n >= 5 && w.length > n && distance(tape, w.slice(0, n), 1) <= 1) sc = 1;
+      else if (n >= 5 && w.includes(tape)) sc = 1;
+      if (sc) res.set(w, sc);
+    }
+    // Un mot corrigé entraîne aussi sa famille : « logaritme » → logarithme, logarithmes, logarithmique…
+    for (const [w, sc] of [...res]) {
+      if (sc !== 1.5 || w.length < 6) continue;
+      const racine = w.slice(0, -1);
+      for (const v of vocab.keys()) if (!res.has(v) && v.startsWith(racine)) res.set(v, 1);
+    }
+    return res;
+  }
+
+  function extrait(doc, trouves) {
+    for (const t of doc.morceaux.slice(1)) {
+      const ws = [...t.matchAll(/[\p{L}\p{N}]+/gu)];
+      const hit = ws.find(w => trouves.has(norm(w[0])));
+      if (!hit) continue;
+      let a = Math.max(0, hit.index - 45), b = Math.min(t.length, hit.index + 85);
+      if (a > 0) a = t.indexOf(' ', a) + 1;
+      if (b < t.length) { const sp = t.lastIndexOf(' ', b); if (sp > hit.index) b = sp; }
+      let out = '', pos = a;
+      ws.filter(w => w.index >= a && w.index + w[0].length <= b && trouves.has(norm(w[0]))).forEach(w => {
+        out += esc(t.slice(pos, w.index)) + '<mark>' + esc(w[0]) + '</mark>';
+        pos = w.index + w[0].length;
+      });
+      out += esc(t.slice(pos, b));
+      return (a > 0 ? '… ' : '') + out + (b < t.length ? ' …' : '');
+    }
+    return '';
+  }
+
+  function filtrer(m, texte) {
+    recherches[m.id] = texte;
+    const liste = document.getElementById('q-liste');
+    const res = document.getElementById('q-res');
+    const info = document.getElementById('q-info');
+    const aucun = document.getElementById('q-aucun');
+    if (!liste) return;
+    let tapes = mots(texte);
+    const utiles = tapes.filter(w => !VIDES.has(w));
+    if (utiles.length) tapes = utiles;
+    if (!tapes.length) {
+      liste.hidden = false; res.hidden = true; res.innerHTML = '';
+      info.textContent = ''; aucun.hidden = true;
+      return;
+    }
+    const { docs, vocab } = indexer(m);
+    const parMot = tapes.map(t => correspondances(t, vocab));
+    const trouves = new Set(parMot.flatMap(mp => [...mp.keys()]));
+    const resultats = docs.map(d => {
+      let occ = 0;
+      const sc = parMot.map(mp => {
+        let best = 0;
+        for (const [w, x] of mp) {
+          const k = d.mots.get(w);
+          if (!k) continue;
+          occ += k;
+          best = Math.max(best, x + (d.titre.has(w) ? 3 : 0));
+        }
+        return best;
+      });
+      return { d, sc, rang: sc.reduce((a, x) => a + x, 0) * 10 + Math.min(occ, 25) };
+    });
+    let gardes = resultats.filter(r => r.sc.every(x => x > 0));
+    const partiel = !gardes.length;
+    if (partiel) gardes = resultats.filter(r => r.sc.some(x => x > 0));
+    gardes.sort((x, y) => y.rang - x.rang);
+
+    const f = feuilles(m.id);
+    const nums = new Map(tousConcepts(m).map((c, i) => [c.id, i + 1]));
+    liste.hidden = true; res.hidden = false;
+    res.innerHTML = gardes.map(({ d }) => {
+      const ok = !!f[d.id], snip = extrait(d, trouves);
+      return `<button class="crow ${ok ? 'done' : 'todo'}" type="button" data-go="s-${m.id}~${d.id}">` +
+        `<span class="num">${nums.get(d.id) || 'G'}</span><span class="ctitle">${esc(d.nom)}${snip ? `<span class="snip">${snip}</span>` : ''}</span>` +
+        (ok ? '<span class="chip ok">prêt</span>' : '<span class="chip wait">bientôt disponible</span>') + `</button>`;
+    }).join('');
+
+    // Mots corrigés : si ce qui est tapé n'existe pas tel quel, on montre ce qu'on a cherché à la place.
+    const corriges = tapes.map((t, i) => {
+      if (vocab.has(t)) return null;
+      let best = null;
+      for (const [w, x] of parMot[i]) if (x === 1.5 && (!best || distance(t, w, 2) < distance(t, best, 2))) best = w;
+      return best ? vocab.get(best) : null;
+    }).filter(Boolean);
+    const nb = gardes.length;
+    aucun.hidden = nb > 0;
+    if (!nb) aucun.innerHTML = `Aucune feuille ne parle de « ${esc(texte.trim())} ». Essaie un autre mot ou un synonyme.`;
+    info.innerHTML = nb
+      ? `<b>${nb}</b> feuille${nb > 1 ? 's' : ''}` +
+        (corriges.length ? ` pour « <mark>${corriges.map(esc).join(' ')}</mark> »` : '') +
+        (partiel && tapes.length > 1 ? ' (contiennent au moins un des mots)' : '') + ' · les plus pertinentes en premier'
+      : '';
   }
 
   function ecranFeuille(m, cid) {
